@@ -46,6 +46,7 @@ public class UserHandler extends BaseClientRequestHandler {
          *  register new event, so the core will dispatch event type to this class
          */
         getExtension().addEventListener(DemoEventType.CHANGE_NAME, this);
+        getExtension().addEventListener(DemoEventType.LOGIN_SUCCESS, this);
     }
 
     private FresherExtension getExtension() {
@@ -64,7 +65,7 @@ public class UserHandler extends BaseClientRequestHandler {
         try {
             switch (dataCmd.getId()) {
             case CmdDefine.GET_USER_INFO:
-                RequestUserInfo reqInfo = new RequestUserInfo(dataCmd);                
+                RequestUserInfo reqInfo = new RequestUserInfo(dataCmd);
                 getUserInfo(user);
                 break;
             }
@@ -82,6 +83,8 @@ public class UserHandler extends BaseClientRequestHandler {
                 userInfo = new PlayerInfo(user.getId(), "username_" + user.getId());
                 userInfo.saveModel(user.getId());
             }
+            System.out.println(userInfo.getName());
+            System.out.println(userInfo.getId());
             send(new ResponseRequestUserInfo(userInfo), user);
         } catch (Exception e) {
 

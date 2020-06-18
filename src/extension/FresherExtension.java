@@ -26,6 +26,8 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import org.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.DemoHandler;
 import service.UserHandler;
 
@@ -55,6 +57,8 @@ public class FresherExtension extends BZExtension {
         /**
          * register new handler to catch client's packet
          */
+//        Logger j = LoggerFactory.getLogger("Extensions");
+//        j.
         trace("  Register Handler ");
         addRequestHandler(UserHandler.USER_MULTI_IDS, UserHandler.class);
         addRequestHandler(DemoHandler.DEMO_MULTI_IDS, DemoHandler.class);

@@ -49,6 +49,10 @@ public class PlayerInfo extends DataModel {
         return name;
     }
 
+    public int getId(){
+        return id;
+    }
+
     public String setName(String name){
         this.name = name;
         return this.getName();
