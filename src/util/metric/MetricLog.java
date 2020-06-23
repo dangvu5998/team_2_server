@@ -3,8 +3,6 @@ package util.metric;
 
 import bitzero.server.entities.User;
 
-import model.UserGame;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

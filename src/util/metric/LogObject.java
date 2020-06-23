@@ -1,8 +1,5 @@
 package util.metric;
 
-
-import model.PlayerInfo;
-
 public class LogObject {
     public long time = 0;
     public int actionId = 0;
@@ -57,24 +54,6 @@ public class LogObject {
         }
         if (accountType == 0 | openAccount == "" | zingName == "") //|| currentExp == 0 || currentLevel == 0)
         {
-            PlayerInfo userInfo = null;
-            try {
-                //          if(zingId == 0 && accountType != "" && openAccount != "") {
-                //            zingId = Long.parseLong(MapSocialId.getInstance().getZingId(accountType, openAccount));
-                //          }
-                if (zingId != 0) {
-                    userInfo = (PlayerInfo) PlayerInfo.getModel((int) zingId, PlayerInfo.class);
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            if (userInfo != null) {
-                
-                accountType = 1;
-                
-            }
         }
 
         Object[] logValues = new Object[] {

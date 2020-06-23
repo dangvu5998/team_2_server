@@ -1,11 +1,10 @@
 package model;
 
-import util.database.DataModel;
+public class GameInfo {
+    private long id;
 
-public class GameInfo extends DataModel {
-    public long id;
-    public String name = "";
     public String ver;
+    public String name;
     public int contentversion;
     public String lastUpdate;
     public String pId = "";
