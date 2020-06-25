@@ -1,12 +1,13 @@
 package model;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.ReplaceOptions;
+import model.map.MapObject;
 import org.bson.Document;
 import  util.database.MongodbDatabase;
-import  util.Common;
 
 public class GeneralInfo {
-    public long getUid() {
-        return uid;
+    public int getId() {
+        return id;
     }
 
     public int getVipLevel() {
@@ -49,7 +50,7 @@ public class GeneralInfo {
         return creating;
     }
 
-    private long uid;
+    private int id;
     private int vipLevel;
     private String username;
     private int frameScore;
@@ -61,11 +62,11 @@ public class GeneralInfo {
     private boolean notifications;
     private boolean creating = false;
 
-    static String collectionName = "GeneralInfo";
+    private static String collectionName = "GeneralInfo";
 
     public GeneralInfo(int vipLevel, String username, int frameScore, int userLevel, int userXP,
                        int g, boolean music, boolean sound, boolean notifications) {
-        this.uid = Common.generateId();
+        this.id = MongodbDatabase.generateId(collectionName);
         this.creating = true;
         this.username = username;
         this.vipLevel = vipLevel;
@@ -79,9 +80,9 @@ public class GeneralInfo {
         this.notifications = notifications;
     }
 
-    public GeneralInfo(long uid, int vipLevel, String username, int frameScore, int userLevel, int userXP,
+    public GeneralInfo(int id, int vipLevel, String username, int frameScore, int userLevel, int userXP,
                        int g, boolean music, boolean sound, boolean notifications) {
-        this.uid = uid;
+        this.id = id;
         this.username = username;
         this.vipLevel = vipLevel;
         this.username = username;
@@ -106,6 +107,7 @@ public class GeneralInfo {
                 true,
                 true
         );
+        MapObject.initialMapForUser(generalInfo.id);
         return generalInfo;
     }
 
@@ -115,7 +117,7 @@ public class GeneralInfo {
 
     public void save() {
         Document doc = new Document();
-        doc.append("_id", uid);
+        doc.append("_id", id);
         doc.append("username", username);
         doc.append("vipLevel", vipLevel);
         doc.append("frameScore", frameScore);
@@ -126,16 +128,13 @@ public class GeneralInfo {
         doc.append("sound", sound);
         doc.append("notifications", notifications);
         // TODO: handle uid collision
-        if(this.creating) {
-            getCollection().insertOne(doc);
-        } else {
-            getCollection().findOneAndUpdate(new Document("_id", uid), doc);
-        }
+
+        getCollection().replaceOne(new Document("_id", id), doc, new ReplaceOptions().upsert(true));
     }
 
     public static GeneralInfo documentToGeneralInfo(Document doc) {
-        return new GeneralInfo(
-                (long) doc.get("_id"),
+        GeneralInfo newGeneralInfo = new GeneralInfo(
+                (int) doc.get("_id"),
                 (int) doc.get("vipLevel"),
                 (String) doc.get("username"),
                 (int) doc.get("frameScore"),
@@ -146,6 +145,7 @@ public class GeneralInfo {
                 (boolean) doc.get("sound"),
                 (boolean) doc.get("notifications")
         );
+        return newGeneralInfo;
     }
 
     public static GeneralInfo getGeneralInfoByUsername(String username) {

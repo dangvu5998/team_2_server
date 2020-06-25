@@ -1,2 +1,0 @@
-23 Jun 2020 08:07:44,815 WARN  [main] bootLogger     - Was not able to bind socket: { 172.28.61.55:1102, TCP, 1024 }
-23 Jun 2020 08:58:16,150 WARN  [main] bootLogger     - Was not able to bind socket: { 0.0.0.0:5998, TCP, 1024 }

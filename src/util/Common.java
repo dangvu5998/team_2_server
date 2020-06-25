@@ -1,6 +1,12 @@
 package util;
 
 
+import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Common {
@@ -15,5 +21,14 @@ public class Common {
         return ((long)currentTimeInSecond() << 32) | (long) (rand.nextInt(1 << 30));
     }
 
+    public static JSONObject loadJSONObjectFromFile(String fileName) {
+        try {
+            String configContent = FileUtils.readFileToString(new File(fileName), "UTF-8");
+            return new JSONObject(configContent);
+        } catch (IOException | JSONException ex) {
+            // TODO: log error
+        }
+        return null;
+    }
 
 }

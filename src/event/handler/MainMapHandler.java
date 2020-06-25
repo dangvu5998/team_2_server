@@ -27,6 +27,7 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
     }
 
     private void processLoadMainMap(User user) {
+
         send(new ResponseLoadMainMap(200), user);
     }
 }

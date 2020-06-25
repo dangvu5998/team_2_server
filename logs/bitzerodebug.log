@@ -1,4 +1,0 @@
-23 Jun 2020 10:12:40,251 WARN  [pool-1-thread-3] DemoHandler     - processUserLoginSuccess, name = Fresher2
-23 Jun 2020 10:35:28,475 WARN  [pool-1-thread-3] DemoHandler     - processUserLoginSuccess, name = Fresher2
-23 Jun 2020 10:48:52,478 WARN  [pool-1-thread-8] DemoHandler     - processUserLoginSuccess, name = Fresher3
-23 Jun 2020 11:14:32,693 WARN  [pool-1-thread-3] DemoHandler     - processUserLoginSuccess, name = dfdfd

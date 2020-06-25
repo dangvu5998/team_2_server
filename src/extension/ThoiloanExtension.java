@@ -4,27 +4,20 @@ package extension;
 import bitzero.engine.sessions.ISession;
 
 import bitzero.server.config.ConfigHandle;
-import bitzero.server.core.BZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.entities.managers.ConnectionStats;
 import bitzero.server.extensions.BZExtension;
 import bitzero.server.extensions.data.DataCmd;
 
 import bitzero.util.ExtensionUtility;
-import bitzero.util.common.business.Debug;
 import bitzero.util.datacontroller.business.DataController;
 import bitzero.util.socialcontroller.bean.UserInfo;
 
 import cmd.receive.authen.RequestLogin;
 
-import event.eventType.AuthEventType;
-import event.handler.LoginSuccessHandler;
-import event.handler.LogoutHandler;
-
-import java.util.List;
-
 import event.handler.MainMapHandler;
 import org.json.JSONObject;
+import util.database.MongodbDatabase;
 import util.server.ServerLoop;
 
 import model.GeneralInfo;
@@ -40,6 +33,7 @@ public class ThoiloanExtension extends BZExtension {
         super();
         setName("Thoiloan");
         svrLoop = new ServerLoop();
+        System.out.println("hello");
     }
 
     public void init() {
@@ -57,6 +51,8 @@ public class ThoiloanExtension extends BZExtension {
 //        addEventHandler(BZEventType.USER_LOGIN, MainMapHandler.class);
 //        addEventHandler(BZEventType.USER_LOGOUT, LogoutHandler.class);
 //        addEventHandler(BZEventType.USER_DISCONNECT, LogoutHandler.class);
+        System.out.println("hell");
+//        System.out.println(MongodbDatabase.generateId("GeneralInfo"));
 
         addRequestHandler(MainMapHandler.MAIN_MAP_IDS, MainMapHandler.class);
     }
@@ -104,7 +100,7 @@ public class ThoiloanExtension extends BZExtension {
         String username = reqGet.getUsername();
         GeneralInfo generalInfo = GeneralInfo.getGeneralInfoByUsername(username);
         UserInfo userInfo = new UserInfo();
-        userInfo.setUserId("" + (int) (generalInfo.getUid() >> 32));
+        userInfo.setUserId("" + generalInfo.getId());
         userInfo.setUsername(username);
         User user = ExtensionUtility.instance().canLogin(userInfo, "", session);
         ExtensionUtility.instance().sendLoginOK(user);
