@@ -19,8 +19,8 @@ public class Obstacle extends MapObject {
 
     private static JSONObject obtacleConfig;
 
-    public Obstacle(int id_, int userId_, int x_, int y_, int objectType_, int obstacleStatus_, int finishTime_) {
-        super(id_, userId_, x_, y_, objectType_);
+    public Obstacle(int id_, int x_, int y_, int objectType_, int obstacleStatus_, int finishTime_) {
+        super(id_, x_, y_, objectType_);
         obstacleStatus = obstacleStatus_;
         finishTime = finishTime_;
         loadConfig();
@@ -128,7 +128,6 @@ public class Obstacle extends MapObject {
         obtacleConfig = Common.loadJSONObjectFromFile(OBSTACLE_CONFIG_PATH);
     }
 
-    @Override
     public Document getMetadata() {
         // TODO: override this
         return new Document();

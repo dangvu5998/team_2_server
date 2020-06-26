@@ -64,38 +64,6 @@ public class ServerUtil {
         return sb.toString();
     }
 
-    public static String getModelKeyName(String model, int userId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(ServerConstant.GAME_DATA_KEY_PREFIX);
-        sb.append(ServerConstant.SEPERATOR);
-        sb.append(userId);
-        sb.append(ServerConstant.SEPERATOR);
-        sb.append(model);
-
-        return sb.toString();
-    }
-
-    public static String getModelKeyName(String model, long userId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(ServerConstant.GAME_DATA_KEY_PREFIX);
-        sb.append(ServerConstant.SEPERATOR);
-        sb.append(userId);
-        sb.append(ServerConstant.SEPERATOR);
-        sb.append(model);
-
-        return sb.toString();
-    }
-
-    public static String getSocialModelKeyName(String model, long userId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(ServerConstant.GAME_DATA_KEY_PREFIX);
-        sb.append(ServerConstant.SEPERATOR);
-        sb.append(userId);
-        sb.append(ServerConstant.SEPERATOR);
-        sb.append(model);
-
-        return sb.toString();
-    }
 
     static public StringBuffer sendRequest(String _method, String _url, String _postFiled) throws IOException {
         URL obj = new URL(_url);

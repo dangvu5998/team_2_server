@@ -1,14 +1,9 @@
 package model.map;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
-import org.bson.Document;
-import util.database.MongodbDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import model.GameUser;
+import org.json.JSONException;
+import org.json.JSONObject;
+import util.database.DBBuiltInUtil;
 
 public abstract class MapObject {
 
@@ -18,7 +13,6 @@ public abstract class MapObject {
     protected int width;
     protected int height;
     protected int objectType;
-    protected int userId;
 
     public static final int ARMY_CAMP = 1;
     public static final int BARRACK = 2;
@@ -65,9 +59,8 @@ public abstract class MapObject {
 
     protected static final String collectionName = "MapObject";
 
-    public MapObject(int id_, int userId_, int x_, int y_, int objectType_) {
+    public MapObject(int id_, int x_, int y_, int objectType_) {
         id = id_;
-        userId = userId_;
         x = x_;
         y = y_;
         objectType = objectType_;
@@ -109,30 +102,40 @@ public abstract class MapObject {
         this.height = height;
     }
 
-    public abstract Document getMetadata();
+    public int getObjectType() {
+        return objectType;
+    }
 
     public void save() {
-        Document doc = new Document();
-        doc.append("_id", id);
-        doc.append("x", x);
-        doc.append("y", y);
-        doc.append("objectType", objectType);
-        doc.append("userId", userId);
-        doc.append("metadata", getMetadata());
-        getCollection().replaceOne(new Document("_id", id), doc, new ReplaceOptions().upsert(true));
+        try {
+            DBBuiltInUtil.save(collectionName, String.valueOf(id), this);
+        } catch (Exception e) {
+            System.out.println("Save map object" + id + " error");
+        }
     }
 
-    public static MongoCollection<Document> getCollection() {
-        return MongodbDatabase.getInstance().getDatabase().getCollection(collectionName);
-    }
+    public static MapObject getMapObjectById(int id) {
+        String mapObjectStr = DBBuiltInUtil.get(collectionName, String.valueOf(id));
+        if(mapObjectStr == null) {
+            return null;
+        }
+        try {
+            JSONObject mapObjectJson = new JSONObject(mapObjectStr);
+            int objectType = mapObjectJson.getInt("objectType");
+            switch (objectType) {
+                case TOWNHALL:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, TownhallBuilding.class);
+                case GOLD_STORAGE:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldStorageBuilding.class);
+                case ELIXIR_STORAGE:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ElixirStorageBuilding.class);
+            }
 
-    public static void initialMapForUser(int userId) {
-        TownhallBuilding.createNewTownhallBuilding(userId, 20, 19).save();
+        } catch (Exception e) {
+            System.out.println("Eror get map oject " + id);
+        }
+//        return (MapObject) DBBuiltInUtil.get(collectionName, String.valueOf(id), MapObject.class);
+        return null;
     }
-
-//    public static ArrayList<MapObject> getAllMapObjectsByUserId(int userId) {
-//        ArrayList<Document> mapObjects = getCollection().find(new Document("userId", userId));
-//        return mapObjects;
-//    }
 
 }

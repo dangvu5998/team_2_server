@@ -17,22 +17,18 @@ import cmd.receive.authen.RequestLogin;
 
 import event.handler.MainMapHandler;
 import org.json.JSONObject;
-import util.database.MongodbDatabase;
-import util.server.ServerLoop;
 
-import model.GeneralInfo;
+import model.GameUser;
 
 
 public class ThoiloanExtension extends BZExtension {
     private static String SERVERS_INFO =
         ConfigHandle.instance().get("servers_key") == null ? "servers" : ConfigHandle.instance().get("servers_key");
 
-    private ServerLoop svrLoop;
 
     public ThoiloanExtension() {
         super();
         setName("Thoiloan");
-        svrLoop = new ServerLoop();
     }
 
     public void init() {
@@ -52,10 +48,6 @@ public class ThoiloanExtension extends BZExtension {
 //        addEventHandler(BZEventType.USER_DISCONNECT, LogoutHandler.class);
 
         addRequestHandler(MainMapHandler.MAIN_MAP_IDS, MainMapHandler.class);
-    }
-
-    public ServerLoop getServerLoop() {
-        return svrLoop;
     }
 
     @Override
@@ -95,9 +87,15 @@ public class ThoiloanExtension extends BZExtension {
         RequestLogin reqGet = new RequestLogin(objData);
         reqGet.unpackData();
         String username = reqGet.getUsername();
-        GeneralInfo generalInfo = GeneralInfo.getGeneralInfoByUsername(username);
+        GameUser gameUser = GameUser.getGeneralInfoByUsername(username);
+        if(gameUser == null) {
+            gameUser = GameUser.createGeneralInfoByUsername(username);
+        }
+        System.out.println("GenInfo");
+        System.out.println(gameUser);
+        System.out.println(gameUser.getId());
         UserInfo userInfo = new UserInfo();
-        userInfo.setUserId("" + generalInfo.getId());
+        userInfo.setUserId("" + gameUser.getId());
         userInfo.setUsername(username);
         User user = ExtensionUtility.instance().canLogin(userInfo, "", session);
         ExtensionUtility.instance().sendLoginOK(user);
