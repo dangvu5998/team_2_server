@@ -26,85 +26,85 @@ public class Obstacle extends MapObject {
         loadConfig();
         String obtacleConfigName = "";
         switch (objectType) {
-            case OBTACLE_1:
+            case OBSTACLE_1:
                 obtacleConfigName = "OBS_1";
                 break;
-            case OBTACLE_2:
+            case OBSTACLE_2:
                 obtacleConfigName = "OBS_2";
                 break;
-            case OBTACLE_3:
+            case OBSTACLE_3:
                 obtacleConfigName = "OBS_3";
                 break;
-            case OBTACLE_4:
+            case OBSTACLE_4:
                 obtacleConfigName = "OBS_4";
                 break;
-            case OBTACLE_5:
+            case OBSTACLE_5:
                 obtacleConfigName = "OBS_5";
                 break;
-            case OBTACLE_6:
+            case OBSTACLE_6:
                 obtacleConfigName = "OBS_6";
                 break;
-            case OBTACLE_7:
+            case OBSTACLE_7:
                 obtacleConfigName = "OBS_7";
                 break;
-            case OBTACLE_8:
+            case OBSTACLE_8:
                 obtacleConfigName = "OBS_8";
                 break;
-            case OBTACLE_9:
+            case OBSTACLE_9:
                 obtacleConfigName = "OBS_9";
                 break;
-            case OBTACLE_10:
+            case OBSTACLE_10:
                 obtacleConfigName = "OBS_10";
                 break;
-            case OBTACLE_11:
+            case OBSTACLE_11:
                 obtacleConfigName = "OBS_11";
                 break;
-            case OBTACLE_12:
+            case OBSTACLE_12:
                 obtacleConfigName = "OBS_12";
                 break;
-            case OBTACLE_13:
+            case OBSTACLE_13:
                 obtacleConfigName = "OBS_13";
                 break;
-            case OBTACLE_14:
+            case OBSTACLE_14:
                 obtacleConfigName = "OBS_14";
                 break;
-            case OBTACLE_15:
+            case OBSTACLE_15:
                 obtacleConfigName = "OBS_15";
                 break;
-            case OBTACLE_16:
+            case OBSTACLE_16:
                 obtacleConfigName = "OBS_16";
                 break;
-            case OBTACLE_17:
+            case OBSTACLE_17:
                 obtacleConfigName = "OBS_17";
                 break;
-            case OBTACLE_18:
+            case OBSTACLE_18:
                 obtacleConfigName = "OBS_18";
                 break;
-            case OBTACLE_19:
+            case OBSTACLE_19:
                 obtacleConfigName = "OBS_19";
                 break;
-            case OBTACLE_20:
+            case OBSTACLE_20:
                 obtacleConfigName = "OBS_20";
                 break;
-            case OBTACLE_21:
+            case OBSTACLE_21:
                 obtacleConfigName = "OBS_21";
                 break;
-            case OBTACLE_22:
+            case OBSTACLE_22:
                 obtacleConfigName = "OBS_22";
                 break;
-            case OBTACLE_23:
+            case OBSTACLE_23:
                 obtacleConfigName = "OBS_23";
                 break;
-            case OBTACLE_24:
+            case OBSTACLE_24:
                 obtacleConfigName = "OBS_24";
                 break;
-            case OBTACLE_25:
+            case OBSTACLE_25:
                 obtacleConfigName = "OBS_25";
                 break;
-            case OBTACLE_26:
+            case OBSTACLE_26:
                 obtacleConfigName = "OBS_26";
                 break;
-            case OBTACLE_27:
+            case OBSTACLE_27:
                 obtacleConfigName = "OBS_27";
                 break;
         }

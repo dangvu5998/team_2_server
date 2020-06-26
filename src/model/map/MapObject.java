@@ -6,6 +6,8 @@ import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import util.database.MongodbDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class MapObject {
@@ -27,37 +29,39 @@ public abstract class MapObject {
     public static final int CANON = 7;
     public static final int ELIXIR_COLLECTOR = 8;
     public static final int ELIXIR_STORAGE = 9;
-    public static final int LABRATORY = 10;
+    public static final int LABORATORY = 10;
     public static final int TREBUCHET = 11;
     public static final int TOWNHALL = 12;
     public static final int WALL = 13;
-    public static final int OBTACLE_1 = 14;
-    public static final int OBTACLE_2 = 15;
-    public static final int OBTACLE_3 = 16;
-    public static final int OBTACLE_4 = 17;
-    public static final int OBTACLE_5 = 18;
-    public static final int OBTACLE_6 = 19;
-    public static final int OBTACLE_7 = 20;
-    public static final int OBTACLE_8 = 21;
-    public static final int OBTACLE_9 = 22;
-    public static final int OBTACLE_10 = 23;
-    public static final int OBTACLE_11 = 24;
-    public static final int OBTACLE_12 = 25;
-    public static final int OBTACLE_14 = 26;
-    public static final int OBTACLE_15 = 27;
-    public static final int OBTACLE_16 = 28;
-    public static final int OBTACLE_17 = 29;
-    public static final int OBTACLE_18 = 30;
-    public static final int OBTACLE_19 = 31;
-    public static final int OBTACLE_20 = 32;
-    public static final int OBTACLE_21 = 33;
-    public static final int OBTACLE_22 = 34;
-    public static final int OBTACLE_23 = 35;
-    public static final int OBTACLE_24 = 36;
-    public static final int OBTACLE_25 = 37;
-    public static final int OBTACLE_26 = 38;
-    public static final int OBTACLE_27 = 39;
-    public static final int OBTACLE_13 = 40;
+    public static final int OBSTACLE_1 = 14;
+    public static final int OBSTACLE_2 = 15;
+    public static final int OBSTACLE_3 = 16;
+    public static final int OBSTACLE_4 = 17;
+    public static final int OBSTACLE_5 = 18;
+    public static final int OBSTACLE_6 = 19;
+    public static final int OBSTACLE_7 = 20;
+    public static final int OBSTACLE_8 = 21;
+    public static final int OBSTACLE_9 = 22;
+    public static final int OBSTACLE_10 = 23;
+    public static final int OBSTACLE_11 = 24;
+    public static final int OBSTACLE_12 = 25;
+    public static final int OBSTACLE_14 = 26;
+    public static final int OBSTACLE_15 = 27;
+    public static final int OBSTACLE_16 = 28;
+    public static final int OBSTACLE_17 = 29;
+    public static final int OBSTACLE_18 = 30;
+    public static final int OBSTACLE_19 = 31;
+    public static final int OBSTACLE_20 = 32;
+    public static final int OBSTACLE_21 = 33;
+    public static final int OBSTACLE_22 = 34;
+    public static final int OBSTACLE_23 = 35;
+    public static final int OBSTACLE_24 = 36;
+    public static final int OBSTACLE_25 = 37;
+    public static final int OBSTACLE_26 = 38;
+    public static final int OBSTACLE_27 = 39;
+    public static final int OBSTACLE_13 = 40;
+    public static final int GOLD_STORAGE = 41;
+    public static final int GOLD_COLLECTOR = 42;
 
     protected static final String collectionName = "MapObject";
 
@@ -125,5 +129,10 @@ public abstract class MapObject {
     public static void initialMapForUser(int userId) {
         TownhallBuilding.createNewTownhallBuilding(userId, 20, 19).save();
     }
+
+//    public static ArrayList<MapObject> getAllMapObjectsByUserId(int userId) {
+//        ArrayList<Document> mapObjects = getCollection().find(new Document("userId", userId));
+//        return mapObjects;
+//    }
 
 }

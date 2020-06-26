@@ -33,7 +33,6 @@ public class ThoiloanExtension extends BZExtension {
         super();
         setName("Thoiloan");
         svrLoop = new ServerLoop();
-        System.out.println("hello");
     }
 
     public void init() {
@@ -51,8 +50,6 @@ public class ThoiloanExtension extends BZExtension {
 //        addEventHandler(BZEventType.USER_LOGIN, MainMapHandler.class);
 //        addEventHandler(BZEventType.USER_LOGOUT, LogoutHandler.class);
 //        addEventHandler(BZEventType.USER_DISCONNECT, LogoutHandler.class);
-        System.out.println("hell");
-//        System.out.println(MongodbDatabase.generateId("GeneralInfo"));
 
         addRequestHandler(MainMapHandler.MAIN_MAP_IDS, MainMapHandler.class);
     }
