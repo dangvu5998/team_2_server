@@ -5,6 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import util.database.DBBuiltInUtil;
 
+import java.util.Map;
+
 public abstract class MapObject {
 
     protected int id;
@@ -56,6 +58,54 @@ public abstract class MapObject {
     public static final int OBSTACLE_13 = 40;
     public static final int GOLD_STORAGE = 41;
     public static final int GOLD_COLLECTOR = 42;
+
+    public static final int MAP_WIDTH = 40;
+    public static final int MAP_HEIGHT = 40;
+
+    public static final Map<String, Integer> MAP_OBJ_NAME_CONFIG_TO_ID = Map.ofEntries(
+            Map.entry("AMC_1", ARMY_CAMP),
+            Map.entry("BAR_2", BARRACK),
+            Map.entry("BDH_2", BUILDER_HUT),
+            Map.entry("CLC_1", CLAN_CASTLE),
+            Map.entry("TODO1", ARCHER_TOWER),
+            Map.entry("TODO2", AIR_DEFENSE),
+            Map.entry("TODO3", CANON),
+            Map.entry("TODO4", ELIXIR_COLLECTOR),
+            Map.entry("TODO5", ELIXIR_STORAGE),
+            Map.entry("TODO6", LABORATORY),
+            Map.entry("TODO7", TREBUCHET),
+            Map.entry("TOW_1", TOWNHALL),
+            Map.entry("WAL_1", WALL),
+            Map.entry("OBS_1", OBSTACLE_1),
+            Map.entry("OBS_2", OBSTACLE_2),
+            Map.entry("OBS_3", OBSTACLE_3),
+            Map.entry("OBS_4", OBSTACLE_4),
+            Map.entry("OBS_5", OBSTACLE_5),
+            Map.entry("OBS_6", OBSTACLE_6),
+            Map.entry("OBS_7", OBSTACLE_7),
+            Map.entry("OBS_8", OBSTACLE_8),
+            Map.entry("OBS_9", OBSTACLE_9),
+            Map.entry("OBS_10", OBSTACLE_10),
+            Map.entry("OBS_11", OBSTACLE_11),
+            Map.entry("OBS_12", OBSTACLE_12),
+            Map.entry("OBS_14", OBSTACLE_14),
+            Map.entry("OBS_15", OBSTACLE_15),
+            Map.entry("OBS_16", OBSTACLE_16),
+            Map.entry("OBS_17", OBSTACLE_17),
+            Map.entry("OBS_18", OBSTACLE_18),
+            Map.entry("OBS_19", OBSTACLE_19),
+            Map.entry("OBS_20", OBSTACLE_20),
+            Map.entry("OBS_21", OBSTACLE_21),
+            Map.entry("OBS_22", OBSTACLE_22),
+            Map.entry("OBS_23", OBSTACLE_23),
+            Map.entry("OBS_24", OBSTACLE_24),
+            Map.entry("OBS_25", OBSTACLE_25),
+            Map.entry("OBS_26", OBSTACLE_26),
+            Map.entry("OBS_27", OBSTACLE_27),
+            Map.entry("OBS_13", OBSTACLE_13),
+            Map.entry("STO_1", GOLD_STORAGE),
+            Map.entry("RES_1", GOLD_COLLECTOR)
+    );
 
     protected static final String collectionName = "MapObject";
 

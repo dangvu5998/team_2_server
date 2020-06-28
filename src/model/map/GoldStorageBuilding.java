@@ -31,6 +31,11 @@ public class GoldStorageBuilding extends Building {
 //        }
     }
 
+    @Override
+    public void setLevel(int level) {
+        // TODO: implement this
+    }
+
     public static GoldStorageBuilding createGoldStorageBuilding(int x_, int y_) {
         int newId = DBBuiltInUtil.generateId(MapObject.collectionName);
         GoldStorageBuilding goldStorageBuilding = new GoldStorageBuilding(newId, x_, y_, 1, Building.NORMAL_STATUS, 0);

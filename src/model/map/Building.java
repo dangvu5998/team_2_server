@@ -1,8 +1,5 @@
 package model.map;
 
-import org.bson.Document;
-import org.json.JSONObject;
-
 public abstract class Building extends MapObject {
     protected int level;
     protected int health;
@@ -19,15 +16,13 @@ public abstract class Building extends MapObject {
     public Building(int id_, int x_,int y_, int mapObjectType_, int level_, int buildingStatus_, int finishTime_) {
         super(id_, x_, y_, mapObjectType_);
         buildingStatus = buildingStatus_;
-        level = level_;
+        setLevel(level_);
         finishTime = finishTime_;
     }
 
-    public Document getMetadata() {
-        Document metadata = new Document();
-        metadata.append("status", buildingStatus);
-        metadata.append("level", level);
-        metadata.append("finishTime", finishTime);
-        return metadata;
+    public abstract void setLevel(int level);
+
+    public boolean upgrade() {
+        return false;
     }
 }

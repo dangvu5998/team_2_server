@@ -1,12 +1,11 @@
 package model;
 
-import model.map.ElixirStorageBuilding;
-import model.map.GoldStorageBuilding;
-import model.map.TownhallBuilding;
+import model.map.*;
 import util.database.DBBuiltInUtil;
-import model.map.MapObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 
 public class GameUser {
     public int getId() {
@@ -55,6 +54,10 @@ public class GameUser {
     private int frameScore;
     private int userLevel;
     private int userXP;
+    private int gold;
+    private int elixir;
+    private int maxGold;
+    private int maxElixir;
     private int g;
     private boolean music;
     private boolean sound;
@@ -124,8 +127,17 @@ public class GameUser {
         return gameUser;
     }
 
-    public void addMapObject(MapObject mapObject) {
+    /**
+     * Add new map object to main map of current game user
+     * @param mapObject map object to add
+     * @return true if map object added successful. Otherwise, return false
+     */
+    public boolean addMapObject(MapObject mapObject) {
+        if(isMapObjectOverlap(mapObject)) {
+            return false;
+        }
         mapObjectIds.add(mapObject.getId());
+        return true;
     }
 
     public void initialMap() {
@@ -153,6 +165,96 @@ public class GameUser {
             result.add(MapObject.getMapObjectById(mapObjectId));
         }
         return result;
+    }
+
+    /**
+     * Return a 2d array has id of map objects value followed by its coordinate
+     * if position has no object, it has a value of -1
+     * @return 2d array
+     */
+    public int[][] getGridMap() {
+        // TODO: load from cached
+        int[][] gridMap = new int[MapObject.MAP_HEIGHT][MapObject.MAP_WIDTH];
+        for(int i = 0; i < MapObject.MAP_HEIGHT; i++) {
+            Arrays.fill(gridMap[i], -1);
+        }
+        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        for (MapObject mapObject: mapObjects) {
+            int x = mapObject.getX();
+            int y = mapObject.getY();
+            for(int i = y; i < y + mapObject.getHeight(); i++) {
+                for(int j = x; j < x + mapObject.getWidth(); j++) {
+                    gridMap[i][j] = mapObject.getId();
+                }
+            }
+        }
+        return gridMap;
+    }
+
+    public boolean isMapObjectOverlap(MapObject mapObject, int x, int y) {
+        int[][] gridMap = getGridMap();
+        for(int i = y; i < y + mapObject.getHeight(); i++) {
+            for(int j = x; j < x + mapObject.getWidth(); j++) {
+                if(gridMap[i][j] != -1 && gridMap[i][j] != mapObject.getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isMapObjectOverlap(MapObject mapObject) {
+        return isMapObjectOverlap(mapObject, mapObject.getX(), mapObject.getY());
+    }
+
+    public boolean moveBuilding(Building building, int x, int y) {
+        if(isMapObjectOverlap(building, x, y)) {
+            return false;
+        }
+        if(!mapObjectIds.contains(building.getId())) {
+            return false;
+        }
+        building.setX(x);
+        building.setY(y);
+        building.save();
+        return true;
+    }
+
+    public ArrayList<GoldStorageBuilding> getAllGoldStorageBuilding() {
+        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        ArrayList<GoldStorageBuilding> goldStorages = new ArrayList<>();
+        for(MapObject mapObject: mapObjects) {
+            if(mapObject instanceof GoldStorageBuilding) {
+                goldStorages.add((GoldStorageBuilding) mapObject);
+            }
+        }
+        return goldStorages;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public boolean deductGold(int amount) {
+        if(amount > gold) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean addGold(int amount) {
+        return false;
+    }
+
+    public boolean deductElixir(int amount) {
+        if(amount > elixir) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean addElixir(int amount) {
+        return false;
     }
 
 }

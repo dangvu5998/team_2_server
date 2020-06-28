@@ -31,7 +31,12 @@ public class ElixirStorageBuilding extends Building {
 //        }
     }
 
-    public static ElixirStorageBuilding createElixirStorageBuilding(int userId_, int x_,int y_) {
+    @Override
+    public void setLevel(int level) {
+
+    }
+
+    public static ElixirStorageBuilding createElixirStorageBuilding(int userId_, int x_, int y_) {
         int newId = DBBuiltInUtil.generateId(collectionName);
         return new ElixirStorageBuilding(newId, x_, y_, 1, Building.NORMAL_STATUS, 0);
     }
