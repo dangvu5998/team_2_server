@@ -3,10 +3,12 @@ package util.database;
 import bitzero.util.datacontroller.business.DataController;
 import com.google.gson.Gson;
 
+import com.google.gson.GsonBuilder;
 import util.server.ServerUtil;
 
 public class DBBuiltInUtil {
     public static final Gson gson = new Gson();
+    public static final Gson gsonWithExpose = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     static final String COUNTER_COLLECTION = "COUNTER";
 
     public static void save(String collectionName, String key, Object obj) {

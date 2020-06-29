@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import util.Common;
 
 public class Obstacle extends MapObject {
-    protected int obstacleStatus;
+    protected int status;
     protected int finishTime;
     protected int buildTime;
     protected int goldToRemove;
@@ -21,7 +21,7 @@ public class Obstacle extends MapObject {
 
     public Obstacle(int id_, int x_, int y_, int objectType_, int obstacleStatus_, int finishTime_) {
         super(id_, x_, y_, objectType_);
-        obstacleStatus = obstacleStatus_;
+        status = obstacleStatus_;
         finishTime = finishTime_;
         loadConfig();
         String obtacleConfigName = "";

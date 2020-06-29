@@ -1,7 +1,5 @@
 package model.map;
 
-import model.GameUser;
-import org.json.JSONException;
 import org.json.JSONObject;
 import util.database.DBBuiltInUtil;
 
@@ -62,18 +60,18 @@ public abstract class MapObject {
     public static final int MAP_WIDTH = 40;
     public static final int MAP_HEIGHT = 40;
 
-    public static final Map<String, Integer> MAP_OBJ_NAME_CONFIG_TO_ID = Map.ofEntries(
+    public static final Map<String, Integer> MAP_OBJ_CONFIG_NAME_TO_ID = Map.ofEntries(
             Map.entry("AMC_1", ARMY_CAMP),
             Map.entry("BAR_2", BARRACK),
             Map.entry("BDH_2", BUILDER_HUT),
             Map.entry("CLC_1", CLAN_CASTLE),
-            Map.entry("TODO1", ARCHER_TOWER),
-            Map.entry("TODO2", AIR_DEFENSE),
-            Map.entry("TODO3", CANON),
-            Map.entry("TODO4", ELIXIR_COLLECTOR),
-            Map.entry("TODO5", ELIXIR_STORAGE),
-            Map.entry("TODO6", LABORATORY),
-            Map.entry("TODO7", TREBUCHET),
+            Map.entry("DEF_2", ARCHER_TOWER),
+            Map.entry("DEF_5", AIR_DEFENSE),
+            Map.entry("DEF_1", CANON),
+            Map.entry("RES_2", ELIXIR_COLLECTOR),
+            Map.entry("STO_2", ELIXIR_STORAGE),
+            Map.entry("LAB_1", LABORATORY),
+            Map.entry("DEF_3", TREBUCHET),
             Map.entry("TOW_1", TOWNHALL),
             Map.entry("WAL_1", WALL),
             Map.entry("OBS_1", OBSTACLE_1),
@@ -174,11 +172,11 @@ public abstract class MapObject {
             int objectType = mapObjectJson.getInt("objectType");
             switch (objectType) {
                 case TOWNHALL:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, TownhallBuilding.class);
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, Townhall.class);
                 case GOLD_STORAGE:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldStorageBuilding.class);
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldStorage.class);
                 case ELIXIR_STORAGE:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ElixirStorageBuilding.class);
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ElixirStorage.class);
             }
 
         } catch (Exception e) {
@@ -186,6 +184,18 @@ public abstract class MapObject {
         }
 //        return (MapObject) DBBuiltInUtil.get(collectionName, String.valueOf(id), MapObject.class);
         return null;
+    }
+
+    public static MapObject createMapObject(int mapObjectType, int x, int y) {
+        return switch (mapObjectType) {
+            case TOWNHALL -> Townhall.createTownhall(x, y);
+            case GOLD_STORAGE -> GoldStorage.createGoldStorage(x, y);
+            case ARMY_CAMP -> ArmyCamp.createArmyCamp(x, y);
+            case ELIXIR_STORAGE -> ElixirStorage.createElixirStorage(x, y);
+            case CLAN_CASTLE -> ClanCastle.createClanCastle(x, y);
+            case BUILDER_HUT -> BuilderHut.createBuilderHut(x, y);
+            default -> null;
+        };
     }
 
 }

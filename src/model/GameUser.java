@@ -1,11 +1,15 @@
 package model;
 
+import com.google.gson.annotations.Expose;
 import model.map.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+import util.Common;
 import util.database.DBBuiltInUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Iterator;
 
 public class GameUser {
     public int getId() {
@@ -48,39 +52,111 @@ public class GameUser {
         return notifications;
     }
 
+    @Expose
     private int id;
+    @Expose
     private int vipLevel;
+    @Expose
     private String username;
+    @Expose
     private int frameScore;
+    @Expose
     private int userLevel;
+    @Expose
     private int userXP;
+
+    private static final String INIT_GAME_CONFIG_PATH = "config/GameStatsConfig/InitGame.json";
+    private static JSONObject initGameConfig;
+
+    public void setGold(int gold) {
+        this.gold = gold;
+        // distribute to townhall and gold storage
+        Townhall townhall = getTownhallBuilding();
+        if(townhall == null) {
+            return;
+        }
+        int townhallGoldCapacity = townhall.getGoldCapacity();
+        ArrayList<GoldStorage> goldStorages = getAllGoldStorageBuilding();
+        if(gold > townhallGoldCapacity) {
+            gold -= townhallGoldCapacity;
+            townhall.setGold(townhallGoldCapacity);
+        }
+        else {
+            townhall.setGold(gold);
+            gold = 0;
+        }
+        townhall.save();
+        for(GoldStorage goldStorage : goldStorages) {
+            int goldStorageCapacity = goldStorage.getGoldCapacity();
+            if(gold > goldStorageCapacity) {
+                goldStorage.setGold(goldStorageCapacity);
+                gold -= goldStorageCapacity;
+            } else {
+                goldStorage.setGold(gold);
+                gold = 0;
+            }
+            goldStorage.save();
+        }
+    }
+
+    public void setElixir(int elixir) {
+        this.elixir = elixir;
+        // distribute to townhall and gold storage
+        Townhall townhall = getTownhallBuilding();
+        if(townhall == null) {
+            return;
+        }
+        int townhallElixirCapacity = townhall.getElixirCapacity();
+        ArrayList<ElixirStorage> elixirStorages = getAllElixirStorageBuilding();
+        if(elixir > townhallElixirCapacity) {
+            elixir -= townhallElixirCapacity;
+            townhall.setGold(townhallElixirCapacity);
+        }
+        else {
+            townhall.setElixir(elixir);
+            elixir = 0;
+        }
+        townhall.save();
+        for(ElixirStorage elixirStorage : elixirStorages) {
+            int elixirStorageCapacity = elixirStorage.getElixirCapacity();
+            if(elixir > elixirStorageCapacity) {
+                elixirStorage.setElixir(elixirStorageCapacity);
+                elixir -= elixirStorageCapacity;
+            } else {
+                elixirStorage.setElixir(elixir);
+                elixir = 0;
+            }
+            elixirStorage.save();
+        }
+    }
+
     private int gold;
     private int elixir;
-    private int maxGold;
-    private int maxElixir;
-    private int g;
-    private boolean music;
-    private boolean sound;
-    private boolean notifications;
-    private ArrayList<Integer> mapObjectIds;
+    private int goldCapacity;
+    private int elixirCapacity;
 
-    private static String COLLECTION_NAME = "GameUser";
+    public void setG(int g) {
+        this.g = g;
+    }
+
+    @Expose
+    private int g;
+    @Expose
+    private boolean music;
+    @Expose
+    private boolean sound;
+    @Expose
+    private boolean notifications;
+    @Expose
+    private final ArrayList<Integer> mapObjectIds;
+
+    private static final String COLLECTION_NAME = "GameUser";
     private static final String USERNAME_MAP_COLLECTION_NAME = "UsernameMap_GameUser";
 
     public GameUser(int vipLevel, String username, int frameScore, int userLevel, int userXP,
                     int g, boolean music, boolean sound, boolean notifications, ArrayList<Integer> mapObjectIds_) {
-        this.id = DBBuiltInUtil.generateId(COLLECTION_NAME);
-        this.username = username;
-        this.vipLevel = vipLevel;
-        this.username = username;
-        this.frameScore = frameScore;
-        this.userLevel = userLevel;
-        this.userXP = userXP;
-        this.g = g;
-        this.music = music;
-        this.sound = sound;
-        this.notifications = notifications;
-        mapObjectIds = mapObjectIds_;
+        this(DBBuiltInUtil.generateId(COLLECTION_NAME), vipLevel, username, frameScore, userLevel, userXP,
+         g, music, sound, notifications, mapObjectIds_);
     }
 
     public GameUser(int id, int vipLevel, String username, int frameScore, int userLevel, int userXP,
@@ -97,6 +173,8 @@ public class GameUser {
         this.sound = sound;
         this.notifications = notifications;
         mapObjectIds = mapObjectIds_;
+        loadGold();
+        loadElixir();
     }
 
     public void save() {
@@ -109,11 +187,11 @@ public class GameUser {
         return (GameUser) DBBuiltInUtil.get(COLLECTION_NAME, idStr, GameUser.class);
     }
 
-    public static GameUser createGeneralInfoByUsername(String username) {
+    public static GameUser createGameUserByUsername(String username) {
         GameUser gameUser = new GameUser(
                 0,
                 username,
-                500,
+                0,
                 1,
                 0,
                 0,
@@ -122,7 +200,7 @@ public class GameUser {
                 true,
                 new ArrayList<>()
         );
-        gameUser.initialMap();
+        gameUser.initGame();
         gameUser.save();
         return gameUser;
     }
@@ -140,19 +218,23 @@ public class GameUser {
         return true;
     }
 
-    public void initialMap() {
-//        MapObject newTownhall = TownhallBuilding.createTownhallBuilding(20, 19);
-//        newTownhall.save();
-//        addMapObject(newTownhall);
-        MapObject goldStorageBuilding = GoldStorageBuilding.createGoldStorageBuilding(30, 19);
-        goldStorageBuilding.save();
-        addMapObject(goldStorageBuilding);
-        MapObject goldStorageBuilding2 = GoldStorageBuilding.createGoldStorageBuilding(30, 35);
-        goldStorageBuilding2.save();
-        addMapObject(goldStorageBuilding2);
-//        MapObject goldStorageBuilding = ElixirStorageBuilding.createGoldStorageBuilding(30, 19);
-//        goldStorageBuilding.save();
-//        addMapObject(goldStorageBuilding);
+    public void initGame() {
+        initGameConfig = Common.loadJSONObjectFromFile(INIT_GAME_CONFIG_PATH);
+        if(initGameConfig == null) {
+            throw new RuntimeException("init config file is invalid or not found");
+        }
+        try {
+            JSONObject initMapConfig = initGameConfig.getJSONObject("map");
+            for (Iterator it = initMapConfig.keys(); it.hasNext(); ) {
+                String x = (String) it.next();
+                System.out.println(x);
+
+
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Init config is invalid");
+        }
+
     }
 
     public static GameUser getGameUserById(int id) {
@@ -220,12 +302,23 @@ public class GameUser {
         return true;
     }
 
-    public ArrayList<GoldStorageBuilding> getAllGoldStorageBuilding() {
+    public ArrayList<ElixirStorage> getAllElixirStorageBuilding() {
         ArrayList<MapObject> mapObjects = getAllMapObjects();
-        ArrayList<GoldStorageBuilding> goldStorages = new ArrayList<>();
+        ArrayList<ElixirStorage> elixirStorages = new ArrayList<>();
         for(MapObject mapObject: mapObjects) {
-            if(mapObject instanceof GoldStorageBuilding) {
-                goldStorages.add((GoldStorageBuilding) mapObject);
+            if(mapObject instanceof ElixirStorage) {
+                elixirStorages.add((ElixirStorage) mapObject);
+            }
+        }
+        return elixirStorages;
+    }
+
+    public ArrayList<GoldStorage> getAllGoldStorageBuilding() {
+        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        ArrayList<GoldStorage> goldStorages = new ArrayList<>();
+        for(MapObject mapObject: mapObjects) {
+            if(mapObject instanceof GoldStorage) {
+                goldStorages.add((GoldStorage) mapObject);
             }
         }
         return goldStorages;
@@ -235,26 +328,80 @@ public class GameUser {
         return gold;
     }
 
+    public void loadGold() {
+        int amount = 0;
+        int capacity = 0;
+        Townhall townhall = getTownhallBuilding();
+        if(townhall == null) {
+            return;
+        }
+        capacity += townhall.getGoldCapacity();
+        for(GoldStorage goldStorage : getAllGoldStorageBuilding()) {
+            amount += goldStorage.getGold();
+            capacity += goldStorage.getGoldCapacity();
+        }
+        amount += townhall.getGold();
+        gold = amount;
+        goldCapacity = capacity;
+    }
+
     public boolean deductGold(int amount) {
         if(amount > gold) {
             return false;
         }
+        setGold(gold - amount);
         return true;
     }
 
     public boolean addGold(int amount) {
-        return false;
+        if(amount + gold > goldCapacity) {
+            return false;
+        }
+        setGold(amount + gold);
+        return true;
     }
 
     public boolean deductElixir(int amount) {
         if(amount > elixir) {
             return false;
         }
+        setElixir(elixir - amount);
         return true;
     }
 
     public boolean addElixir(int amount) {
-        return false;
+        if(amount + elixir > elixirCapacity) {
+            return false;
+        }
+        setElixir(elixir + amount);
+        return true;
     }
 
+    public void loadElixir() {
+        int amount = 0;
+        int capacity = 0;
+        Townhall townhall = getTownhallBuilding();
+        if(townhall == null) {
+            return;
+        }
+        amount += townhall.getElixir();
+        capacity += townhall.getElixirCapacity();
+        for(ElixirStorage elixirStorage : getAllElixirStorageBuilding()) {
+            amount += elixirStorage.getElixir();
+            capacity += elixirStorage.getElixirCapacity();
+        }
+        elixir = amount;
+        elixirCapacity = capacity;
+    }
+
+    public Townhall getTownhallBuilding() {
+        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        Townhall townhall = null;
+        for(MapObject mapObject: mapObjects) {
+            if(mapObject instanceof Townhall) {
+                townhall = (Townhall) mapObject;
+            }
+        }
+        return townhall;
+    }
 }

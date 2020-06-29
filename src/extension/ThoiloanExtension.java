@@ -89,7 +89,7 @@ public class ThoiloanExtension extends BZExtension {
         String username = reqGet.getUsername();
         GameUser gameUser = GameUser.getGeneralInfoByUsername(username);
         if(gameUser == null) {
-            gameUser = GameUser.createGeneralInfoByUsername(username);
+            gameUser = GameUser.createGameUserByUsername(username);
         }
         System.out.println("GenInfo");
         System.out.println(gameUser);
