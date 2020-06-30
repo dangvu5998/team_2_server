@@ -291,6 +291,7 @@ public class GameUser {
 
     public boolean isMapObjectOverlap(MapObject mapObject, int x, int y) {
         int[][] gridMap = getGridMap();
+        mapObject = null;
 
         for(int i = y; i < y + mapObject.getHeight(); i++) {
             for(int j = x; j < x + mapObject.getWidth(); j++) {

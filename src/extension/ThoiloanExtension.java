@@ -10,6 +10,7 @@ import bitzero.server.extensions.BZExtension;
 import bitzero.server.extensions.data.DataCmd;
 
 import bitzero.util.ExtensionUtility;
+import bitzero.util.common.business.CommonHandle;
 import bitzero.util.datacontroller.business.DataController;
 import bitzero.util.socialcontroller.bean.UserInfo;
 
@@ -84,18 +85,18 @@ public class ThoiloanExtension extends BZExtension {
      * the first packet send from client after handshake success will dispatch to doLogin() function
      */
     public void doLogin(short cmdId, ISession session, DataCmd objData) {
-        RequestLogin reqGet = new RequestLogin(objData);
-        reqGet.unpackData();
-        String username = reqGet.getUsername();
-        GameUser gameUser = GameUser.getGeneralInfoByUsername(username);
-        if(gameUser == null) {
-            gameUser = GameUser.createGameUserByUsername(username);
-        }
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserId("" + gameUser.getId());
-        userInfo.setUsername(username);
-        User user = ExtensionUtility.instance().canLogin(userInfo, "", session);
-        ExtensionUtility.instance().sendLoginOK(user);
+            RequestLogin reqGet = new RequestLogin(objData);
+            reqGet.unpackData();
+            String username = reqGet.getUsername();
+            GameUser gameUser = GameUser.getGeneralInfoByUsername(username);
+            if (gameUser == null) {
+                gameUser = GameUser.createGameUserByUsername(username);
+            }
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUserId("" + gameUser.getId());
+            userInfo.setUsername(username);
+            User user = ExtensionUtility.instance().canLogin(userInfo, "", session);
+            ExtensionUtility.instance().sendLoginOK(user);
     }
 
 

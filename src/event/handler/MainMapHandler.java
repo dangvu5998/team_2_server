@@ -6,6 +6,7 @@ import bitzero.server.extensions.IServerEventHandler;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.server.core.IBZEvent;
 import cmd.CmdDefine;
+import cmd.ResponseConst;
 import cmd.send.ResponseLoadMainMap;
 import model.GameUser;
 
@@ -30,6 +31,6 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
     private void processLoadMainMap(User user) {
         GameUser gameUser = GameUser.getGameUserById(user.getId());
 
-        send(new ResponseLoadMainMap(200, gameUser.getAllMapObjects()), user);
+        send(new ResponseLoadMainMap(ResponseConst.OK, gameUser.getAllMapObjects()), user);
     }
 }

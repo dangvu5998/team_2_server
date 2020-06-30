@@ -203,6 +203,34 @@ public abstract class MapObject {
             case CLAN_CASTLE -> ClanCastle.createClanCastle(x, y);
             case BUILDER_HUT -> BuilderHut.createBuilderHut(x, y);
             case GOLD_MINE -> GoldMine.createGoldMine(x, y);
+            case
+                    OBSTACLE_1,
+                    OBSTACLE_2,
+                    OBSTACLE_3,
+                    OBSTACLE_4,
+                    OBSTACLE_5,
+                    OBSTACLE_6,
+                    OBSTACLE_7,
+                    OBSTACLE_8,
+                    OBSTACLE_9,
+                    OBSTACLE_10,
+                    OBSTACLE_11,
+                    OBSTACLE_12,
+                    OBSTACLE_13,
+                    OBSTACLE_14,
+                    OBSTACLE_15,
+                    OBSTACLE_16,
+                    OBSTACLE_17,
+                    OBSTACLE_18,
+                    OBSTACLE_19,
+                    OBSTACLE_20,
+                    OBSTACLE_21,
+                    OBSTACLE_22,
+                    OBSTACLE_23,
+                    OBSTACLE_24,
+                    OBSTACLE_25,
+                    OBSTACLE_26,
+                    OBSTACLE_27 -> Obstacle.createObtacle(mapObjectType, x, y);
             default -> null;
         };
     }
