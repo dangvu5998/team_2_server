@@ -91,9 +91,6 @@ public class ThoiloanExtension extends BZExtension {
         if(gameUser == null) {
             gameUser = GameUser.createGameUserByUsername(username);
         }
-        System.out.println("GenInfo");
-        System.out.println(gameUser);
-        System.out.println(gameUser.getId());
         UserInfo userInfo = new UserInfo();
         userInfo.setUserId("" + gameUser.getId());
         userInfo.setUsername(username);

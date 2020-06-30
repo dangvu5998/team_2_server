@@ -29,9 +29,7 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
 
     private void processLoadMainMap(User user) {
         GameUser gameUser = GameUser.getGameUserById(user.getId());
-        System.out.println("process load main map");
 
         send(new ResponseLoadMainMap(200, gameUser.getAllMapObjects()), user);
-        System.out.println("end load process main map");
     }
 }

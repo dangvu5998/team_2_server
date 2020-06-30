@@ -21,7 +21,7 @@ public abstract class MapObject {
     public static final int ARCHER_TOWER = 5;
     public static final int AIR_DEFENSE = 6;
     public static final int CANON = 7;
-    public static final int ELIXIR_COLLECTOR = 8;
+    public static final int ELIXIR_MINE = 8;
     public static final int ELIXIR_STORAGE = 9;
     public static final int LABORATORY = 10;
     public static final int TREBUCHET = 11;
@@ -55,7 +55,7 @@ public abstract class MapObject {
     public static final int OBSTACLE_27 = 39;
     public static final int OBSTACLE_13 = 40;
     public static final int GOLD_STORAGE = 41;
-    public static final int GOLD_COLLECTOR = 42;
+    public static final int GOLD_MINE = 42;
 
     public static final int MAP_WIDTH = 40;
     public static final int MAP_HEIGHT = 40;
@@ -63,12 +63,12 @@ public abstract class MapObject {
     public static final Map<String, Integer> MAP_OBJ_CONFIG_NAME_TO_ID = Map.ofEntries(
             Map.entry("AMC_1", ARMY_CAMP),
             Map.entry("BAR_2", BARRACK),
-            Map.entry("BDH_2", BUILDER_HUT),
+            Map.entry("BDH_1", BUILDER_HUT),
             Map.entry("CLC_1", CLAN_CASTLE),
             Map.entry("DEF_2", ARCHER_TOWER),
             Map.entry("DEF_5", AIR_DEFENSE),
             Map.entry("DEF_1", CANON),
-            Map.entry("RES_2", ELIXIR_COLLECTOR),
+            Map.entry("RES_2", ELIXIR_MINE),
             Map.entry("STO_2", ELIXIR_STORAGE),
             Map.entry("LAB_1", LABORATORY),
             Map.entry("DEF_3", TREBUCHET),
@@ -102,7 +102,7 @@ public abstract class MapObject {
             Map.entry("OBS_27", OBSTACLE_27),
             Map.entry("OBS_13", OBSTACLE_13),
             Map.entry("STO_1", GOLD_STORAGE),
-            Map.entry("RES_1", GOLD_COLLECTOR)
+            Map.entry("RES_1", GOLD_MINE)
     );
 
     protected static final String collectionName = "MapObject";
@@ -173,16 +173,24 @@ public abstract class MapObject {
             switch (objectType) {
                 case TOWNHALL:
                     return DBBuiltInUtil.gson.fromJson(mapObjectStr, Townhall.class);
+                case ARMY_CAMP:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ArmyCamp.class);
                 case GOLD_STORAGE:
                     return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldStorage.class);
+                case GOLD_MINE:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldMine.class);
                 case ELIXIR_STORAGE:
                     return DBBuiltInUtil.gson.fromJson(mapObjectStr, ElixirStorage.class);
+                case CLAN_CASTLE:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ClanCastle.class);
+                case BUILDER_HUT:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, BuilderHut.class);
             }
 
         } catch (Exception e) {
             System.out.println("Eror get map oject " + id);
         }
-//        return (MapObject) DBBuiltInUtil.get(collectionName, String.valueOf(id), MapObject.class);
+        System.out.println("error " + mapObjectStr);
         return null;
     }
 
@@ -194,6 +202,7 @@ public abstract class MapObject {
             case ELIXIR_STORAGE -> ElixirStorage.createElixirStorage(x, y);
             case CLAN_CASTLE -> ClanCastle.createClanCastle(x, y);
             case BUILDER_HUT -> BuilderHut.createBuilderHut(x, y);
+            case GOLD_MINE -> GoldMine.createGoldMine(x, y);
             default -> null;
         };
     }

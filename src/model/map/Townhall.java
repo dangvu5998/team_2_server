@@ -76,7 +76,7 @@ public class Townhall extends Building {
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
             goldToUpgrade = currConfig.getInt("gold");
-            elixirToUpgrade = currConfig.getInt("elixir");
+            elixirToUpgrade = 0;
             darkElixirToUpgrade = currConfig.getInt("darkElixir");
             timeToUpgrade = currConfig.getInt("buildTime");
             goldCapacity = currConfig.getInt("capacityGold");

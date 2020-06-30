@@ -27,10 +27,6 @@ public class ResponseLoadMainMap extends BaseMsg {
             bf.putInt(mapObject.getObjectType());
             bf.putInt(mapObject.getX());
             bf.putInt(mapObject.getY());
-            System.out.println("======");
-            System.out.println(mapObject.getX() + " " + mapObject.getY());
-            System.out.println(mapObject.getObjectType());
-            System.out.println("======");
             switch (mapObject.getObjectType()) {
                 case MapObject.TOWNHALL -> {
                     bf.putInt(0); // status

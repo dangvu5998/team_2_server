@@ -10,6 +10,7 @@ import util.database.DBBuiltInUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Map;
 
 public class GameUser {
     public int getId() {
@@ -211,10 +212,14 @@ public class GameUser {
      * @return true if map object added successful. Otherwise, return false
      */
     public boolean addMapObject(MapObject mapObject) {
+        if(mapObject == null) {
+            return false;
+        }
         if(isMapObjectOverlap(mapObject)) {
             return false;
         }
         mapObjectIds.add(mapObject.getId());
+        save();
         return true;
     }
 
@@ -226,10 +231,15 @@ public class GameUser {
         try {
             JSONObject initMapConfig = initGameConfig.getJSONObject("map");
             for (Iterator it = initMapConfig.keys(); it.hasNext(); ) {
-                String x = (String) it.next();
-                System.out.println(x);
-
-
+                String buildingConfigName = (String) it.next();
+                JSONObject buildingConfig = initMapConfig.getJSONObject(buildingConfigName);
+                int x = buildingConfig.getInt("posX");
+                int y = buildingConfig.getInt("posY");
+                MapObject newMapObject = MapObject.createMapObject(MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.get(buildingConfigName), x, y);
+                if(newMapObject != null) {
+                    newMapObject.save();
+                    addMapObject(newMapObject);
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Init config is invalid");
@@ -244,7 +254,13 @@ public class GameUser {
     public ArrayList<MapObject> getAllMapObjects() {
         ArrayList<MapObject> result = new ArrayList<>();
         for(int mapObjectId: mapObjectIds) {
-            result.add(MapObject.getMapObjectById(mapObjectId));
+            MapObject mapObj = MapObject.getMapObjectById(mapObjectId);
+            if(mapObj != null) {
+                result.add(MapObject.getMapObjectById(mapObjectId));
+            } else {
+                // TODO: warning mapObjId of user is invalid
+                System.out.println("Map object id " + mapObjectId + " is invalid!");
+            }
         }
         return result;
     }
@@ -275,6 +291,7 @@ public class GameUser {
 
     public boolean isMapObjectOverlap(MapObject mapObject, int x, int y) {
         int[][] gridMap = getGridMap();
+
         for(int i = y; i < y + mapObject.getHeight(); i++) {
             for(int j = x; j < x + mapObject.getWidth(); j++) {
                 if(gridMap[i][j] != -1 && gridMap[i][j] != mapObject.getId()) {
