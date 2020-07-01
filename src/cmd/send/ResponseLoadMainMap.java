@@ -2,7 +2,7 @@ package cmd.send;
 
 import bitzero.server.extensions.data.BaseMsg;
 import cmd.CmdDefine;
-import model.map.MapObject;
+import model.map.*;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -27,21 +27,45 @@ public class ResponseLoadMainMap extends BaseMsg {
             bf.putInt(mapObject.getObjectType());
             bf.putInt(mapObject.getX());
             bf.putInt(mapObject.getY());
-            switch (mapObject.getObjectType()) {
-                case MapObject.TOWNHALL -> {
-                    bf.putInt(0); // status
-                    bf.putInt(0); // finishTime
-                    bf.putInt(1); // level
-                    bf.putInt(0); // gold
-                    bf.putInt(0); // elixir
-                    bf.putInt(0); // black elixir
+
+            if(mapObject instanceof Building) {
+                // for building
+                Building building = (Building) mapObject;
+                // status
+                bf.putInt(building.getStatus());
+                // finish time
+                bf.putInt(building.getFinishTime());
+                // level
+                bf.putInt(building.getLevel());
+                if(building instanceof MineBuilding) {
+                    // for miner
+                    MineBuilding mineBuilding = (MineBuilding) building;
+                    System.out.println(mineBuilding.getObjectType());
+                    // last time collectted
+                    bf.putInt(mineBuilding.getLastTimeCollected());
                 }
-                case MapObject.GOLD_STORAGE, MapObject.ELIXIR_STORAGE -> {
-                    bf.putInt(0); // status
-                    bf.putInt(0); // finishTime
-                    bf.putInt(1); // level
-                    bf.putInt(0); // resources
+                // for gold and elixir storage
+                if(building instanceof GoldStorage) {
+                    GoldStorage goldStorage = (GoldStorage) building;
+                    bf.putInt(goldStorage.getGold());
                 }
+                if(building instanceof ElixirStorage) {
+                    ElixirStorage elixirStorage = (ElixirStorage) building;
+                    bf.putInt(elixirStorage.getElixir());
+                }
+                if(building instanceof Townhall) {
+                    Townhall townhall = (Townhall) building;
+                    bf.putInt(townhall.getGold());
+                    bf.putInt(townhall.getElixir());
+                    bf.putInt(townhall.getDarkElixir());
+                }
+            }
+            if(mapObject instanceof Obstacle) {
+                Obstacle obstacle = (Obstacle) mapObject;
+                // status
+                bf.putInt(obstacle.getStatus());
+                // finish time
+                bf.putInt(obstacle.getFinishTime());
             }
         }
         return packBuffer(bf);

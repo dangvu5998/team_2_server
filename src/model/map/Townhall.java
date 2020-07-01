@@ -88,4 +88,8 @@ public class Townhall extends Building {
         }
 
     }
+
+    public int getDarkElixir() {
+        return darkElixir;
+    }
 }

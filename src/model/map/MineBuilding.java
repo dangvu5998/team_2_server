@@ -18,4 +18,7 @@ public abstract class MineBuilding extends Building {
         return (currTime - lastTimeCollected) * productionRate;
     }
 
+    public int getLastTimeCollected() {
+        return lastTimeCollected;
+    }
 }

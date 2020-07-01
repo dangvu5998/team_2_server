@@ -140,6 +140,15 @@ public class GameUser {
 
     private int gold;
     private int elixir;
+
+    public int getGoldCapacity() {
+        return goldCapacity;
+    }
+
+    public int getElixirCapacity() {
+        return elixirCapacity;
+    }
+
     private int goldCapacity;
     private int elixirCapacity;
 

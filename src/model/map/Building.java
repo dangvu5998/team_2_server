@@ -3,8 +3,21 @@ package model.map;
 public abstract class Building extends MapObject {
     protected int level;
     protected int health;
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getFinishTime() {
+        return finishTime;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
     protected int finishTime;
-    protected int buildingStatus;
+    protected int status;
     protected int goldToUpgrade;
     protected int elixirToUpgrade;
     protected int darkElixirToUpgrade;
@@ -14,9 +27,9 @@ public abstract class Building extends MapObject {
     public static final int BUILDING_STATUS = 1;
     public static final int UPGRADING_STATUS = 2;
 
-    public Building(int id_, int x_,int y_, int mapObjectType_, int level_, int buildingStatus_, int finishTime_) {
+    public Building(int id_, int x_,int y_, int mapObjectType_, int level_, int status_, int finishTime_) {
         super(id_, x_, y_, mapObjectType_);
-        buildingStatus = buildingStatus_;
+        status = status_;
         setLevel(level_);
         finishTime = finishTime_;
     }

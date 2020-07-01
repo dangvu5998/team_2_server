@@ -87,4 +87,11 @@ public class Obstacle extends MapObject {
         return new Obstacle(newId, x, y, objType, NORMAL_STATUS, 0);
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public int getFinishTime() {
+        return finishTime;
+    }
 }
