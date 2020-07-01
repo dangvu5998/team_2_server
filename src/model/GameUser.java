@@ -10,7 +10,6 @@ import util.database.DBBuiltInUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
 
 public class GameUser {
     public int getId() {
@@ -51,6 +50,10 @@ public class GameUser {
 
     public boolean isNotifications() {
         return notifications;
+    }
+
+    public ArrayList<Integer> getMapObjectIds() {
+        return mapObjectIds;
     }
 
     @Expose
@@ -100,6 +103,10 @@ public class GameUser {
         }
     }
 
+    public int getElixir() {
+        return elixir;
+    }
+
     public void setElixir(int elixir) {
         this.elixir = elixir;
         // distribute to townhall and gold storage
@@ -111,7 +118,7 @@ public class GameUser {
         ArrayList<ElixirStorage> elixirStorages = getAllElixirStorageBuilding();
         if(elixir > townhallElixirCapacity) {
             elixir -= townhallElixirCapacity;
-            townhall.setGold(townhallElixirCapacity);
+            townhall.setElixir(townhallElixirCapacity);
         }
         else {
             townhall.setElixir(elixir);
@@ -138,6 +145,7 @@ public class GameUser {
 
     public void setG(int g) {
         this.g = g;
+        save();
     }
 
     @Expose
@@ -174,8 +182,6 @@ public class GameUser {
         this.sound = sound;
         this.notifications = notifications;
         mapObjectIds = mapObjectIds_;
-        loadGold();
-        loadElixir();
     }
 
     public void save() {
@@ -215,11 +221,22 @@ public class GameUser {
         if(mapObject == null) {
             return false;
         }
+        if(mapObject.getX() < 0 || mapObject.getX() + mapObject.getWidth() > MapObject.MAP_WIDTH ||
+        mapObject.getY() < 0 || mapObject.getY() + mapObject.getHeight() > MapObject.MAP_HEIGHT) {
+
+            return false;
+        }
         if(isMapObjectOverlap(mapObject)) {
             return false;
         }
         mapObjectIds.add(mapObject.getId());
         save();
+        if(mapObject instanceof Townhall || mapObject instanceof GoldStorage) {
+            updateGoldCapacity();
+        }
+        if(mapObject instanceof Townhall || mapObject instanceof ElixirStorage) {
+            updateElixirCapacity();
+        }
         return true;
     }
 
@@ -229,18 +246,49 @@ public class GameUser {
             throw new RuntimeException("init config file is invalid or not found");
         }
         try {
+            // load buildings
             JSONObject initMapConfig = initGameConfig.getJSONObject("map");
             for (Iterator it = initMapConfig.keys(); it.hasNext(); ) {
                 String buildingConfigName = (String) it.next();
                 JSONObject buildingConfig = initMapConfig.getJSONObject(buildingConfigName);
-                int x = buildingConfig.getInt("posX");
-                int y = buildingConfig.getInt("posY");
+                // position index in config start from 1
+                int x = buildingConfig.getInt("posX") - 1;
+                int y = buildingConfig.getInt("posY") - 1;
                 MapObject newMapObject = MapObject.createMapObject(MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.get(buildingConfigName), x, y);
                 if(newMapObject != null) {
                     newMapObject.save();
-                    addMapObject(newMapObject);
+                    boolean objAdded = addMapObject(newMapObject);
+                    if(!objAdded) {
+                        System.out.println("Cannot add " + buildingConfig);
+                    }
                 }
             }
+            // load obstacles
+            JSONObject initObsConfig = initGameConfig.getJSONObject("obs");
+            for (Iterator it = initObsConfig.keys(); it.hasNext(); ) {
+                String obsIndex = (String) it.next();
+                JSONObject obsConfig = initObsConfig.getJSONObject(obsIndex);
+                String obsType = obsConfig.getString("type");
+                // position index in config start from 1
+                int x = obsConfig.getInt("posX") - 1;
+                int y = obsConfig.getInt("posY") - 1;
+                MapObject newMapObject = MapObject.createMapObject(MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.get(obsType), x, y);
+                if(newMapObject != null) {
+                    newMapObject.save();
+                    boolean objAdded = addMapObject(newMapObject);
+                    if(!objAdded) {
+                        System.out.println("Cannot add " + obsConfig);
+                    }
+                }
+            }
+            // load resources
+            JSONObject initResourcesConfig = initGameConfig.getJSONObject("player");
+            int initGold = initResourcesConfig.getInt("gold");
+            int initElixir = initResourcesConfig.getInt("elixir");
+            int initG = initResourcesConfig.getInt("coin");
+            addGold(initGold);
+            addElixir(initElixir);
+            addG(initG);
         } catch (JSONException e) {
             throw new RuntimeException("Init config is invalid");
         }
@@ -248,7 +296,12 @@ public class GameUser {
     }
 
     public static GameUser getGameUserById(int id) {
-        return (GameUser) DBBuiltInUtil.get(COLLECTION_NAME, String.valueOf(id), GameUser.class);
+        GameUser gameUser = (GameUser) DBBuiltInUtil.get(COLLECTION_NAME, String.valueOf(id), GameUser.class);
+        if(gameUser == null)
+            return null;
+        gameUser.loadElixir();
+        gameUser.loadGold();
+        return gameUser;
     }
 
     public ArrayList<MapObject> getAllMapObjects() {
@@ -291,10 +344,9 @@ public class GameUser {
 
     public boolean isMapObjectOverlap(MapObject mapObject, int x, int y) {
         int[][] gridMap = getGridMap();
-        mapObject = null;
 
-        for(int i = y; i < y + mapObject.getHeight(); i++) {
-            for(int j = x; j < x + mapObject.getWidth(); j++) {
+        for(int i = y; i < Math.min(y + mapObject.getHeight(), MapObject.MAP_HEIGHT); i++) {
+            for(int j = x; j < Math.min(x + mapObject.getWidth(), MapObject.MAP_WIDTH); j++) {
                 if(gridMap[i][j] != -1 && gridMap[i][j] != mapObject.getId()) {
                     return true;
                 }
@@ -308,6 +360,12 @@ public class GameUser {
     }
 
     public boolean moveBuilding(Building building, int x, int y) {
+        if(x == building.getX() && y == building.getY()) {
+            return false;
+        }
+        if(x < 0 || y < 0 || x + building.getWidth() > MapObject.MAP_WIDTH || y + building.getHeight() > MapObject.MAP_HEIGHT) {
+            return false;
+        }
         if(isMapObjectOverlap(building, x, y)) {
             return false;
         }
@@ -318,6 +376,15 @@ public class GameUser {
         building.setY(y);
         building.save();
         return true;
+    }
+
+    public boolean moveBuildingById(int buildingId, int x, int y) {
+        MapObject mapObject = MapObject.getMapObjectById(buildingId);
+        if(mapObject instanceof Building) {
+            return moveBuilding((Building) mapObject, x, y);
+        }
+        return false;
+
     }
 
     public ArrayList<ElixirStorage> getAllElixirStorageBuilding() {
@@ -387,6 +454,32 @@ public class GameUser {
         return true;
     }
 
+    public void updateGoldCapacity() {
+        Townhall townhall = getTownhallBuilding();
+        if(townhall == null) {
+            return;
+        }
+        goldCapacity = 0;
+        goldCapacity += townhall.getGoldCapacity();
+        ArrayList<GoldStorage> goldStorages = getAllGoldStorageBuilding();
+        for(GoldStorage goldStorage : goldStorages) {
+            goldCapacity += goldStorage.getGoldCapacity();
+        }
+    }
+
+    public void updateElixirCapacity() {
+        Townhall townhall = getTownhallBuilding();
+        if(townhall == null) {
+            return;
+        }
+        elixirCapacity = 0;
+        elixirCapacity += townhall.getElixirCapacity();
+        ArrayList<ElixirStorage> elixirStorages = getAllElixirStorageBuilding();
+        for(ElixirStorage elixirStorage : elixirStorages) {
+            elixirCapacity += elixirStorage.getElixirCapacity();
+        }
+    }
+
     public boolean addElixir(int amount) {
         if(amount + elixir > elixirCapacity) {
             return false;
@@ -421,5 +514,17 @@ public class GameUser {
             }
         }
         return townhall;
+    }
+
+    public void addG(int amount) {
+        setG(g + amount);
+    }
+
+    public boolean deductG(int amount) {
+        if(amount >= g) {
+            setG(g - amount);
+            return true;
+        }
+        return false;
     }
 }

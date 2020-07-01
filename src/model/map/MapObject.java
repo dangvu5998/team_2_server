@@ -185,12 +185,41 @@ public abstract class MapObject {
                     return DBBuiltInUtil.gson.fromJson(mapObjectStr, ClanCastle.class);
                 case BUILDER_HUT:
                     return DBBuiltInUtil.gson.fromJson(mapObjectStr, BuilderHut.class);
+                case
+                        OBSTACLE_1,
+                        OBSTACLE_2,
+                        OBSTACLE_3,
+                        OBSTACLE_4,
+                        OBSTACLE_5,
+                        OBSTACLE_6,
+                        OBSTACLE_7,
+                        OBSTACLE_8,
+                        OBSTACLE_9,
+                        OBSTACLE_10,
+                        OBSTACLE_11,
+                        OBSTACLE_12,
+                        OBSTACLE_13,
+                        OBSTACLE_14,
+                        OBSTACLE_15,
+                        OBSTACLE_16,
+                        OBSTACLE_17,
+                        OBSTACLE_18,
+                        OBSTACLE_19,
+                        OBSTACLE_20,
+                        OBSTACLE_21,
+                        OBSTACLE_22,
+                        OBSTACLE_23,
+                        OBSTACLE_24,
+                        OBSTACLE_25,
+                        OBSTACLE_26,
+                        OBSTACLE_27:
+                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, Obstacle.class);
             }
 
         } catch (Exception e) {
             System.out.println("Eror get map oject " + id);
         }
-        System.out.println("error " + mapObjectStr);
+        System.out.println("not handle map object by id" + mapObjectStr);
         return null;
     }
 

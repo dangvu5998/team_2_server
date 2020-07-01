@@ -1,8 +1,6 @@
 package cmd;
 
 public class ResponseConst {
-    public static final short OK = 200;
-    public static final short UNPROCESSABLE_ENTITY = 422;
-
-
+    public static final int OK = 0;
+    public static final int USER_REQUEST_INVALID = 1;
 }

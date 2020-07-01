@@ -14,11 +14,10 @@ import bitzero.util.common.business.CommonHandle;
 import bitzero.util.datacontroller.business.DataController;
 import bitzero.util.socialcontroller.bean.UserInfo;
 
-import cmd.receive.authen.RequestLogin;
-
 import event.handler.MainMapHandler;
 import org.json.JSONObject;
 
+import cmd.receive.authen.RequestLogin;
 import model.GameUser;
 
 
