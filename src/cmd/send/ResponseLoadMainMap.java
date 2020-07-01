@@ -40,7 +40,6 @@ public class ResponseLoadMainMap extends BaseMsg {
                 if(building instanceof MineBuilding) {
                     // for miner
                     MineBuilding mineBuilding = (MineBuilding) building;
-                    System.out.println(mineBuilding.getObjectType());
                     // last time collectted
                     bf.putInt(mineBuilding.getLastTimeCollected());
                 }

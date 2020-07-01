@@ -10,6 +10,7 @@ import cmd.RequestConst;
 import cmd.ResponseConst;
 import cmd.receive.mainmap.RequestMoveBuilding;
 import cmd.send.ResponseLoadMainMap;
+import cmd.send.ResponseMainInfo;
 import cmd.send.ResponseMoveBuilding;
 import model.GameUser;
 import model.map.MapObject;
@@ -23,10 +24,19 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
         GameUser gameUser = GameUser.getGameUserById(user.getId());
+        if(gameUser == null) {
+            // TODO: handle game user null
+            return;
+        }
         switch (dataCmd.getId()) {
             case CmdDefine.LOAD_MAIN_MAP -> processLoadMainMap(user, gameUser);
+            case CmdDefine.MAIN_GAME_INFO -> processMainGameInfo(user, gameUser);
             case CmdDefine.MOVE_BUILDING -> processMoveBuilding(user, gameUser, dataCmd);
         }
+    }
+
+    private void processMainGameInfo(User user, GameUser gameUser) {
+        send(new ResponseMainInfo(ResponseConst.OK, gameUser), user);
     }
 
     public void handleServerEvent(IBZEvent ibzevent) {

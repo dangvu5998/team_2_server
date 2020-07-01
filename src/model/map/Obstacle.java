@@ -1,7 +1,6 @@
 package model.map;
 
 import com.google.gson.annotations.Expose;
-import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -12,13 +11,9 @@ public class Obstacle extends MapObject {
     protected int status;
     @Expose
     protected int finishTime;
-    @Expose
     protected int buildTime;
-    @Expose
     protected int goldToRemove;
-    @Expose
     protected int elixirToRemove;
-    @Expose
     protected int exp;
 
     public static final int NORMAL_STATUS = 0;
