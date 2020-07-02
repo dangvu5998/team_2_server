@@ -18,6 +18,7 @@ public class ResponseMainInfo extends BaseMsg {
     @Override
     public byte[] createData() {
         ByteBuffer bf = makeBuffer();
+        // TODO: replace hardcode some fields
         // 0 status
         bf.putInt(status);
         // 1 id
@@ -35,9 +36,9 @@ public class ResponseMainInfo extends BaseMsg {
         // 7 max nb of sodiers
         bf.putInt(0);
         // 8 current of available builder
-        bf.putInt(1);
+        bf.putInt(gameUser.getNbOfAvaiBuilder());
         // 9 max nb of builders
-        bf.putInt(1);
+        bf.putInt(gameUser.getNbOfBuilder());
         // 10 shield expired time
         bf.putInt(0);
         // 11 gold

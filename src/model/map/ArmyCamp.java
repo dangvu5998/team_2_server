@@ -1,19 +1,89 @@
 package model.map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class ArmyCamp extends Building {
+    private int capacity;
+    private static int timeToBuild;
+    private static int elixirToBuild;
+    private static int darkElixirToBuild;
+    public static final int MAX_LEVEL = 8;
+    private static final String ARMY_CAMP_CONFIG_PATH = "config/GameStatsConfig/ArmyCamp.json";
+    private static final String ARMY_CAMP_CONFIG_NAME = "AMC_1";
+    private static JSONObject armyCampConfig;
     public ArmyCamp(int id_, int x_,int y_, int level_, int buildingStatus_, int finishTime_) {
         super(id_, x_, y_, Building.ARMY_CAMP, level_, buildingStatus_, finishTime_);
     }
 
+    private static void loadConfig() {
+        if(armyCampConfig != null) {
+            return;
+        }
+        armyCampConfig = Common.loadJSONObjectFromFile(ARMY_CAMP_CONFIG_PATH);
+        if(armyCampConfig == null) {
+            throw new RuntimeException("Cannot load army camp config");
+        }
+        try {
+            JSONObject level1Config = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME).getJSONObject(String.valueOf(1));
+            timeToBuild = level1Config.getInt("buildTime");
+            elixirToBuild = level1Config.getInt("elixir");
+            darkElixirToBuild = level1Config.getInt("darkElixir");
+
+        } catch (JSONException e) {
+            throw new RuntimeException("Army camp config is invalid");
+        }
+    }
+
     @Override
     public void setLevel(int level) {
+        loadConfig();
         this.level = level;
+        if (level < 1 || level > MAX_LEVEL) {
+            throw new RuntimeException("Army camp level is invalid");
+        }
+        try {
+            JSONObject currConfig = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME).getJSONObject(String.valueOf(level));
+            width = currConfig.getInt("width");
+            height = currConfig.getInt("height");
+            health = currConfig.getInt("hitpoints");
+            capacity = currConfig.getInt("capacity");
+            if(level < MAX_LEVEL) {
+                JSONObject nextLevelConfig = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                timeToUpgrade = nextLevelConfig.getInt("buildTime");
+            }
+            else {
+                goldToUpgrade = 0;
+                elixirToUpgrade = 0;
+                darkElixirToUpgrade = 0;
+                timeToUpgrade = 0;
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Army camp config is invalid");
+        }
     }
 
     public static ArmyCamp createArmyCamp(int x_, int y_) {
         int newId = DBBuiltInUtil.generateId(collectionName);
         return new ArmyCamp(newId, x_, y_, 1, Building.NORMAL_STATUS, 0);
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return MAX_LEVEL;
+    }
+
+    @Override
+    public int getElixirToBuild() {
+        return elixirToBuild;
+    }
+
+    @Override
+    public int getTimeToBuild() {
+        return timeToBuild;
     }
 }

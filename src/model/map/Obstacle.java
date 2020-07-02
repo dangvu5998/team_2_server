@@ -89,4 +89,9 @@ public class Obstacle extends MapObject {
     public int getFinishTime() {
         return finishTime;
     }
+
+    @Override
+    public void loadExtraInfo() {
+        // TODO: handle this
+    }
 }

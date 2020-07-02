@@ -12,6 +12,41 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class GameUser {
+    @Expose
+    private final int id;
+    @Expose
+    private int vipLevel;
+    @Expose
+    private String username;
+    @Expose
+    private int frameScore;
+    @Expose
+    private int userLevel;
+    @Expose
+    private int userXP;
+    @Expose
+    private int g;
+    @Expose
+    private boolean music;
+    @Expose
+    private boolean sound;
+    @Expose
+    private boolean notifications;
+    @Expose
+    private final ArrayList<Integer> mapObjectIds;
+    private int gold;
+    private int elixir;
+    private int goldCapacity;
+    private int elixirCapacity;
+    private int nbOfAvaiBuilder;
+    private int nbOfBuilder;
+
+    private static JSONObject initGameConfig;
+
+    private static final String COLLECTION_NAME = "GameUser";
+    private static final String USERNAME_MAP_COLLECTION_NAME = "UsernameMap_GameUser";
+    private static final String INIT_GAME_CONFIG_PATH = "config/GameStatsConfig/InitGame.json";
+
     public int getId() {
         return id;
     }
@@ -52,25 +87,41 @@ public class GameUser {
         return notifications;
     }
 
-    public ArrayList<Integer> getMapObjectIds() {
-        return mapObjectIds;
+    public int getNbOfBuilder() {
+        return nbOfBuilder;
     }
 
-    @Expose
-    private int id;
-    @Expose
-    private int vipLevel;
-    @Expose
-    private String username;
-    @Expose
-    private int frameScore;
-    @Expose
-    private int userLevel;
-    @Expose
-    private int userXP;
+    public int getNbOfAvaiBuilder() {
+        return nbOfAvaiBuilder;
+    }
 
-    private static final String INIT_GAME_CONFIG_PATH = "config/GameStatsConfig/InitGame.json";
-    private static JSONObject initGameConfig;
+    public void deductAvaiBuilder() {
+        if(nbOfAvaiBuilder <= 0) {
+            throw new RuntimeException("Game user " + id + " has no available builers");
+        }
+        nbOfAvaiBuilder -= 1;
+    }
+
+    public void addAvaiBuilder() {
+        nbOfAvaiBuilder += 1;
+    }
+
+    private void loadBuilders() {
+        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        for(MapObject mapObject: mapObjects) {
+            if(mapObject instanceof BuilderHut) {
+                nbOfBuilder += 1;
+                nbOfAvaiBuilder += 1;
+            }
+            if(mapObject instanceof Building) {
+                Building building = (Building) mapObject;
+                if(building.getStatus() == Building.BUILDING_STATUS ||
+                building.getStatus() == Building.UPGRADING_STATUS) {
+                    nbOfAvaiBuilder -= 1;
+                }
+            }
+        }
+    }
 
     public void setGold(int gold) {
         this.gold = gold;
@@ -138,9 +189,6 @@ public class GameUser {
         }
     }
 
-    private int gold;
-    private int elixir;
-
     public int getGoldCapacity() {
         return goldCapacity;
     }
@@ -149,27 +197,10 @@ public class GameUser {
         return elixirCapacity;
     }
 
-    private int goldCapacity;
-    private int elixirCapacity;
-
     public void setG(int g) {
         this.g = g;
         save();
     }
-
-    @Expose
-    private int g;
-    @Expose
-    private boolean music;
-    @Expose
-    private boolean sound;
-    @Expose
-    private boolean notifications;
-    @Expose
-    private final ArrayList<Integer> mapObjectIds;
-
-    private static final String COLLECTION_NAME = "GameUser";
-    private static final String USERNAME_MAP_COLLECTION_NAME = "UsernameMap_GameUser";
 
     public GameUser(int vipLevel, String username, int frameScore, int userLevel, int userXP,
                     int g, boolean music, boolean sound, boolean notifications, ArrayList<Integer> mapObjectIds_) {
@@ -249,10 +280,15 @@ public class GameUser {
         return true;
     }
 
+    /**
+     * Init game for new user
+     */
     public void initGame() {
-        initGameConfig = Common.loadJSONObjectFromFile(INIT_GAME_CONFIG_PATH);
         if(initGameConfig == null) {
-            throw new RuntimeException("init config file is invalid or not found");
+            initGameConfig = Common.loadJSONObjectFromFile(INIT_GAME_CONFIG_PATH);
+            if (initGameConfig == null) {
+                throw new RuntimeException("init config file is invalid or not found");
+            }
         }
         try {
             // load buildings
@@ -310,6 +346,7 @@ public class GameUser {
             return null;
         gameUser.loadElixir();
         gameUser.loadGold();
+        gameUser.loadBuilders();
         return gameUser;
     }
 
@@ -422,7 +459,7 @@ public class GameUser {
         return gold;
     }
 
-    public void loadGold() {
+    private void loadGold() {
         int amount = 0;
         int capacity = 0;
         Townhall townhall = getTownhallBuilding();
@@ -536,4 +573,65 @@ public class GameUser {
         }
         return false;
     }
+
+    public int buyBuilding(int buildingTypeId, int x, int y) {
+        if(!MapObject.isObjectTypeBuilding(buildingTypeId)) {
+            return -1;
+        }
+        if(nbOfAvaiBuilder <= 0) {
+            return -2;
+        }
+        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        int nbOfCurrBuyingBuilding = 0;
+        for(MapObject mapObject: mapObjects) {
+            if(mapObject.getObjectType() == buildingTypeId) {
+                nbOfCurrBuyingBuilding += 1;
+            }
+        }
+        Townhall townhall = getTownhallBuilding();
+        if(townhall.getMaxNumberBuilding(buildingTypeId) >= nbOfCurrBuyingBuilding) {
+            return -3;
+        }
+        Building building = (Building) MapObject.createMapObject(buildingTypeId, x, y);
+//        TODO: handle all building
+        if(building == null) {
+            System.out.println("This building is not added");
+            return -1000;
+        }
+        if(isMapObjectOverlap(building)) {
+            return -1000;
+        }
+        // check resource
+        int goldToBuild = building.getGoldToBuild();
+        if(gold < goldToBuild) {
+            return -5;
+        }
+        int elixirToBuild = building.getElixirToBuild();
+        if(elixir < elixirToBuild) {
+            return -6;
+        }
+        int gToBuild = building.getGToBuild();
+        if(g < gToBuild) {
+            return -7;
+        }
+        int timeToBuild = building.getTimeToBuild();
+        // deduct resources and add new building
+
+        System.out.println("before buy");
+        System.out.println(gold);
+        deductGold(goldToBuild);
+        deductElixir(elixirToBuild);
+        deductG(gToBuild);
+        if(timeToBuild > 0) {
+            deductAvaiBuilder();
+        }
+        mapObjectIds.add(building.getId());
+        building.build();
+        building.save();
+        save();
+        System.out.println("after buy");
+        System.out.println(gold);
+        return building.getId();
+    }
 }
+

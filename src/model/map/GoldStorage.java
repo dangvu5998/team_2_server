@@ -7,8 +7,14 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class GoldStorage extends Building {
+    @Expose
+    private int gold;
+    private int goldCapacity;
+
     private static final String GOLD_STORAGE_CONFIG_PATH = "config/GameStatsConfig/Storage.json";
     private static final String GOLD_STORAGE_CONFIG_NAME = "STO_1";
+    private static int elixirToBuild;
+    private static int timeToBuild;
     private static JSONObject goldStorageConfig;
     public static final int MAX_LEVEL = 11;
 
@@ -20,15 +26,9 @@ public class GoldStorage extends Building {
         this.gold = gold;
     }
 
-    @Expose
-    private int gold;
-
     public int getGoldCapacity() {
         return goldCapacity;
     }
-
-    private int goldCapacity;
-
 
     public GoldStorage(int id_, int x_, int y_, int level_, int buildingStatus_, int finishTime_) {
         super(id_, x_, y_, Building.GOLD_STORAGE, level_, buildingStatus_, finishTime_);
@@ -36,7 +36,6 @@ public class GoldStorage extends Building {
 
     @Override
     public void setLevel(int level) {
-        // TODO: implement this
         loadConfig();
         this.level = level;
         if (level < 1 || level > MAX_LEVEL) {
@@ -47,11 +46,20 @@ public class GoldStorage extends Building {
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
-            goldToUpgrade = currConfig.getInt("gold");
-            elixirToUpgrade = currConfig.getInt("elixir");
-            darkElixirToUpgrade = currConfig.getInt("darkElixir");
-            timeToUpgrade = currConfig.getInt("buildTime");
             goldCapacity = currConfig.getInt("capacity");
+            if(level < MAX_LEVEL) {
+                JSONObject nextLevelConfig = goldStorageConfig.getJSONObject(GOLD_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                goldToUpgrade = nextLevelConfig.getInt("gold");
+                elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                timeToUpgrade = nextLevelConfig.getInt("buildTime");
+            }
+            else {
+                goldToUpgrade = 0;
+                elixirToUpgrade = 0;
+                darkElixirToUpgrade = 0;
+                timeToUpgrade = 0;
+            }
         } catch (JSONException e) {
             throw new RuntimeException("Gold storage config is invalid");
         }
@@ -67,5 +75,30 @@ public class GoldStorage extends Building {
             return;
         }
         goldStorageConfig = Common.loadJSONObjectFromFile(GOLD_STORAGE_CONFIG_PATH);
+        if(goldStorageConfig == null) {
+            throw new RuntimeException("Cannot load army camp config");
+        }
+        try {
+            JSONObject level1Config = goldStorageConfig.getJSONObject(GOLD_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(1));
+            timeToBuild = level1Config.getInt("buildTime");
+            elixirToBuild = level1Config.getInt("elixir");
+        } catch (JSONException e) {
+            throw new RuntimeException("Gold storage config is invalid");
+        }
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return MAX_LEVEL;
+    }
+
+    @Override
+    public int getElixirToBuild() {
+        return elixirToBuild;
+    }
+
+    @Override
+    public int getTimeToBuild() {
+        return timeToBuild;
     }
 }

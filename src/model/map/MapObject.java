@@ -1,18 +1,27 @@
 package model.map;
 
+import com.google.gson.annotations.Expose;
+import org.json.JSONException;
 import org.json.JSONObject;
 import util.database.DBBuiltInUtil;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class MapObject {
 
+    @Expose
     protected int id;
+    @Expose
     protected int x;
+    @Expose
     protected int y;
+    @Expose
+    protected int objectType;
     protected int width;
     protected int height;
-    protected int objectType;
 
     public static final int ARMY_CAMP = 1;
     public static final int BARRACK = 2;
@@ -56,6 +65,23 @@ public abstract class MapObject {
     public static final int OBSTACLE_27 = 40;
     public static final int GOLD_STORAGE = 41;
     public static final int GOLD_MINE = 42;
+    public static final Set<Integer> BUILDING_TYPES = new HashSet<>(Arrays.asList(
+        ARMY_CAMP,
+        BARRACK,
+        BUILDER_HUT,
+        CLAN_CASTLE,
+        ARCHER_TOWER,
+        AIR_DEFENSE,
+        CANON,
+        ELIXIR_MINE,
+        ELIXIR_STORAGE,
+        LABORATORY,
+        TREBUCHET,
+        TOWNHALL,
+        WALL,
+        GOLD_STORAGE,
+        GOLD_MINE
+    ));
 
     public static final int MAP_WIDTH = 40;
     public static final int MAP_HEIGHT = 40;
@@ -105,6 +131,50 @@ public abstract class MapObject {
             Map.entry("RES_1", GOLD_MINE)
     );
 
+    public static final Map<Integer, String> MAP_ID_OBJ_TO_CONFIG_NAME = Map.ofEntries(
+            Map.entry(ARMY_CAMP, "AMC_1"),
+            Map.entry(BARRACK, "BAR_2"),
+            Map.entry(BUILDER_HUT, "BDH_1"),
+            Map.entry(CLAN_CASTLE, "CLC_1"),
+            Map.entry(ARCHER_TOWER, "DEF_2"),
+            Map.entry(AIR_DEFENSE, "DEF_5"),
+            Map.entry(CANON, "DEF_1"),
+            Map.entry(ELIXIR_MINE, "RES_2"),
+            Map.entry(ELIXIR_STORAGE, "STO_2"),
+            Map.entry(LABORATORY, "LAB_1"),
+            Map.entry(TREBUCHET, "DEF_3"),
+            Map.entry(TOWNHALL, "TOW_1"),
+            Map.entry(WALL, "WAL_1"),
+            Map.entry(OBSTACLE_1, "OBS_1"),
+            Map.entry(OBSTACLE_2, "OBS_2"),
+            Map.entry(OBSTACLE_3, "OBS_3"),
+            Map.entry(OBSTACLE_4, "OBS_4"),
+            Map.entry(OBSTACLE_5, "OBS_5"),
+            Map.entry(OBSTACLE_6, "OBS_6"),
+            Map.entry(OBSTACLE_7, "OBS_7"),
+            Map.entry(OBSTACLE_8, "OBS_8"),
+            Map.entry(OBSTACLE_9, "OBS_9"),
+            Map.entry(OBSTACLE_10, "OBS_10"),
+            Map.entry(OBSTACLE_11, "OBS_11"),
+            Map.entry(OBSTACLE_12, "OBS_12"),
+            Map.entry(OBSTACLE_14, "OBS_14"),
+            Map.entry(OBSTACLE_15, "OBS_15"),
+            Map.entry(OBSTACLE_16, "OBS_16"),
+            Map.entry(OBSTACLE_17, "OBS_17"),
+            Map.entry(OBSTACLE_18, "OBS_18"),
+            Map.entry(OBSTACLE_19, "OBS_19"),
+            Map.entry(OBSTACLE_20, "OBS_20"),
+            Map.entry(OBSTACLE_21, "OBS_21"),
+            Map.entry(OBSTACLE_22, "OBS_22"),
+            Map.entry(OBSTACLE_23, "OBS_23"),
+            Map.entry(OBSTACLE_24, "OBS_24"),
+            Map.entry(OBSTACLE_25, "OBS_25"),
+            Map.entry(OBSTACLE_26, "OBS_26"),
+            Map.entry(OBSTACLE_27, "OBS_27"),
+            Map.entry(OBSTACLE_13, "OBS_13"),
+            Map.entry(GOLD_STORAGE, "STO_1"),
+            Map.entry(GOLD_MINE, "RES_1")
+    );
     protected static final String collectionName = "MapObject";
 
     public MapObject(int id_, int x_, int y_, int objectType_) {
@@ -170,53 +240,23 @@ public abstract class MapObject {
         try {
             JSONObject mapObjectJson = new JSONObject(mapObjectStr);
             int objectType = mapObjectJson.getInt("objectType");
-            switch (objectType) {
-                case TOWNHALL:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, Townhall.class);
-                case ARMY_CAMP:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ArmyCamp.class);
-                case GOLD_STORAGE:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldStorage.class);
-                case GOLD_MINE:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, GoldMine.class);
-                case ELIXIR_STORAGE:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ElixirStorage.class);
-                case CLAN_CASTLE:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, ClanCastle.class);
-                case BUILDER_HUT:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, BuilderHut.class);
-                case
-                        OBSTACLE_1,
-                        OBSTACLE_2,
-                        OBSTACLE_3,
-                        OBSTACLE_4,
-                        OBSTACLE_5,
-                        OBSTACLE_6,
-                        OBSTACLE_7,
-                        OBSTACLE_8,
-                        OBSTACLE_9,
-                        OBSTACLE_10,
-                        OBSTACLE_11,
-                        OBSTACLE_12,
-                        OBSTACLE_13,
-                        OBSTACLE_14,
-                        OBSTACLE_15,
-                        OBSTACLE_16,
-                        OBSTACLE_17,
-                        OBSTACLE_18,
-                        OBSTACLE_19,
-                        OBSTACLE_20,
-                        OBSTACLE_21,
-                        OBSTACLE_22,
-                        OBSTACLE_23,
-                        OBSTACLE_24,
-                        OBSTACLE_25,
-                        OBSTACLE_26,
-                        OBSTACLE_27:
-                    return DBBuiltInUtil.gson.fromJson(mapObjectStr, Obstacle.class);
+            MapObject mapObject = switch (objectType) {
+                case TOWNHALL -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Townhall.class);
+                case ARMY_CAMP -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ArmyCamp.class);
+                case GOLD_STORAGE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, GoldStorage.class);
+                case GOLD_MINE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, GoldMine.class);
+                case ELIXIR_STORAGE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ElixirStorage.class);
+                case CLAN_CASTLE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ClanCastle.class);
+                case BUILDER_HUT -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, BuilderHut.class);
+                case OBSTACLE_1, OBSTACLE_2, OBSTACLE_3, OBSTACLE_4, OBSTACLE_5, OBSTACLE_6, OBSTACLE_7, OBSTACLE_8, OBSTACLE_9, OBSTACLE_10, OBSTACLE_11, OBSTACLE_12, OBSTACLE_13, OBSTACLE_14, OBSTACLE_15, OBSTACLE_16, OBSTACLE_17, OBSTACLE_18, OBSTACLE_19, OBSTACLE_20, OBSTACLE_21, OBSTACLE_22, OBSTACLE_23, OBSTACLE_24, OBSTACLE_25, OBSTACLE_26, OBSTACLE_27 -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Obstacle.class);
+                default -> null;
+            };
+            if(mapObject != null) {
+                mapObject.loadExtraInfo();
             }
+            return mapObject;
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             System.out.println("Eror get map oject " + id);
         }
         System.out.println("not handle map object by id" + mapObjectStr);
@@ -263,5 +303,11 @@ public abstract class MapObject {
             default -> null;
         };
     }
+
+    public static boolean isObjectTypeBuilding(int id) {
+        return BUILDING_TYPES.contains(id);
+    }
+
+    public abstract void loadExtraInfo();
 
 }

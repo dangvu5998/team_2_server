@@ -6,12 +6,32 @@ import org.json.JSONObject;
 import util.Common;
 import util.database.DBBuiltInUtil;
 
+import java.util.HashMap;
+
 public class Townhall extends Building {
+    @Expose
+    private int gold;
+    @Expose
+    private int elixir;
+    @Expose
+    private int darkElixir;
+    private int goldCapacity;
+    private int elixirCapacity;
+    private int darkElixirCapacity;
+    private HashMap<Integer, Integer> maxNumberBuilding;
 
     private static final String TOWNHALL_CONFIG_PATH = "config/GameStatsConfig/TownHall.json";
     private static final String TOWNHALL_CONFIG_NAME = "TOW_1";
     private static JSONObject townhallConfig;
     public static final int MAX_LEVEL = 11;
+
+    public int getGoldCapacity() {
+        return goldCapacity;
+    }
+
+    public int getElixirCapacity() {
+        return elixirCapacity;
+    }
 
     public int getGold() {
         return gold;
@@ -28,25 +48,6 @@ public class Townhall extends Building {
     public void setElixir(int elixir) {
         this.elixir = elixir;
     }
-
-    @Expose
-    private int gold;
-    @Expose
-    private int elixir;
-    @Expose
-    private int darkElixir;
-
-    public int getGoldCapacity() {
-        return goldCapacity;
-    }
-
-    public int getElixirCapacity() {
-        return elixirCapacity;
-    }
-
-    private int goldCapacity;
-    private int elixirCapacity;
-    private int darkElixirCapacity;
 
     public Townhall(int id_, int x_, int y_, int level_, int buildingStatus_, int finishTime_) {
         super(id_, x_, y_, Building.TOWNHALL, level_, buildingStatus_, finishTime_);
@@ -67,6 +68,7 @@ public class Townhall extends Building {
     @Override
     public void setLevel(int level) {
         loadConfig();
+        this.level = level;
         if (level < 1 || level > MAX_LEVEL) {
             throw new RuntimeException("Level is invalid");
         }
@@ -75,21 +77,44 @@ public class Townhall extends Building {
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
-            goldToUpgrade = currConfig.getInt("gold");
             elixirToUpgrade = 0;
-            darkElixirToUpgrade = currConfig.getInt("darkElixir");
-            timeToUpgrade = currConfig.getInt("buildTime");
+            if(level < MAX_LEVEL) {
+                JSONObject nextLevelConfig = townhallConfig.getJSONObject(TOWNHALL_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                goldToUpgrade = nextLevelConfig.getInt("gold");
+                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                timeToUpgrade = nextLevelConfig.getInt("buildTime");
+            }
             goldCapacity = currConfig.getInt("capacityGold");
             elixirCapacity = currConfig.getInt("capacityElixir");
             darkElixirCapacity = currConfig.getInt("capacityDarkElixir");
+            maxNumberBuilding = new HashMap<>();
+            for(int buildingTypeId: MapObject.BUILDING_TYPES) {
+                if(buildingTypeId == MapObject.BUILDER_HUT) {
+                    break;
+                }
+                String configBuildingName = MapObject.MAP_ID_OBJ_TO_CONFIG_NAME.get(buildingTypeId);
+                maxNumberBuilding.put(buildingTypeId, currConfig.getInt(configBuildingName));
+            }
             // TODO: load config other buildings condition
         } catch (JSONException e) {
             throw new RuntimeException("Townhall config is invalid");
         }
-
     }
 
     public int getDarkElixir() {
         return darkElixir;
+    }
+
+    public int getMaxNumberBuilding(int buildingTypeId) {
+        Integer res = maxNumberBuilding.get(buildingTypeId);
+        if(res == null) {
+            return -1;
+        }
+        return res;
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return MAX_LEVEL;
     }
 }

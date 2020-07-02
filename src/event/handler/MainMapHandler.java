@@ -5,14 +5,18 @@ import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.IServerEventHandler;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.server.core.IBZEvent;
+import bitzero.util.common.business.CommonHandle;
 import cmd.CmdDefine;
 import cmd.RequestConst;
 import cmd.ResponseConst;
+import cmd.receive.mainmap.RequestBuyBuilding;
 import cmd.receive.mainmap.RequestMoveBuilding;
+import cmd.send.ResponseBuyBuilding;
 import cmd.send.ResponseLoadMainMap;
 import cmd.send.ResponseMainInfo;
 import cmd.send.ResponseMoveBuilding;
 import model.GameUser;
+import model.map.Building;
 import model.map.MapObject;
 
 public class MainMapHandler extends BaseClientRequestHandler implements IServerEventHandler {
@@ -32,6 +36,7 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             case CmdDefine.LOAD_MAIN_MAP -> processLoadMainMap(user, gameUser);
             case CmdDefine.MAIN_GAME_INFO -> processMainGameInfo(user, gameUser);
             case CmdDefine.MOVE_BUILDING -> processMoveBuilding(user, gameUser, dataCmd);
+            case CmdDefine.BUY_BUILDING -> processBuyBuilding(user, gameUser, dataCmd);
         }
     }
 
@@ -44,7 +49,11 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
     }
 
     private void processLoadMainMap(User user, GameUser gameUser) {
-        send(new ResponseLoadMainMap(ResponseConst.OK, gameUser.getAllMapObjects()), user);
+        try {
+            send(new ResponseLoadMainMap(ResponseConst.OK, gameUser.getAllMapObjects()), user);
+        } catch ( Exception e) {
+            CommonHandle.writeErrLog(e);
+        }
     }
 
     private void processMoveBuilding(User user, GameUser gameUser, DataCmd dataCmd) {
@@ -65,6 +74,26 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
                 send(new ResponseMoveBuilding(ResponseConst.USER_REQUEST_INVALID, buildingId, x, y), user);
             }
         }
+    }
 
+    private void processBuyBuilding(User user, GameUser gameUser, DataCmd dataCmd) {
+        RequestBuyBuilding requestBuyBuilding = new RequestBuyBuilding(dataCmd);
+        if(requestBuyBuilding.getStatus() == ResponseConst.OK) {
+            int buildingTypeId = requestBuyBuilding.getBuildingTypeId();
+            int x = requestBuyBuilding.getX();
+            int y = requestBuyBuilding.getY();
+            System.out.println("buying");
+            try {
+                int buyBuildingCode = gameUser.buyBuilding(buildingTypeId, x, y);
+            if(buyBuildingCode > 0) {
+                send(new ResponseBuyBuilding(ResponseConst.OK, buildingTypeId, x, y, buyBuildingCode), user);
+            }
+            else {
+                send(new ResponseBuyBuilding(ResponseConst.USER_REQUEST_INVALID, buildingTypeId, x, y, buyBuildingCode), user);
+            }
+            } catch (Exception e) {
+                CommonHandle.writeErrLog(e);
+            }
+        }
     }
 }

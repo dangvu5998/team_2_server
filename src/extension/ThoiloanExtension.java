@@ -84,6 +84,7 @@ public class ThoiloanExtension extends BZExtension {
      * the first packet send from client after handshake success will dispatch to doLogin() function
      */
     public void doLogin(short cmdId, ISession session, DataCmd objData) {
+        try {
             RequestLogin reqGet = new RequestLogin(objData);
             reqGet.unpackData();
             String username = reqGet.getUsername();
@@ -96,6 +97,9 @@ public class ThoiloanExtension extends BZExtension {
             userInfo.setUsername(username);
             User user = ExtensionUtility.instance().canLogin(userInfo, "", session);
             ExtensionUtility.instance().sendLoginOK(user);
+        } catch(Exception e) {
+            CommonHandle.writeErrLog(e);
+        }
     }
 
 

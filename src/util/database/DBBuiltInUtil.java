@@ -13,7 +13,7 @@ public class DBBuiltInUtil {
 
     public static void save(String collectionName, String key, Object obj) {
         String globalKey = ServerUtil.getModelKeyName(collectionName, key);
-        String sobj = gson.toJson(obj);
+        String sobj = gsonWithExpose.toJson(obj);
         try {
             DataController.getController().set(globalKey, sobj);
         } catch (Exception e) {
@@ -35,7 +35,7 @@ public class DBBuiltInUtil {
     public static Object get(String collectionName, String key, Class c) {
         String globalKey = ServerUtil.getModelKeyName(collectionName, key);
         try {
-            return gson.fromJson((String) DataController.getController().get(globalKey), c);
+            return gsonWithExpose.fromJson((String) DataController.getController().get(globalKey), c);
         } catch (Exception e) {
             // TODO: handle exception
             System.out.println("Error get " + key + " in " + collectionName);
