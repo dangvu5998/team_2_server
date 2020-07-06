@@ -9,7 +9,6 @@ public class ArmyCamp extends Building {
     private int capacity;
     private static int timeToBuild;
     private static int elixirToBuild;
-    private static int darkElixirToBuild;
     public static final int MAX_LEVEL = 8;
     private static final String ARMY_CAMP_CONFIG_PATH = "config/GameStatsConfig/ArmyCamp.json";
     private static final String ARMY_CAMP_CONFIG_NAME = "AMC_1";
@@ -22,16 +21,21 @@ public class ArmyCamp extends Building {
         if(armyCampConfig != null) {
             return;
         }
-        armyCampConfig = Common.loadJSONObjectFromFile(ARMY_CAMP_CONFIG_PATH);
+        try {
+            armyCampConfig = Common.loadJSONObjectFromFile(ARMY_CAMP_CONFIG_PATH);
+            if (armyCampConfig != null) {
+                armyCampConfig = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME);
+            }
+        } catch (JSONException e) {
+            armyCampConfig = null;
+        }
         if(armyCampConfig == null) {
             throw new RuntimeException("Cannot load army camp config");
         }
         try {
-            JSONObject level1Config = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME).getJSONObject(String.valueOf(1));
+            JSONObject level1Config = armyCampConfig.getJSONObject(String.valueOf(1));
             timeToBuild = level1Config.getInt("buildTime");
             elixirToBuild = level1Config.getInt("elixir");
-            darkElixirToBuild = level1Config.getInt("darkElixir");
-
         } catch (JSONException e) {
             throw new RuntimeException("Army camp config is invalid");
         }
@@ -45,13 +49,13 @@ public class ArmyCamp extends Building {
             throw new RuntimeException("Army camp level is invalid");
         }
         try {
-            JSONObject currConfig = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME).getJSONObject(String.valueOf(level));
+            JSONObject currConfig = armyCampConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
             capacity = currConfig.getInt("capacity");
             if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = armyCampConfig.getJSONObject(ARMY_CAMP_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                JSONObject nextLevelConfig = armyCampConfig.getJSONObject(String.valueOf(level + 1));
                 elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
@@ -79,11 +83,13 @@ public class ArmyCamp extends Building {
 
     @Override
     public int getElixirToBuild() {
+        loadConfig();
         return elixirToBuild;
     }
 
     @Override
     public int getTimeToBuild() {
+        loadConfig();
         return timeToBuild;
     }
 }

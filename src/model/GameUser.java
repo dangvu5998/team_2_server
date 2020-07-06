@@ -1,5 +1,6 @@
 package model;
 
+import cmd.send.ResponseBuyBuilding;
 import com.google.gson.annotations.Expose;
 import model.map.*;
 import org.json.JSONException;
@@ -476,28 +477,25 @@ public class GameUser {
         goldCapacity = capacity;
     }
 
-    public boolean deductGold(int amount) {
+    public void deductGold(int amount) {
         if(amount > gold) {
-            return false;
+            return;
         }
         setGold(gold - amount);
-        return true;
     }
 
-    public boolean addGold(int amount) {
+    public void addGold(int amount) {
         if(amount + gold > goldCapacity) {
-            return false;
+            return;
         }
         setGold(amount + gold);
-        return true;
     }
 
-    public boolean deductElixir(int amount) {
+    public void deductElixir(int amount) {
         if(amount > elixir) {
-            return false;
+            return;
         }
         setElixir(elixir - amount);
-        return true;
     }
 
     public void updateGoldCapacity() {
@@ -526,12 +524,11 @@ public class GameUser {
         }
     }
 
-    public boolean addElixir(int amount) {
+    public void addElixir(int amount) {
         if(amount + elixir > elixirCapacity) {
-            return false;
+            return;
         }
         setElixir(elixir + amount);
-        return true;
     }
 
     public void loadElixir() {
@@ -566,21 +563,21 @@ public class GameUser {
         setG(g + amount);
     }
 
-    public boolean deductG(int amount) {
-        if(amount >= g) {
+    public void deductG(int amount) {
+        if(amount <= g) {
             setG(g - amount);
-            return true;
         }
-        return false;
     }
 
     public int buyBuilding(int buildingTypeId, int x, int y) {
         if(!MapObject.isObjectTypeBuilding(buildingTypeId)) {
-            return -1;
+            return ResponseBuyBuilding.OBJECT_TYPE_INVALID;
         }
         if(nbOfAvaiBuilder <= 0) {
-            return -2;
+            return ResponseBuyBuilding.NOT_ENOUGH_BUILDERS;
         }
+
+        // check max number of building
         ArrayList<MapObject> mapObjects = getAllMapObjects();
         int nbOfCurrBuyingBuilding = 0;
         for(MapObject mapObject: mapObjects) {
@@ -588,37 +585,42 @@ public class GameUser {
                 nbOfCurrBuyingBuilding += 1;
             }
         }
+        if(buildingTypeId == MapObject.BUILDER_HUT) {
+            if(nbOfCurrBuyingBuilding >= 5) {
+                return ResponseBuyBuilding.TOO_MUCH_BUILDER_HUT;
+            }
+        }
         Townhall townhall = getTownhallBuilding();
         if(townhall.getMaxNumberBuilding(buildingTypeId) >= nbOfCurrBuyingBuilding) {
-            return -3;
+            return ResponseBuyBuilding.TOWNHALL_NOT_ENOUGH_CONDITION;
         }
         Building building = (Building) MapObject.createMapObject(buildingTypeId, x, y);
+        if(building instanceof BuilderHut) {
+            ((BuilderHut) building).setIndex(nbOfCurrBuyingBuilding + 1);
+        }
 //        TODO: handle all building
         if(building == null) {
-            System.out.println("This building is not added");
             return -1000;
         }
         if(isMapObjectOverlap(building)) {
-            return -1000;
+            return ResponseBuyBuilding.BUILDING_OVERLAP;
         }
         // check resource
         int goldToBuild = building.getGoldToBuild();
         if(gold < goldToBuild) {
-            return -5;
+            return ResponseBuyBuilding.NOT_ENOUGH_GOLD;
         }
         int elixirToBuild = building.getElixirToBuild();
         if(elixir < elixirToBuild) {
-            return -6;
+            return ResponseBuyBuilding.NOT_ENOUGH_ELIXIR;
         }
         int gToBuild = building.getGToBuild();
         if(g < gToBuild) {
-            return -7;
+            return ResponseBuyBuilding.NOT_ENOUGH_G;
         }
         int timeToBuild = building.getTimeToBuild();
         // deduct resources and add new building
 
-        System.out.println("before buy");
-        System.out.println(gold);
         deductGold(goldToBuild);
         deductElixir(elixirToBuild);
         deductG(gToBuild);
@@ -629,8 +631,6 @@ public class GameUser {
         building.build();
         building.save();
         save();
-        System.out.println("after buy");
-        System.out.println(gold);
         return building.getId();
     }
 }

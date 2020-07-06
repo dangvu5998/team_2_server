@@ -44,13 +44,13 @@ public class ElixirStorage extends Building {
         }
         this.level = level;
         try {
-            JSONObject currConfig = elixirStorageConfig.getJSONObject(ELIXIR_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(level));
+            JSONObject currConfig = elixirStorageConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
             elixirCapacity = currConfig.getInt("capacity");
             if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = elixirStorageConfig.getJSONObject(ELIXIR_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                JSONObject nextLevelConfig = elixirStorageConfig.getJSONObject(String.valueOf(level + 1));
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
             }
@@ -75,12 +75,20 @@ public class ElixirStorage extends Building {
         if(elixirStorageConfig != null) {
             return;
         }
-        elixirStorageConfig = Common.loadJSONObjectFromFile(ELIXIR_STORAGE_CONFIG_PATH);
+        try {
+            elixirStorageConfig = Common.loadJSONObjectFromFile(ELIXIR_STORAGE_CONFIG_PATH);
+            if (elixirStorageConfig != null) {
+                elixirStorageConfig = elixirStorageConfig.getJSONObject(ELIXIR_STORAGE_CONFIG_NAME);
+            }
+        } catch (JSONException e) {
+            elixirStorageConfig = null;
+        }
+
         if (elixirStorageConfig == null) {
             throw new RuntimeException("Cannot load elixir storage config");
         }
         try {
-            JSONObject level1Config = elixirStorageConfig.getJSONObject(ELIXIR_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(1));
+            JSONObject level1Config = elixirStorageConfig.getJSONObject(String.valueOf(1));
             timeToBuild = level1Config.getInt("buildTime");
             goldToBuild = level1Config.getInt("gold");
         } catch (JSONException e) {
@@ -95,11 +103,13 @@ public class ElixirStorage extends Building {
 
     @Override
     public int getGoldToBuild() {
+        loadConfig();
         return goldToBuild;
     }
 
     @Override
     public int getTimeToBuild() {
+        loadConfig();
         return timeToBuild;
     }
 }

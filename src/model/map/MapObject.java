@@ -253,6 +253,10 @@ public abstract class MapObject {
             };
             if(mapObject != null) {
                 mapObject.loadExtraInfo();
+                if(mapObject instanceof Building) {
+                    Building building = (Building) mapObject;
+                    building.updateStatus();
+                }
             }
             return mapObject;
 
@@ -300,6 +304,11 @@ public abstract class MapObject {
                     OBSTACLE_25,
                     OBSTACLE_26,
                     OBSTACLE_27 -> Obstacle.createObtacle(mapObjectType, x, y);
+            case AIR_DEFENSE -> AirDefense.createAirDefense(x, y);
+            case ARCHER_TOWER -> ArcherTower.createArcherTower(x, y);
+            case BARRACK -> Barrack.createBarrack(x, y);
+            case CANON -> Canon.createCanon(x, y);
+//            case WALL -> Wall.c(x, y);
             default -> null;
         };
     }
@@ -308,6 +317,9 @@ public abstract class MapObject {
         return BUILDING_TYPES.contains(id);
     }
 
+    /**
+     * Load extra informations derived from attributes loaded from database
+     */
     public abstract void loadExtraInfo();
 
 }

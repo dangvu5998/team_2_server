@@ -82,7 +82,6 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             int buildingTypeId = requestBuyBuilding.getBuildingTypeId();
             int x = requestBuyBuilding.getX();
             int y = requestBuyBuilding.getY();
-            System.out.println("buying");
             try {
                 int buyBuildingCode = gameUser.buyBuilding(buildingTypeId, x, y);
             if(buyBuildingCode > 0) {

@@ -26,6 +26,30 @@ public class Obstacle extends MapObject {
         super(id_, x_, y_, objectType_);
         status = obstacleStatus_;
         finishTime = finishTime_;
+    }
+
+    public static void loadConfig() {
+        if(obtacleConfig != null) {
+            return;
+        }
+        obtacleConfig = Common.loadJSONObjectFromFile(OBSTACLE_CONFIG_PATH);
+    }
+
+    public static Obstacle createObtacle(int objType, int x, int y) {
+        int newId = DBBuiltInUtil.generateId(collectionName);
+        return new Obstacle(newId, x, y, objType, NORMAL_STATUS, 0);
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public int getFinishTime() {
+        return finishTime;
+    }
+
+    @Override
+    public void loadExtraInfo() {
         loadConfig();
         String obtacleConfigName = switch (objectType) {
             case OBSTACLE_1 -> "OBS_1";
@@ -68,30 +92,5 @@ public class Obstacle extends MapObject {
         } catch (JSONException e) {
             throw new RuntimeException("obtacle config is invalid");
         }
-    }
-
-    public static void loadConfig() {
-        if(obtacleConfig != null) {
-            return;
-        }
-        obtacleConfig = Common.loadJSONObjectFromFile(OBSTACLE_CONFIG_PATH);
-    }
-
-    public static Obstacle createObtacle(int objType, int x, int y) {
-        int newId = DBBuiltInUtil.generateId(collectionName);
-        return new Obstacle(newId, x, y, objType, NORMAL_STATUS, 0);
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public int getFinishTime() {
-        return finishTime;
-    }
-
-    @Override
-    public void loadExtraInfo() {
-        // TODO: handle this
     }
 }

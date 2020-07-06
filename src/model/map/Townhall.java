@@ -62,7 +62,14 @@ public class Townhall extends Building {
         if(townhallConfig != null) {
             return;
         }
-        townhallConfig = Common.loadJSONObjectFromFile(TOWNHALL_CONFIG_PATH);
+        try {
+            townhallConfig = Common.loadJSONObjectFromFile(TOWNHALL_CONFIG_PATH);
+            if (townhallConfig != null) {
+                townhallConfig = townhallConfig.getJSONObject(TOWNHALL_CONFIG_NAME);
+            }
+        } catch (JSONException e) {
+            townhallConfig = null;
+        }
     }
 
     @Override
@@ -73,13 +80,13 @@ public class Townhall extends Building {
             throw new RuntimeException("Level is invalid");
         }
         try {
-            JSONObject currConfig = townhallConfig.getJSONObject(TOWNHALL_CONFIG_NAME).getJSONObject(String.valueOf(level));
+            JSONObject currConfig = townhallConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
             elixirToUpgrade = 0;
             if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = townhallConfig.getJSONObject(TOWNHALL_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                JSONObject nextLevelConfig = townhallConfig.getJSONObject(String.valueOf(level + 1));
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");

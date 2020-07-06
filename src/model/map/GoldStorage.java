@@ -1,5 +1,6 @@
 package model.map;
 
+import bitzero.core.J;
 import com.google.gson.annotations.Expose;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,13 +43,13 @@ public class GoldStorage extends Building {
             throw new RuntimeException("Gold storage level is invalid");
         }
         try {
-            JSONObject currConfig = goldStorageConfig.getJSONObject(GOLD_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(level));
+            JSONObject currConfig = goldStorageConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
             goldCapacity = currConfig.getInt("capacity");
             if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = goldStorageConfig.getJSONObject(GOLD_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                JSONObject nextLevelConfig = goldStorageConfig.getJSONObject(String.valueOf(level + 1));
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
@@ -74,12 +75,19 @@ public class GoldStorage extends Building {
         if(goldStorageConfig != null) {
             return;
         }
-        goldStorageConfig = Common.loadJSONObjectFromFile(GOLD_STORAGE_CONFIG_PATH);
+        try {
+            goldStorageConfig = Common.loadJSONObjectFromFile(GOLD_STORAGE_CONFIG_PATH);
+            if (goldStorageConfig != null) {
+                goldStorageConfig = goldStorageConfig.getJSONObject(GOLD_STORAGE_CONFIG_NAME);
+            }
+        } catch (JSONException e) {
+            goldStorageConfig = null;
+        }
         if(goldStorageConfig == null) {
-            throw new RuntimeException("Cannot load army camp config");
+            throw new RuntimeException("Cannot load gold storage config");
         }
         try {
-            JSONObject level1Config = goldStorageConfig.getJSONObject(GOLD_STORAGE_CONFIG_NAME).getJSONObject(String.valueOf(1));
+            JSONObject level1Config = goldStorageConfig.getJSONObject(String.valueOf(1));
             timeToBuild = level1Config.getInt("buildTime");
             elixirToBuild = level1Config.getInt("elixir");
         } catch (JSONException e) {
@@ -94,11 +102,13 @@ public class GoldStorage extends Building {
 
     @Override
     public int getElixirToBuild() {
+        loadConfig();
         return elixirToBuild;
     }
 
     @Override
     public int getTimeToBuild() {
+        loadConfig();
         return timeToBuild;
     }
 }

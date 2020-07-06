@@ -94,14 +94,21 @@ public abstract class Building extends MapObject {
         }
     }
 
+    /**
+     * Update status of building after complete upgrade or build
+     */
     public void updateStatus() {
         if(status == NORMAL_STATUS) {
             return;
         }
         if(finishTime <= Common.currentTimeInSecond()) {
+            if(status == UPGRADING_STATUS) {
+                setLevel(level + 1);
+            }
             status = NORMAL_STATUS;
             finishTime = 0;
         }
+        save();
     }
 
     public void build() {
