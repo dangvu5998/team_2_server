@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class Canon extends Defense {
-    private static final String CANON_CONFIG_PATH = "config/GameStatsConfig/Defense.json";
+    private static final String CANON_CONFIG_PATH = "config/GameStatsConfig/Defence.json";
     private static final String CANON_CONFIG_NAME = "DEF_1";
     private static int timeToBuild;
     private static int goldToBuild;
@@ -46,12 +46,12 @@ public class Canon extends Defense {
         this.level = level;
         loadConfig();
         try {
-            JSONObject currConfig = canonConfig.getJSONObject(CANON_CONFIG_NAME).getJSONObject(String.valueOf(level));
+            JSONObject currConfig = canonConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
             health = currConfig.getInt("hitpoints");
             if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = canonConfig.getJSONObject(CANON_CONFIG_NAME).getJSONObject(String.valueOf(level + 1));
+                JSONObject nextLevelConfig = canonConfig.getJSONObject(String.valueOf(level + 1));
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
