@@ -16,12 +16,11 @@ public class ResponseBuyBuilding extends BaseMsg {
 
     public static final int OBJECT_TYPE_INVALID = -1;
     public static final int NOT_ENOUGH_BUILDERS = -2;
-    public static final int TOWNHALL_NOT_ENOUGH_CONDITION = -3;
+    public static final int FULL_BUILDINGS = -3;
     public static final int BUILDING_OVERLAP = -4;
     public static final int NOT_ENOUGH_GOLD = -5;
     public static final int NOT_ENOUGH_ELIXIR = -6;
     public static final int NOT_ENOUGH_G = -7;
-    public static final int TOO_MUCH_BUILDER_HUT = -8;
 
     public ResponseBuyBuilding(int status, int buildingTypeId, int x, int y, int buildingId) {
         super(CmdDefine.BUY_BUILDING);

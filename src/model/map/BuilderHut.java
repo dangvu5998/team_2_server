@@ -11,8 +11,6 @@ public class BuilderHut extends Building {
     private static JSONObject builderHutConfig;
     private int index = 1;
 
-    public static final int MAX_NUMBER_BUILDER_HUT = 5;
-
     public BuilderHut(int id_, int x_, int y_) {
         super(id_, x_, y_, BUILDER_HUT, 1, NORMAL_STATUS, 0);
     }

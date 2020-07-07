@@ -14,7 +14,7 @@ public class Canon extends Defense {
     public static final int MAX_LEVEL = 17;
 
     public Canon(int id_, int x_, int y_, int level_, int buildingStatus_, int finishTime_) {
-        super(id_, x_, y_, Building.WALL, level_, buildingStatus_, finishTime_);
+        super(id_, x_, y_, Building.CANON, level_, buildingStatus_, finishTime_);
     }
 
     private void loadConfig() {

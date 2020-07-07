@@ -587,12 +587,12 @@ public class GameUser {
         }
         if(buildingTypeId == MapObject.BUILDER_HUT) {
             if(nbOfCurrBuyingBuilding >= 5) {
-                return ResponseBuyBuilding.TOO_MUCH_BUILDER_HUT;
+                return ResponseBuyBuilding.FULL_BUILDINGS;
             }
         }
         Townhall townhall = getTownhallBuilding();
         if(townhall.getMaxNumberBuilding(buildingTypeId) >= nbOfCurrBuyingBuilding) {
-            return ResponseBuyBuilding.TOWNHALL_NOT_ENOUGH_CONDITION;
+            return ResponseBuyBuilding.FULL_BUILDINGS;
         }
         Building building = (Building) MapObject.createMapObject(buildingTypeId, x, y);
         if(building instanceof BuilderHut) {
