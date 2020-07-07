@@ -10,13 +10,10 @@ import cmd.CmdDefine;
 import cmd.RequestConst;
 import cmd.ResponseConst;
 import cmd.receive.mainmap.RequestBuyBuilding;
+import cmd.receive.mainmap.RequestCancelBuilding;
 import cmd.receive.mainmap.RequestMoveBuilding;
-import cmd.send.ResponseBuyBuilding;
-import cmd.send.ResponseLoadMainMap;
-import cmd.send.ResponseMainInfo;
-import cmd.send.ResponseMoveBuilding;
+import cmd.send.*;
 import model.GameUser;
-import model.map.Building;
 import model.map.MapObject;
 
 public class MainMapHandler extends BaseClientRequestHandler implements IServerEventHandler {
@@ -37,6 +34,7 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             case CmdDefine.MAIN_GAME_INFO -> processMainGameInfo(user, gameUser);
             case CmdDefine.MOVE_BUILDING -> processMoveBuilding(user, gameUser, dataCmd);
             case CmdDefine.BUY_BUILDING -> processBuyBuilding(user, gameUser, dataCmd);
+            case CmdDefine.CANCEL_BUILDING -> processCancelBuilding(user, gameUser, dataCmd);
         }
     }
 
@@ -63,7 +61,7 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             int x = requestMoveBuilding.getX();
             int y = requestMoveBuilding.getY();
             if(x < 0 || x >= MapObject.MAP_WIDTH || y < 0 || y >= MapObject.MAP_HEIGHT) {
-                send(new ResponseMoveBuilding(ResponseConst.USER_REQUEST_INVALID, buildingId, x, y), user);
+                send(new ResponseMoveBuilding(ResponseConst.SEMANTIC_INVALID, buildingId, x, y), user);
                 return;
             }
             boolean isMoved = gameUser.moveBuildingById(buildingId, x, y);
@@ -71,7 +69,7 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
                 send(new ResponseMoveBuilding(ResponseConst.OK, buildingId, x, y), user);
             }
             else {
-                send(new ResponseMoveBuilding(ResponseConst.USER_REQUEST_INVALID, buildingId, x, y), user);
+                send(new ResponseMoveBuilding(ResponseConst.SEMANTIC_INVALID, buildingId, x, y), user);
             }
         }
     }
@@ -82,17 +80,32 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             int buildingTypeId = requestBuyBuilding.getBuildingTypeId();
             int x = requestBuyBuilding.getX();
             int y = requestBuyBuilding.getY();
-            try {
-                int buyBuildingCode = gameUser.buyBuilding(buildingTypeId, x, y);
-            if(buyBuildingCode > 0) {
+            int buyBuildingCode = gameUser.buyBuilding(buildingTypeId, x, y);
+            if (buyBuildingCode > 0) {
                 send(new ResponseBuyBuilding(ResponseConst.OK, buildingTypeId, x, y, buyBuildingCode), user);
+            } else {
+                send(new ResponseBuyBuilding(ResponseConst.SEMANTIC_INVALID, buildingTypeId, x, y, buyBuildingCode), user);
             }
-            else {
-                send(new ResponseBuyBuilding(ResponseConst.USER_REQUEST_INVALID, buildingTypeId, x, y, buyBuildingCode), user);
+        }
+        else {
+            send(new ResponseFormatInvalid(dataCmd.getId()), user);
+        }
+    }
+
+    private void processCancelBuilding(User user, GameUser gameUser, DataCmd dataCmd) {
+        RequestCancelBuilding requestCancelBuilding = new RequestCancelBuilding(dataCmd);
+        if(requestCancelBuilding.getStatus() == RequestConst.OK) {
+            int buildingId = requestCancelBuilding.getBuildingId();
+            int cancelCode = gameUser.cancelBuilding(buildingId);
+            if(cancelCode > 0) {
+                send(new ResponseCancelBuilding(ResponseConst.OK, buildingId), user);
+            } else
+            {
+                send(new ResponseCancelBuilding(ResponseConst.SEMANTIC_INVALID, buildingId, cancelCode), user);
             }
-            } catch (Exception e) {
-                CommonHandle.writeErrLog(e);
-            }
+        }
+        else {
+            send(new ResponseFormatInvalid(dataCmd.getId()), user);
         }
     }
 }

@@ -83,6 +83,9 @@ public abstract class Building extends MapObject {
 
     public abstract int getMaxLevel();
 
+    /**
+     * Begin upgrade building
+     */
     public void upgrade() {
         if(level >= getMaxLevel()) {
             return;
@@ -92,6 +95,16 @@ public abstract class Building extends MapObject {
             status = UPGRADING_STATUS;
             finishTime = Common.currentTimeInSecond() + timeToUpgrade;
         }
+        save();
+    }
+
+    /**
+     * Cancel upgrading building
+     */
+    public void cancelUpgrading() {
+        status = NORMAL_STATUS;
+        finishTime = 0;
+        save();
     }
 
     /**

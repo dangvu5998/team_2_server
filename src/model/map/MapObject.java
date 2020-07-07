@@ -232,6 +232,10 @@ public abstract class MapObject {
         }
     }
 
+    public static void removeMapObjectById(int id) {
+        DBBuiltInUtil.delete(collectionName, String.valueOf(id));
+    }
+
     public static MapObject getMapObjectById(int id) {
         String mapObjectStr = DBBuiltInUtil.get(collectionName, String.valueOf(id));
         if(mapObjectStr == null) {

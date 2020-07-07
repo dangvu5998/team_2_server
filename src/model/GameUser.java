@@ -1,6 +1,7 @@
 package model;
 
 import cmd.send.ResponseBuyBuilding;
+import cmd.send.ResponseCancelBuilding;
 import com.google.gson.annotations.Expose;
 import model.map.*;
 import org.json.JSONException;
@@ -486,7 +487,7 @@ public class GameUser {
 
     public void addGold(int amount) {
         if(amount + gold > goldCapacity) {
-            return;
+            setGold(goldCapacity);
         }
         setGold(amount + gold);
     }
@@ -526,7 +527,7 @@ public class GameUser {
 
     public void addElixir(int amount) {
         if(amount + elixir > elixirCapacity) {
-            return;
+            setElixir(elixirCapacity);
         }
         setElixir(elixir + amount);
     }
@@ -569,6 +570,13 @@ public class GameUser {
         }
     }
 
+    /**
+     * Buy new building
+     * @param buildingTypeId building type id of building user need to build
+     * @param x x position
+     * @param y y postion
+     * @return id of building if buy success, error code if buy fail
+     */
     public int buyBuilding(int buildingTypeId, int x, int y) {
         if(!MapObject.isObjectTypeBuilding(buildingTypeId)) {
             return ResponseBuyBuilding.OBJECT_TYPE_INVALID;
@@ -632,6 +640,50 @@ public class GameUser {
         building.save();
         save();
         return building.getId();
+    }
+
+    /**
+     * Cancel upgrading or building building
+     * @param buildingId building id
+     * @return building id if success, otherwise return error code
+     */
+    public int cancelBuilding(int buildingId) {
+        if(!mapObjectIds.contains(buildingId)) {
+            return ResponseCancelBuilding.INVALID_BUILDING_ID;
+        }
+        MapObject mapObject = MapObject.getMapObjectById(buildingId);
+        if(!(mapObject instanceof Building)) {
+            return ResponseCancelBuilding.INVALID_BUILDING_ID;
+        }
+        Building building = (Building) mapObject;
+        if(building.getStatus() == Building.BUILDING_STATUS) {
+            int goldToBuild = building.getGoldToBuild();
+            int elixirToBuild = building.getElixirToBuild();
+
+            // add 1/2 resource of building
+            addGold(goldToBuild / 2);
+            addElixir(elixirToBuild / 2);
+
+            // remove building
+            mapObjectIds.removeIf(mapObjectId -> mapObjectId == buildingId);
+            save();
+            MapObject.removeMapObjectById(buildingId);
+            return buildingId;
+        }
+
+        if(building.getStatus() == Building.UPGRADING_STATUS) {
+            int goldToUpgrade = building.getGoldToUpgrade();
+            int elixirToUpgrade = building.getElixirToUpgrade();
+
+            // add 1/2 resource of building
+            addGold(goldToUpgrade / 2);
+            addElixir(elixirToUpgrade / 2);
+
+            // cancel building upgrading
+            building.cancelUpgrading();
+            return buildingId;
+        }
+        return ResponseCancelBuilding.INVALID_BUILDING_STATUS;
     }
 }
 

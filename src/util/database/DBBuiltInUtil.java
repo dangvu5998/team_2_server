@@ -32,6 +32,16 @@ public class DBBuiltInUtil {
         }
     }
 
+    public static void delete(String collectionName, String key) {
+        String globalKey = ServerUtil.getModelKeyName(collectionName, key);
+        try {
+            DataController.getController().delete(globalKey);
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Error delete " + key + " in " + collectionName);
+        }
+    }
+
     public static Object get(String collectionName, String key, Class c) {
         String globalKey = ServerUtil.getModelKeyName(collectionName, key);
         try {

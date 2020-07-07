@@ -2,8 +2,6 @@ package cmd.send;
 
 import bitzero.server.extensions.data.BaseMsg;
 import cmd.CmdDefine;
-import cmd.RequestConst;
-import model.map.Building;
 
 import java.nio.ByteBuffer;
 
@@ -29,13 +27,6 @@ public class ResponseBuyBuilding extends BaseMsg {
         this.y = y;
         this.buildingId = buildingId;
         this.buildingTypeId = buildingTypeId;
-    }
-
-    public ResponseBuyBuilding(int status, int buildingTypeId, int x, int y) {
-        this(status, buildingTypeId, x, y, -1);
-        if(status == RequestConst.OK) {
-            throw new RuntimeException("Success buy building response need building id");
-        }
     }
 
     @Override
