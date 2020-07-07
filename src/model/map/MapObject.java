@@ -232,11 +232,11 @@ public abstract class MapObject {
         }
     }
 
-    public static void removeMapObjectById(int id) {
+    public static void removeById(int id) {
         DBBuiltInUtil.delete(collectionName, String.valueOf(id));
     }
 
-    public static MapObject getMapObjectById(int id) {
+    public static MapObject getById(int id) {
         String mapObjectStr = DBBuiltInUtil.get(collectionName, String.valueOf(id));
         if(mapObjectStr == null) {
             return null;
@@ -263,10 +263,9 @@ public abstract class MapObject {
             };
             if(mapObject != null) {
                 mapObject.loadExtraInfo();
-                if(mapObject instanceof Building) {
-                    Building building = (Building) mapObject;
-                    building.updateStatus();
-                }
+                mapObject.updateStatus();
+            } else {
+                System.out.println("not handle map object by id" + mapObjectStr);
             }
             return mapObject;
 
@@ -283,6 +282,7 @@ public abstract class MapObject {
             case GOLD_STORAGE -> GoldStorage.createGoldStorage(x, y);
             case ARMY_CAMP -> ArmyCamp.createArmyCamp(x, y);
             case ELIXIR_STORAGE -> ElixirStorage.createElixirStorage(x, y);
+            case ELIXIR_MINE -> ElixirMine.createElixirMine(x, y);
             case CLAN_CASTLE -> ClanCastle.createClanCastle(x, y);
             case BUILDER_HUT -> BuilderHut.createBuilderHut(x, y);
             case GOLD_MINE -> GoldMine.createGoldMine(x, y);
@@ -318,7 +318,7 @@ public abstract class MapObject {
             case ARCHER_TOWER -> ArcherTower.createArcherTower(x, y);
             case BARRACK -> Barrack.createBarrack(x, y);
             case CANON -> Canon.createCanon(x, y);
-//            case WALL -> Wall.c(x, y);
+            case WALL -> Wall.createWall(x, y);
             default -> null;
         };
     }
@@ -331,5 +331,7 @@ public abstract class MapObject {
      * Load extra informations derived from attributes loaded from database
      */
     public abstract void loadExtraInfo();
+
+    public abstract void updateStatus();
 
 }

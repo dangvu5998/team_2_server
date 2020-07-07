@@ -3,6 +3,7 @@ package model.map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
+import util.database.DBBuiltInUtil;
 
 public class Wall extends Building {
     private static final String WALL_CONFIG_PATH = "config/GameStatsConfig/Wall.json";
@@ -20,7 +21,7 @@ public class Wall extends Building {
         }
         wallConfig = Common.loadJSONObjectFromFile(WALL_CONFIG_PATH);
         if (wallConfig == null) {
-            throw new RuntimeException("Cannot load clan castle config");
+            throw new RuntimeException("Cannot load wall config");
         }
     }
 
@@ -46,7 +47,7 @@ public class Wall extends Building {
                 timeToUpgrade = 0;
             }
         } catch (JSONException e) {
-            throw new RuntimeException("Clan castle config is invalid");
+            throw new RuntimeException("Wall config is invalid");
         }
     }
 
@@ -54,4 +55,10 @@ public class Wall extends Building {
     public int getMaxLevel() {
         return MAX_LEVEL;
     }
+
+    public static Wall createWall(int x, int y) {
+        int newId = DBBuiltInUtil.generateId(MapObject.collectionName);
+        return new Wall(newId,  x, y, 1, Building.NORMAL_STATUS, 0);
+    }
+
 }

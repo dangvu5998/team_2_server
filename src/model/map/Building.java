@@ -110,6 +110,7 @@ public abstract class Building extends MapObject {
     /**
      * Update status of building after complete upgrade or build
      */
+    @Override
     public void updateStatus() {
         if(status == NORMAL_STATUS) {
             return;
@@ -122,6 +123,17 @@ public abstract class Building extends MapObject {
             finishTime = 0;
         }
         save();
+    }
+
+    /**
+     * Quick finish build/upgrade building
+     */
+    public void quickFinish() {
+        if(status == NORMAL_STATUS) {
+            return;
+        }
+        finishTime = Common.currentTimeInSecond();
+        updateStatus();
     }
 
     public void build() {

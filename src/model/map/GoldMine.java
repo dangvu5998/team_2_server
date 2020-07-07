@@ -14,8 +14,8 @@ public class GoldMine extends MineBuilding {
     private static int elixirToBuild;
     public static final int MAX_LEVEL = 11;
 
-    public GoldMine(int id_, int x_,int y_, int mapObjectType_, int level_, int buildingStatus_, int finishTime_) {
-        super(id_, x_,y_, mapObjectType_, level_, buildingStatus_, finishTime_);
+    public GoldMine(int id_, int x_,int y_, int level_, int buildingStatus_, int finishTime_) {
+        super(id_, x_,y_, GOLD_MINE, level_, buildingStatus_, finishTime_);
     }
 
     private void loadConfig() {
@@ -31,14 +31,14 @@ public class GoldMine extends MineBuilding {
             goldMineConfig = null;
         }
         if (goldMineConfig == null) {
-            throw new RuntimeException("Cannot load defense config");
+            throw new RuntimeException("Cannot load gold mine config");
         }
         try {
             JSONObject level1Config = goldMineConfig.getJSONObject(String.valueOf(1));
             timeToBuild = level1Config.getInt("buildTime");
             elixirToBuild = level1Config.getInt("elixir");
         } catch (JSONException e) {
-            throw new RuntimeException("Archer tower config is invalid");
+            throw new RuntimeException("Gold mine config is invalid");
         }
     }
 
@@ -61,13 +61,13 @@ public class GoldMine extends MineBuilding {
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
             }
         } catch (JSONException e) {
-            throw new RuntimeException("Archer tower config is invalid");
+            throw new RuntimeException("Gold mine config is invalid");
         }
     }
 
     public static GoldMine createGoldMine(int x, int y) {
         int newId = DBBuiltInUtil.generateId(collectionName);
-        return new GoldMine(newId, x, y, GOLD_MINE, 1, NORMAL_STATUS, 0);
+        return new GoldMine(newId, x, y, 1, NORMAL_STATUS, 0);
     }
 
     @Override

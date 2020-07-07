@@ -9,9 +9,7 @@ import bitzero.util.common.business.CommonHandle;
 import cmd.CmdDefine;
 import cmd.RequestConst;
 import cmd.ResponseConst;
-import cmd.receive.mainmap.RequestBuyBuilding;
-import cmd.receive.mainmap.RequestCancelBuilding;
-import cmd.receive.mainmap.RequestMoveBuilding;
+import cmd.receive.mainmap.*;
 import cmd.send.*;
 import model.GameUser;
 import model.map.MapObject;
@@ -35,6 +33,9 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             case CmdDefine.MOVE_BUILDING -> processMoveBuilding(user, gameUser, dataCmd);
             case CmdDefine.BUY_BUILDING -> processBuyBuilding(user, gameUser, dataCmd);
             case CmdDefine.CANCEL_BUILDING -> processCancelBuilding(user, gameUser, dataCmd);
+            case CmdDefine.UPGRADE_BUILDING -> processUpgradeBuilding(user, gameUser, dataCmd);
+            case CmdDefine.QUICK_FINISH_MAP_OBJECT -> processQuickFinish(user, gameUser, dataCmd);
+            case CmdDefine.REMOVE_OBSTACLE -> processRemoveObstacle(user, gameUser, dataCmd);
         }
     }
 
@@ -108,4 +109,56 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             send(new ResponseFormatInvalid(dataCmd.getId()), user);
         }
     }
+
+    private void processUpgradeBuilding(User user, GameUser gameUser, DataCmd dataCmd) {
+        RequestUpgradeBuilding requestUpgradeBuilding = new RequestUpgradeBuilding(dataCmd);
+        if(requestUpgradeBuilding.getStatus() == ResponseConst.OK) {
+            int buildingId = requestUpgradeBuilding.getBuildingId();
+            int upgradeCode = gameUser.upgradeBuilding(buildingId);
+            if(upgradeCode > 0) {
+                send(new ResponseUpgradeBuilding(ResponseConst.OK, buildingId), user);
+            }
+            else {
+                send(new ResponseUpgradeBuilding(ResponseConst.SEMANTIC_INVALID, buildingId, upgradeCode), user);
+            }
+        }
+        else {
+            send(new ResponseFormatInvalid(dataCmd.getId()), user);
+        }
+    }
+
+    private void processQuickFinish(User user, GameUser gameUser, DataCmd dataCmd) {
+        RequestQuickFinish requestQuickFinish = new RequestQuickFinish(dataCmd);
+        if (requestQuickFinish.getStatus() == ResponseConst.OK) {
+            int mapObjId = requestQuickFinish.getMapObjId();
+            int gToQF = requestQuickFinish.getgToQF();
+            int quickFinishCode = gameUser.quickFinishMapObject(mapObjId, gToQF);
+            if(quickFinishCode > 0) {
+                send(new ResponseQuickFinish(ResponseConst.OK, mapObjId), user);
+            }
+            else {
+                send(new ResponseQuickFinish(ResponseConst.SEMANTIC_INVALID, mapObjId, quickFinishCode), user);
+            }
+        } else {
+            send(new ResponseFormatInvalid(dataCmd.getId()), user);
+        }
+    }
+
+    private void processRemoveObstacle(User user, GameUser gameUser, DataCmd dataCmd) {
+        RequestRemoveObstacle requestRemoveObstacle = new RequestRemoveObstacle(dataCmd);
+        if(requestRemoveObstacle.getStatus() == ResponseConst.OK) {
+            int mapObjId = requestRemoveObstacle.getMapObjId();
+            int resCode = gameUser.removeObstacle(mapObjId);
+            if(resCode > 0) {
+                send(new ResponseRemoveObstacle(ResponseConst.OK, mapObjId), user);
+            }
+            else {
+                send(new ResponseRemoveObstacle(ResponseConst.SEMANTIC_INVALID, mapObjId, resCode), user);
+            }
+        }
+        else {
+            send(new ResponseFormatInvalid(dataCmd.getId()), user);
+        }
+    }
+
 }

@@ -1,7 +1,6 @@
 package model;
 
-import cmd.send.ResponseBuyBuilding;
-import cmd.send.ResponseCancelBuilding;
+import cmd.send.*;
 import com.google.gson.annotations.Expose;
 import model.map.*;
 import org.json.JSONException;
@@ -354,15 +353,35 @@ public class GameUser {
 
     public ArrayList<MapObject> getAllMapObjects() {
         ArrayList<MapObject> result = new ArrayList<>();
+        ArrayList<Integer> removedObstacles = new ArrayList<>();
+
+        boolean mapObjIdsModified = false;
         for(int mapObjectId: mapObjectIds) {
-            MapObject mapObj = MapObject.getMapObjectById(mapObjectId);
+            MapObject mapObj = MapObject.getById(mapObjectId);
+            // skip removed obstacle
+            if(mapObj instanceof Obstacle) {
+                Obstacle obstacle = (Obstacle) mapObj;
+                if(obstacle.getStatus() == Obstacle.REMOVED_STATUS) {
+                    removedObstacles.add(mapObjectId);
+                    mapObjIdsModified = true;
+                    continue;
+                }
+            }
             if(mapObj != null) {
-                result.add(MapObject.getMapObjectById(mapObjectId));
+                result.add(MapObject.getById(mapObjectId));
             } else {
                 // TODO: warning mapObjId of user is invalid
                 System.out.println("Map object id " + mapObjectId + " is invalid!");
             }
         }
+        if(mapObjIdsModified) {
+            mapObjectIds.removeIf(removedObstacles::contains);
+            save();
+            for(int removeId: removedObstacles) {
+                MapObject.removeById(removeId);
+            }
+        }
+
         return result;
     }
 
@@ -427,7 +446,7 @@ public class GameUser {
     }
 
     public boolean moveBuildingById(int buildingId, int x, int y) {
-        MapObject mapObject = MapObject.getMapObjectById(buildingId);
+        MapObject mapObject = MapObject.getById(buildingId);
         if(mapObject instanceof Building) {
             return moveBuilding((Building) mapObject, x, y);
         }
@@ -651,7 +670,7 @@ public class GameUser {
         if(!mapObjectIds.contains(buildingId)) {
             return ResponseCancelBuilding.INVALID_BUILDING_ID;
         }
-        MapObject mapObject = MapObject.getMapObjectById(buildingId);
+        MapObject mapObject = MapObject.getById(buildingId);
         if(!(mapObject instanceof Building)) {
             return ResponseCancelBuilding.INVALID_BUILDING_ID;
         }
@@ -667,7 +686,7 @@ public class GameUser {
             // remove building
             mapObjectIds.removeIf(mapObjectId -> mapObjectId == buildingId);
             save();
-            MapObject.removeMapObjectById(buildingId);
+            MapObject.removeById(buildingId);
             return buildingId;
         }
 
@@ -684,6 +703,105 @@ public class GameUser {
             return buildingId;
         }
         return ResponseCancelBuilding.INVALID_BUILDING_STATUS;
+    }
+
+    public int upgradeBuilding(int buildingId) {
+        if(!mapObjectIds.contains(buildingId)) {
+            return ResponseUpgradeBuilding.INVALID_BUILDING_ID;
+        }
+        MapObject mapObject = MapObject.getById(buildingId);
+        if(!(mapObject instanceof Building)) {
+            return ResponseUpgradeBuilding.INVALID_BUILDING_ID;
+        }
+        Building building = (Building) mapObject;
+
+        if(building.getStatus() == Building.NORMAL_STATUS) {
+
+            int goldToUpgrade = building.getGoldToUpgrade();
+            int elixirToUpgrade = building.getElixirToUpgrade();
+            if(goldToUpgrade < gold || elixirToUpgrade < elixir) {
+                return ResponseUpgradeBuilding.NOT_ENOUGH_RESOURCE;
+            }
+            if(nbOfAvaiBuilder <= 0) {
+                return ResponseUpgradeBuilding.NOT_ENOUGH_BUILDERS;
+            }
+
+            // deduct resources and upgrade building
+            deductGold(goldToUpgrade);
+            deductElixir(elixirToUpgrade);
+            building.upgrade();
+
+            return buildingId;
+        }
+        return ResponseUpgradeBuilding.INVALID_BUILDING_STATUS;
+    }
+
+    /**
+     * quick finish remove obstacle, build/upgrade building
+     * @param mapObjId id of map object
+     * @param gToQuickFinish g to quick finish sent from client
+     * @return id of map object, otherwise return error code
+     */
+    public int quickFinishMapObject(int mapObjId, int gToQuickFinish) {
+        if(!mapObjectIds.contains(mapObjId)) {
+            return ResponseQuickFinish.INVALID_MAP_OBJECT;
+        }
+        MapObject mapObject = MapObject.getById(mapObjId);
+        if(mapObject instanceof Obstacle) {
+            // TODO: handle obstacle
+            return -1000;
+        }
+        if(mapObject instanceof Building) {
+            Building building = (Building) mapObject;
+            if(building.getStatus() == Building.NORMAL_STATUS) {
+                return ResponseQuickFinish.INVALID_MAP_OBJECT_STATUS;
+            }
+            if(gToQuickFinish > g) {
+                return ResponseQuickFinish.NOT_ENOUGH_G;
+            }
+            if(building.getStatus() == Building.BUILDING_STATUS ||
+                    building.getStatus() == Building.UPGRADING_STATUS) {
+                int finishTime = building.getFinishTime();
+                int gToQuickFinishValidate = ResourceExchange.timeToG(finishTime - Common.currentTimeInSecond());
+                if(gToQuickFinishValidate > gToQuickFinish) {
+                    return ResponseQuickFinish.INVALID_G;
+                }
+                building.quickFinish();
+                g -= gToQuickFinish;
+                save();
+                return mapObjId;
+            }
+        }
+        return ResponseQuickFinish.INVALID_MAP_OBJECT;
+    }
+
+    public int removeObstacle(int obstacleId) {
+        if(!mapObjectIds.contains(obstacleId)) {
+            return ResponseRemoveObstacle.INVALID_MAP_OBJ_ID;
+        }
+        MapObject mapObject = MapObject.getById(obstacleId);
+        if(mapObject instanceof Obstacle) {
+            Obstacle obstacle = (Obstacle) mapObject;
+            if(obstacle.getStatus() == Obstacle.NORMAL_STATUS) {
+                if(nbOfAvaiBuilder <= 0) {
+                    return ResponseRemoveObstacle.NOT_ENOUGH_BUILDER;
+                }
+                int goldToRemove = obstacle.getGoldToRemove();
+                int elixirToRemove = obstacle.getElixirToRemove();
+                if(gold < goldToRemove || elixir < elixirToRemove) {
+                    return ResponseRemoveObstacle.NOT_ENOUGH_RESOURCES;
+                }
+
+                // deduct resource and remove obstacle
+                deductGold(goldToRemove);
+                deductElixir(elixirToRemove);
+                obstacle.remove();
+                return obstacleId;
+            } else {
+                return ResponseRemoveObstacle.INVALID_MAP_OBJ_STATUS;
+            }
+        }
+        return ResponseRemoveObstacle.INVALID_MAP_OBJ_ID;
     }
 }
 

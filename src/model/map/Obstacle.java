@@ -11,13 +11,14 @@ public class Obstacle extends MapObject {
     protected int status;
     @Expose
     protected int finishTime;
-    protected int buildTime;
+    protected int timeToRemove;
     protected int goldToRemove;
     protected int elixirToRemove;
     protected int exp;
 
     public static final int NORMAL_STATUS = 0;
     public static final int REMOVING_STATUS = 1;
+    public static final int REMOVED_STATUS = 2;
     private static final String OBSTACLE_CONFIG_PATH = "config/GameStatsConfig/Obstacle.json";
 
     private static JSONObject obtacleConfig;
@@ -33,6 +34,9 @@ public class Obstacle extends MapObject {
             return;
         }
         obtacleConfig = Common.loadJSONObjectFromFile(OBSTACLE_CONFIG_PATH);
+        if(obtacleConfig == null) {
+            throw new RuntimeException("Cannot load obstacle config");
+        }
     }
 
     public static Obstacle createObtacle(int objType, int x, int y) {
@@ -85,12 +89,37 @@ public class Obstacle extends MapObject {
             JSONObject currConfig = obtacleConfig.getJSONObject(obtacleConfigName).getJSONObject("1");
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            buildTime = currConfig.getInt("buildTime");
+            timeToRemove = currConfig.getInt("buildTime");
             elixirToRemove = currConfig.getInt("elixir");
             goldToRemove = currConfig.getInt("gold");
             exp = currConfig.getInt("exp");
         } catch (JSONException e) {
             throw new RuntimeException("obtacle config is invalid");
         }
+    }
+
+    @Override
+    public void updateStatus() {
+        if(status == REMOVING_STATUS && finishTime <= Common.currentTimeInSecond()) {
+            status = REMOVED_STATUS;
+            save();
+        }
+    }
+
+    public void remove() {
+        if(status == NORMAL_STATUS) {
+            status = REMOVING_STATUS;
+            finishTime = Common.currentTimeInSecond() + timeToRemove;
+            save();
+        }
+
+    }
+
+    public int getGoldToRemove() {
+        return goldToRemove;
+    }
+
+    public int getElixirToRemove() {
+        return elixirToRemove;
     }
 }
