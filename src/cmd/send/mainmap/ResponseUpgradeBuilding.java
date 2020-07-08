@@ -1,26 +1,28 @@
-package cmd.send;
+package cmd.send.mainmap;
 
 import bitzero.server.extensions.data.BaseMsg;
 import cmd.CmdDefine;
 
 import java.nio.ByteBuffer;
 
-public class ResponseCancelBuilding extends BaseMsg {
+public class ResponseUpgradeBuilding extends BaseMsg {
     private final int status;
     private final int buildingId;
     private final int error;
 
     public static final int INVALID_BUILDING_ID = -1;
     public static final int INVALID_BUILDING_STATUS = -2;
+    public static final int NOT_ENOUGH_RESOURCE = -3;
+    public static final int NOT_ENOUGH_BUILDERS = -4;
     public static final int NO_ERROR = 0;
-    public ResponseCancelBuilding(int status, int buildingId, int error) {
-        super(CmdDefine.CANCEL_BUILDING);
+    public ResponseUpgradeBuilding(int status, int buildingId, int error) {
+        super(CmdDefine.UPGRADE_BUILDING);
         this.status = status;
         this.buildingId = buildingId;
         this.error = error;
     }
 
-    public ResponseCancelBuilding(int status, int buildingId) {
+    public ResponseUpgradeBuilding(int status, int buildingId) {
         this(status, buildingId, NO_ERROR);
     }
 

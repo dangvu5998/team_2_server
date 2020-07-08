@@ -11,6 +11,7 @@ import cmd.RequestConst;
 import cmd.ResponseConst;
 import cmd.receive.mainmap.*;
 import cmd.send.*;
+import cmd.send.mainmap.*;
 import model.GameUser;
 import model.map.MapObject;
 
@@ -28,14 +29,29 @@ public class MainMapHandler extends BaseClientRequestHandler implements IServerE
             return;
         }
         switch (dataCmd.getId()) {
-            case CmdDefine.LOAD_MAIN_MAP -> processLoadMainMap(user, gameUser);
-            case CmdDefine.MAIN_GAME_INFO -> processMainGameInfo(user, gameUser);
-            case CmdDefine.MOVE_BUILDING -> processMoveBuilding(user, gameUser, dataCmd);
-            case CmdDefine.BUY_BUILDING -> processBuyBuilding(user, gameUser, dataCmd);
-            case CmdDefine.CANCEL_BUILDING -> processCancelBuilding(user, gameUser, dataCmd);
-            case CmdDefine.UPGRADE_BUILDING -> processUpgradeBuilding(user, gameUser, dataCmd);
-            case CmdDefine.QUICK_FINISH_MAP_OBJECT -> processQuickFinish(user, gameUser, dataCmd);
-            case CmdDefine.REMOVE_OBSTACLE -> processRemoveObstacle(user, gameUser, dataCmd);
+            case CmdDefine.LOAD_MAIN_MAP:
+                processLoadMainMap(user, gameUser);
+                break;
+            case CmdDefine.MAIN_GAME_INFO:
+                processMainGameInfo(user, gameUser);
+                break;
+            case CmdDefine.MOVE_BUILDING:
+                processMoveBuilding(user, gameUser, dataCmd);
+                break;
+            case CmdDefine.BUY_BUILDING:
+                processBuyBuilding(user, gameUser, dataCmd);
+                break;
+            case CmdDefine.CANCEL_BUILDING:
+                processCancelBuilding(user, gameUser, dataCmd);
+                break;
+            case CmdDefine.UPGRADE_BUILDING:
+                processUpgradeBuilding(user, gameUser, dataCmd);
+                break;
+            case CmdDefine.QUICK_FINISH_MAP_OBJECT:
+                processQuickFinish(user, gameUser, dataCmd);
+                break;
+            case CmdDefine.REMOVE_OBSTACLE:
+                processRemoveObstacle(user, gameUser, dataCmd);
         }
     }
 

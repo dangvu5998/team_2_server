@@ -15,6 +15,7 @@ import bitzero.util.datacontroller.business.DataController;
 import bitzero.util.socialcontroller.bean.UserInfo;
 
 import event.handler.MainMapHandler;
+import event.handler.ResourceHandler;
 import org.json.JSONObject;
 
 import cmd.receive.authen.RequestLogin;
@@ -48,6 +49,7 @@ public class ThoiloanExtension extends BZExtension {
 //        addEventHandler(BZEventType.USER_DISCONNECT, LogoutHandler.class);
 
         addRequestHandler(MainMapHandler.MAIN_MAP_IDS, MainMapHandler.class);
+        addRequestHandler(ResourceHandler.RESOURCE_IDS, ResourceHandler.class);
     }
 
     @Override

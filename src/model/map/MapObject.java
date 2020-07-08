@@ -5,10 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import util.database.DBBuiltInUtil;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class MapObject {
 
@@ -86,95 +83,100 @@ public abstract class MapObject {
     public static final int MAP_WIDTH = 40;
     public static final int MAP_HEIGHT = 40;
 
-    public static final Map<String, Integer> MAP_OBJ_CONFIG_NAME_TO_ID = Map.ofEntries(
-            Map.entry("AMC_1", ARMY_CAMP),
-            Map.entry("BAR_2", BARRACK),
-            Map.entry("BDH_1", BUILDER_HUT),
-            Map.entry("CLC_1", CLAN_CASTLE),
-            Map.entry("DEF_2", ARCHER_TOWER),
-            Map.entry("DEF_5", AIR_DEFENSE),
-            Map.entry("DEF_1", CANON),
-            Map.entry("RES_2", ELIXIR_MINE),
-            Map.entry("STO_2", ELIXIR_STORAGE),
-            Map.entry("LAB_1", LABORATORY),
-            Map.entry("DEF_3", TREBUCHET),
-            Map.entry("TOW_1", TOWNHALL),
-            Map.entry("WAL_1", WALL),
-            Map.entry("OBS_1", OBSTACLE_1),
-            Map.entry("OBS_2", OBSTACLE_2),
-            Map.entry("OBS_3", OBSTACLE_3),
-            Map.entry("OBS_4", OBSTACLE_4),
-            Map.entry("OBS_5", OBSTACLE_5),
-            Map.entry("OBS_6", OBSTACLE_6),
-            Map.entry("OBS_7", OBSTACLE_7),
-            Map.entry("OBS_8", OBSTACLE_8),
-            Map.entry("OBS_9", OBSTACLE_9),
-            Map.entry("OBS_10", OBSTACLE_10),
-            Map.entry("OBS_11", OBSTACLE_11),
-            Map.entry("OBS_12", OBSTACLE_12),
-            Map.entry("OBS_14", OBSTACLE_14),
-            Map.entry("OBS_15", OBSTACLE_15),
-            Map.entry("OBS_16", OBSTACLE_16),
-            Map.entry("OBS_17", OBSTACLE_17),
-            Map.entry("OBS_18", OBSTACLE_18),
-            Map.entry("OBS_19", OBSTACLE_19),
-            Map.entry("OBS_20", OBSTACLE_20),
-            Map.entry("OBS_21", OBSTACLE_21),
-            Map.entry("OBS_22", OBSTACLE_22),
-            Map.entry("OBS_23", OBSTACLE_23),
-            Map.entry("OBS_24", OBSTACLE_24),
-            Map.entry("OBS_25", OBSTACLE_25),
-            Map.entry("OBS_26", OBSTACLE_26),
-            Map.entry("OBS_27", OBSTACLE_27),
-            Map.entry("OBS_13", OBSTACLE_13),
-            Map.entry("STO_1", GOLD_STORAGE),
-            Map.entry("RES_1", GOLD_MINE)
-    );
+    public static final Map<String, Integer> MAP_OBJ_CONFIG_NAME_TO_ID = new HashMap<String, Integer>() {
+        {
+            put("AMC_1", MapObject.ARMY_CAMP);
+            put("BAR_2", BARRACK);
+            put("BDH_1", BUILDER_HUT);
+            put("CLC_1", CLAN_CASTLE);
+            put("DEF_2", ARCHER_TOWER);
+            put("DEF_5", AIR_DEFENSE);
+            put("DEF_1", CANON);
+            put("RES_2", ELIXIR_MINE);
+            put("STO_2", ELIXIR_STORAGE);
+            put("LAB_1", LABORATORY);
+            put("DEF_3", TREBUCHET);
+            put("TOW_1", TOWNHALL);
+            put("WAL_1", WALL);
+            put("OBS_1", OBSTACLE_1);
+            put("OBS_2", OBSTACLE_2);
+            put("OBS_3", OBSTACLE_3);
+            put("OBS_4", OBSTACLE_4);
+            put("OBS_5", OBSTACLE_5);
+            put("OBS_6", OBSTACLE_6);
+            put("OBS_7", OBSTACLE_7);
+            put("OBS_8", OBSTACLE_8);
+            put("OBS_9", OBSTACLE_9);
+            put("OBS_10", OBSTACLE_10);
+            put("OBS_11", OBSTACLE_11);
+            put("OBS_12", OBSTACLE_12);
+            put("OBS_14", OBSTACLE_14);
+            put("OBS_15", OBSTACLE_15);
+            put("OBS_16", OBSTACLE_16);
+            put("OBS_17", OBSTACLE_17);
+            put("OBS_18", OBSTACLE_18);
+            put("OBS_19", OBSTACLE_19);
+            put("OBS_20", OBSTACLE_20);
+            put("OBS_21", OBSTACLE_21);
+            put("OBS_22", OBSTACLE_22);
+            put("OBS_23", OBSTACLE_23);
+            put("OBS_24", OBSTACLE_24);
+            put("OBS_25", OBSTACLE_25);
+            put("OBS_26", OBSTACLE_26);
+            put("OBS_27", OBSTACLE_27);
+            put("OBS_13", OBSTACLE_13);
+            put("STO_1", GOLD_STORAGE);
+            put("RES_1", GOLD_MINE);
+        }
+    };
 
-    public static final Map<Integer, String> MAP_ID_OBJ_TO_CONFIG_NAME = Map.ofEntries(
-            Map.entry(ARMY_CAMP, "AMC_1"),
-            Map.entry(BARRACK, "BAR_2"),
-            Map.entry(BUILDER_HUT, "BDH_1"),
-            Map.entry(CLAN_CASTLE, "CLC_1"),
-            Map.entry(ARCHER_TOWER, "DEF_2"),
-            Map.entry(AIR_DEFENSE, "DEF_5"),
-            Map.entry(CANON, "DEF_1"),
-            Map.entry(ELIXIR_MINE, "RES_2"),
-            Map.entry(ELIXIR_STORAGE, "STO_2"),
-            Map.entry(LABORATORY, "LAB_1"),
-            Map.entry(TREBUCHET, "DEF_3"),
-            Map.entry(TOWNHALL, "TOW_1"),
-            Map.entry(WALL, "WAL_1"),
-            Map.entry(OBSTACLE_1, "OBS_1"),
-            Map.entry(OBSTACLE_2, "OBS_2"),
-            Map.entry(OBSTACLE_3, "OBS_3"),
-            Map.entry(OBSTACLE_4, "OBS_4"),
-            Map.entry(OBSTACLE_5, "OBS_5"),
-            Map.entry(OBSTACLE_6, "OBS_6"),
-            Map.entry(OBSTACLE_7, "OBS_7"),
-            Map.entry(OBSTACLE_8, "OBS_8"),
-            Map.entry(OBSTACLE_9, "OBS_9"),
-            Map.entry(OBSTACLE_10, "OBS_10"),
-            Map.entry(OBSTACLE_11, "OBS_11"),
-            Map.entry(OBSTACLE_12, "OBS_12"),
-            Map.entry(OBSTACLE_14, "OBS_14"),
-            Map.entry(OBSTACLE_15, "OBS_15"),
-            Map.entry(OBSTACLE_16, "OBS_16"),
-            Map.entry(OBSTACLE_17, "OBS_17"),
-            Map.entry(OBSTACLE_18, "OBS_18"),
-            Map.entry(OBSTACLE_19, "OBS_19"),
-            Map.entry(OBSTACLE_20, "OBS_20"),
-            Map.entry(OBSTACLE_21, "OBS_21"),
-            Map.entry(OBSTACLE_22, "OBS_22"),
-            Map.entry(OBSTACLE_23, "OBS_23"),
-            Map.entry(OBSTACLE_24, "OBS_24"),
-            Map.entry(OBSTACLE_25, "OBS_25"),
-            Map.entry(OBSTACLE_26, "OBS_26"),
-            Map.entry(OBSTACLE_27, "OBS_27"),
-            Map.entry(OBSTACLE_13, "OBS_13"),
-            Map.entry(GOLD_STORAGE, "STO_1"),
-            Map.entry(GOLD_MINE, "RES_1")
-    );
+    public static final Map<Integer, String> MAP_ID_OBJ_TO_CONFIG_NAME = new HashMap<Integer, String>() {
+        {
+            put(ARMY_CAMP, "AMC_1");
+            put(BARRACK, "BAR_2");
+            put(BUILDER_HUT, "BDH_1");
+            put(CLAN_CASTLE, "CLC_1");
+            put(ARCHER_TOWER, "DEF_2");
+            put(AIR_DEFENSE, "DEF_5");
+            put(CANON, "DEF_1");
+            put(ELIXIR_MINE, "RES_2");
+            put(ELIXIR_STORAGE, "STO_2");
+            put(LABORATORY, "LAB_1");
+            put(TREBUCHET, "DEF_3");
+            put(TOWNHALL, "TOW_1");
+            put(WALL, "WAL_1");
+            put(OBSTACLE_1, "OBS_1");
+            put(OBSTACLE_2, "OBS_2");
+            put(OBSTACLE_3, "OBS_3");
+            put(OBSTACLE_4, "OBS_4");
+            put(OBSTACLE_5, "OBS_5");
+            put(OBSTACLE_6, "OBS_6");
+            put(OBSTACLE_7, "OBS_7");
+            put(OBSTACLE_8, "OBS_8");
+            put(OBSTACLE_9, "OBS_9");
+            put(OBSTACLE_10, "OBS_10");
+            put(OBSTACLE_11, "OBS_11");
+            put(OBSTACLE_12, "OBS_12");
+            put(OBSTACLE_14, "OBS_14");
+            put(OBSTACLE_15, "OBS_15");
+            put(OBSTACLE_16, "OBS_16");
+            put(OBSTACLE_17, "OBS_17");
+            put(OBSTACLE_18, "OBS_18");
+            put(OBSTACLE_19, "OBS_19");
+            put(OBSTACLE_20, "OBS_20");
+            put(OBSTACLE_21, "OBS_21");
+            put(OBSTACLE_22, "OBS_22");
+            put(OBSTACLE_23, "OBS_23");
+            put(OBSTACLE_24, "OBS_24");
+            put(OBSTACLE_25, "OBS_25");
+            put(OBSTACLE_26, "OBS_26");
+            put(OBSTACLE_27, "OBS_27");
+            put(OBSTACLE_13, "OBS_13");
+            put(GOLD_STORAGE, "STO_1");
+            put(GOLD_MINE, "RES_1");
+        }
+    };
+
     protected static final String collectionName = "MapObject";
 
     public MapObject(int id_, int x_, int y_, int objectType_) {
@@ -244,22 +246,76 @@ public abstract class MapObject {
         try {
             JSONObject mapObjectJson = new JSONObject(mapObjectStr);
             int objectType = mapObjectJson.getInt("objectType");
-            MapObject mapObject = switch (objectType) {
-                case TOWNHALL -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Townhall.class);
-                case ARMY_CAMP -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ArmyCamp.class);
-                case GOLD_STORAGE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, GoldStorage.class);
-                case GOLD_MINE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, GoldMine.class);
-                case ELIXIR_STORAGE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ElixirStorage.class);
-                case CLAN_CASTLE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ClanCastle.class);
-                case BUILDER_HUT -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, BuilderHut.class);
-                case OBSTACLE_1, OBSTACLE_2, OBSTACLE_3, OBSTACLE_4, OBSTACLE_5, OBSTACLE_6, OBSTACLE_7, OBSTACLE_8, OBSTACLE_9, OBSTACLE_10, OBSTACLE_11, OBSTACLE_12, OBSTACLE_13, OBSTACLE_14, OBSTACLE_15, OBSTACLE_16, OBSTACLE_17, OBSTACLE_18, OBSTACLE_19, OBSTACLE_20, OBSTACLE_21, OBSTACLE_22, OBSTACLE_23, OBSTACLE_24, OBSTACLE_25, OBSTACLE_26, OBSTACLE_27 -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Obstacle.class);
-                case CANON -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Canon.class);
-                case BARRACK -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Barrack.class);
-                case ARCHER_TOWER -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ArcherTower.class);
-                case AIR_DEFENSE -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, AirDefense.class);
-                case WALL -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Wall.class);
-                case TREBUCHET -> DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Trebuchet.class);
-                default -> null;
+            MapObject mapObject = null;
+            switch (objectType) {
+                case TOWNHALL:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Townhall.class);
+                    break;
+                case ARMY_CAMP:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ArmyCamp.class);
+                    break;
+                case GOLD_STORAGE:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, GoldStorage.class);
+                    break;
+                case GOLD_MINE:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, GoldMine.class);
+                    break;
+                case ELIXIR_STORAGE:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ElixirStorage.class);
+                    break;
+                case CLAN_CASTLE:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ClanCastle.class);
+                    break;
+                case BUILDER_HUT:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, BuilderHut.class);
+                    break;
+                case OBSTACLE_1:
+                case OBSTACLE_2:
+                case OBSTACLE_3:
+                case OBSTACLE_4:
+                case OBSTACLE_5:
+                case OBSTACLE_6:
+                case OBSTACLE_7:
+                case OBSTACLE_8:
+                case OBSTACLE_9:
+                case OBSTACLE_10:
+                case OBSTACLE_11:
+                case OBSTACLE_12:
+                case OBSTACLE_13:
+                case OBSTACLE_14:
+                case OBSTACLE_15:
+                case OBSTACLE_16:
+                case OBSTACLE_17:
+                case OBSTACLE_18:
+                case OBSTACLE_19:
+                case OBSTACLE_20:
+                case OBSTACLE_21:
+                case OBSTACLE_22:
+                case OBSTACLE_23:
+                case OBSTACLE_24:
+                case OBSTACLE_25:
+                case OBSTACLE_26:
+                case OBSTACLE_27:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Obstacle.class);
+                    break;
+                case CANON:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Canon.class);
+                    break;
+                case BARRACK:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Barrack.class);
+                    break;
+                case ARCHER_TOWER:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ArcherTower.class);
+                    break;
+                case AIR_DEFENSE:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, AirDefense.class);
+                    break;
+                case WALL:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Wall.class);
+                    break;
+                case TREBUCHET:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Trebuchet.class);
+                    break;
             };
             if(mapObject != null) {
                 mapObject.loadExtraInfo();
@@ -277,50 +333,64 @@ public abstract class MapObject {
     }
 
     public static MapObject createMapObject(int mapObjectType, int x, int y) {
-        return switch (mapObjectType) {
-            case TOWNHALL -> Townhall.createTownhall(x, y);
-            case GOLD_STORAGE -> GoldStorage.createGoldStorage(x, y);
-            case ARMY_CAMP -> ArmyCamp.createArmyCamp(x, y);
-            case ELIXIR_STORAGE -> ElixirStorage.createElixirStorage(x, y);
-            case ELIXIR_MINE -> ElixirMine.createElixirMine(x, y);
-            case CLAN_CASTLE -> ClanCastle.createClanCastle(x, y);
-            case BUILDER_HUT -> BuilderHut.createBuilderHut(x, y);
-            case GOLD_MINE -> GoldMine.createGoldMine(x, y);
-            case
-                    OBSTACLE_1,
-                    OBSTACLE_2,
-                    OBSTACLE_3,
-                    OBSTACLE_4,
-                    OBSTACLE_5,
-                    OBSTACLE_6,
-                    OBSTACLE_7,
-                    OBSTACLE_8,
-                    OBSTACLE_9,
-                    OBSTACLE_10,
-                    OBSTACLE_11,
-                    OBSTACLE_12,
-                    OBSTACLE_13,
-                    OBSTACLE_14,
-                    OBSTACLE_15,
-                    OBSTACLE_16,
-                    OBSTACLE_17,
-                    OBSTACLE_18,
-                    OBSTACLE_19,
-                    OBSTACLE_20,
-                    OBSTACLE_21,
-                    OBSTACLE_22,
-                    OBSTACLE_23,
-                    OBSTACLE_24,
-                    OBSTACLE_25,
-                    OBSTACLE_26,
-                    OBSTACLE_27 -> Obstacle.createObtacle(mapObjectType, x, y);
-            case AIR_DEFENSE -> AirDefense.createAirDefense(x, y);
-            case ARCHER_TOWER -> ArcherTower.createArcherTower(x, y);
-            case BARRACK -> Barrack.createBarrack(x, y);
-            case CANON -> Canon.createCanon(x, y);
-            case WALL -> Wall.createWall(x, y);
-            default -> null;
-        };
+        switch (mapObjectType) {
+            case TOWNHALL:
+                return Townhall.createTownhall(x, y);
+            case GOLD_STORAGE:
+                return GoldStorage.createGoldStorage(x, y);
+            case ARMY_CAMP:
+                return ArmyCamp.createArmyCamp(x, y);
+            case ELIXIR_STORAGE:
+                return ElixirStorage.createElixirStorage(x, y);
+            case ELIXIR_MINE:
+                return ElixirMine.createElixirMine(x, y);
+            case CLAN_CASTLE:
+                return ClanCastle.createClanCastle(x, y);
+            case BUILDER_HUT:
+                return BuilderHut.createBuilderHut(x, y);
+            case GOLD_MINE:
+                return GoldMine.createGoldMine(x, y);
+            case OBSTACLE_1:
+            case OBSTACLE_2:
+            case OBSTACLE_3:
+            case OBSTACLE_4:
+            case OBSTACLE_5:
+            case OBSTACLE_6:
+            case OBSTACLE_7:
+            case OBSTACLE_8:
+            case OBSTACLE_9:
+            case OBSTACLE_10:
+            case OBSTACLE_11:
+            case OBSTACLE_12:
+            case OBSTACLE_13:
+            case OBSTACLE_14:
+            case OBSTACLE_15:
+            case OBSTACLE_16:
+            case OBSTACLE_17:
+            case OBSTACLE_18:
+            case OBSTACLE_19:
+            case OBSTACLE_20:
+            case OBSTACLE_21:
+            case OBSTACLE_22:
+            case OBSTACLE_23:
+            case OBSTACLE_24:
+            case OBSTACLE_25:
+            case OBSTACLE_26:
+            case OBSTACLE_27:
+                return Obstacle.createObtacle(mapObjectType, x, y);
+            case AIR_DEFENSE:
+                return AirDefense.createAirDefense(x, y);
+            case ARCHER_TOWER:
+                return ArcherTower.createArcherTower(x, y);
+            case BARRACK:
+                return Barrack.createBarrack(x, y);
+            case CANON:
+                return Canon.createCanon(x, y);
+            case WALL:
+                return Wall.createWall(x, y);
+        }
+        ;
+        return null;
     }
 
     public static boolean isObjectTypeBuilding(int id) {

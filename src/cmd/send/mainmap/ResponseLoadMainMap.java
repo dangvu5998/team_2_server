@@ -1,4 +1,4 @@
-package cmd.send;
+package cmd.send.mainmap;
 
 import bitzero.server.extensions.data.BaseMsg;
 import cmd.CmdDefine;

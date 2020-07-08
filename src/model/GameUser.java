@@ -1,6 +1,6 @@
 package model;
 
-import cmd.send.*;
+import cmd.send.mainmap.*;
 import com.google.gson.annotations.Expose;
 import model.map.*;
 import org.json.JSONException;
