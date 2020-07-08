@@ -1,13 +1,12 @@
 package service;
 
-import bitzero.server.BitZeroServer;
 import bitzero.server.core.BZEventParam;
 import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.DataCmd;
-import extension.ThoiloanExtension;
+import extension.FresherExtension;
 
 
 
@@ -30,8 +29,8 @@ public class UserHandler extends BaseClientRequestHandler {
          */
     }
 
-    private ThoiloanExtension getExtension() {
-        return (ThoiloanExtension) getParentExtension();
+    private FresherExtension getExtension() {
+        return (FresherExtension) getParentExtension();
     }
 
     public void handleServerEvent(IBZEvent ibzevent) {

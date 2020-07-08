@@ -22,12 +22,12 @@ import cmd.receive.authen.RequestLogin;
 import model.GameUser;
 
 
-public class ThoiloanExtension extends BZExtension {
+public class FresherExtension extends BZExtension {
     private static String SERVERS_INFO =
         ConfigHandle.instance().get("servers_key") == null ? "servers" : ConfigHandle.instance().get("servers_key");
 
 
-    public ThoiloanExtension() {
+    public FresherExtension() {
         super();
         setName("Thoiloan");
     }
