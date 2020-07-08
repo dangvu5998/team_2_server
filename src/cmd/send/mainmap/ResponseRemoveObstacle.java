@@ -17,7 +17,7 @@ public class ResponseRemoveObstacle extends BaseMsg {
     private final int mapObjId;
     private final int error;
     public ResponseRemoveObstacle(int status, int buildingId, int error) {
-        super(CmdDefine.QUICK_FINISH_MAP_OBJECT);
+        super(CmdDefine.REMOVE_OBSTACLE);
         this.status = status;
         this.mapObjId = buildingId;
         this.error = error;

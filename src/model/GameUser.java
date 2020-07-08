@@ -143,6 +143,9 @@ public class GameUser {
         }
         townhall.save();
         for(GoldStorage goldStorage : goldStorages) {
+            if(goldStorage.getStatus() == Building.BUILDING_STATUS) {
+                continue;
+            }
             int goldStorageCapacity = goldStorage.getGoldCapacity();
             if(gold > goldStorageCapacity) {
                 goldStorage.setGold(goldStorageCapacity);
@@ -178,6 +181,9 @@ public class GameUser {
         }
         townhall.save();
         for(ElixirStorage elixirStorage : elixirStorages) {
+            if(elixirStorage.getStatus() == Building.BUILDING_STATUS) {
+                continue;
+            }
             int elixirStorageCapacity = elixirStorage.getElixirCapacity();
             if(elixir > elixirStorageCapacity) {
                 elixirStorage.setElixir(elixirStorageCapacity);
@@ -489,8 +495,10 @@ public class GameUser {
         }
         capacity += townhall.getGoldCapacity();
         for(GoldStorage goldStorage : getAllGoldStorageBuilding()) {
-            amount += goldStorage.getGold();
-            capacity += goldStorage.getGoldCapacity();
+            if(goldStorage.getStatus() != Building.BUILDING_STATUS) {
+                amount += goldStorage.getGold();
+                capacity += goldStorage.getGoldCapacity();
+            }
         }
         amount += townhall.getGold();
         gold = amount;
@@ -527,6 +535,9 @@ public class GameUser {
         goldCapacity += townhall.getGoldCapacity();
         ArrayList<GoldStorage> goldStorages = getAllGoldStorageBuilding();
         for(GoldStorage goldStorage : goldStorages) {
+            if(goldStorage.getStatus() == Building.BUILDING_STATUS) {
+                continue;
+            }
             goldCapacity += goldStorage.getGoldCapacity();
         }
     }
@@ -540,6 +551,9 @@ public class GameUser {
         elixirCapacity += townhall.getElixirCapacity();
         ArrayList<ElixirStorage> elixirStorages = getAllElixirStorageBuilding();
         for(ElixirStorage elixirStorage : elixirStorages) {
+            if(elixirStorage.getStatus() == Building.BUILDING_STATUS) {
+                continue;
+            }
             elixirCapacity += elixirStorage.getElixirCapacity();
         }
     }
@@ -561,6 +575,9 @@ public class GameUser {
         amount += townhall.getElixir();
         capacity += townhall.getElixirCapacity();
         for(ElixirStorage elixirStorage : getAllElixirStorageBuilding()) {
+            if(elixirStorage.getStatus() == Building.BUILDING_STATUS) {
+                continue;
+            }
             amount += elixirStorage.getElixir();
             capacity += elixirStorage.getElixirCapacity();
         }
@@ -600,6 +617,8 @@ public class GameUser {
         if(!MapObject.isObjectTypeBuilding(buildingTypeId)) {
             return ResponseBuyBuilding.OBJECT_TYPE_INVALID;
         }
+
+        // check available builders
         if(nbOfAvaiBuilder <= 0) {
             return ResponseBuyBuilding.NOT_ENOUGH_BUILDERS;
         }
@@ -616,10 +635,11 @@ public class GameUser {
             if(nbOfCurrBuyingBuilding >= 5) {
                 return ResponseBuyBuilding.FULL_BUILDINGS;
             }
-        }
-        Townhall townhall = getTownhallBuilding();
-        if(townhall.getMaxNumberBuilding(buildingTypeId) >= nbOfCurrBuyingBuilding) {
-            return ResponseBuyBuilding.FULL_BUILDINGS;
+        } else {
+            Townhall townhall = getTownhallBuilding();
+            if (townhall.getMaxNumberBuilding(buildingTypeId) <= nbOfCurrBuyingBuilding) {
+                return ResponseBuyBuilding.FULL_BUILDINGS;
+            }
         }
         Building building = (Building) MapObject.createMapObject(buildingTypeId, x, y);
         if(building instanceof BuilderHut) {
@@ -719,7 +739,7 @@ public class GameUser {
 
             int goldToUpgrade = building.getGoldToUpgrade();
             int elixirToUpgrade = building.getElixirToUpgrade();
-            if(goldToUpgrade < gold || elixirToUpgrade < elixir) {
+            if(goldToUpgrade > gold || elixirToUpgrade > elixir) {
                 return ResponseUpgradeBuilding.NOT_ENOUGH_RESOURCE;
             }
             if(nbOfAvaiBuilder <= 0) {

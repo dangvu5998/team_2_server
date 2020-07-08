@@ -7,6 +7,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Townhall extends Building {
     @Expose
@@ -96,8 +97,8 @@ public class Townhall extends Building {
             darkElixirCapacity = currConfig.getInt("capacityDarkElixir");
             maxNumberBuilding = new HashMap<>();
             for(int buildingTypeId: MapObject.BUILDING_TYPES) {
-                if(buildingTypeId == MapObject.BUILDER_HUT) {
-                    break;
+                if(buildingTypeId == MapObject.BUILDER_HUT || buildingTypeId == MapObject.TOWNHALL) {
+                    continue;
                 }
                 String configBuildingName = MapObject.MAP_ID_OBJ_TO_CONFIG_NAME.get(buildingTypeId);
                 maxNumberBuilding.put(buildingTypeId, currConfig.getInt(configBuildingName));

@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ResponseLoadMainMap extends BaseMsg {
-    private int status;
-    private ArrayList<MapObject> mapObjects;
+    private final int status;
+    private final ArrayList<MapObject> mapObjects;
     public ResponseLoadMainMap(int status, ArrayList<MapObject> mapObjects) {
         super(CmdDefine.LOAD_MAIN_MAP);
         this.status = status;

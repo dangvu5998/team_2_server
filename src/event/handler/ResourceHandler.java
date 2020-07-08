@@ -69,7 +69,7 @@ public class ResourceHandler extends BaseClientRequestHandler implements IServer
             if(invalidResType) {
                 send(new ResponseBuyResource(ResponseConst.SEMANTIC_INVALID, resType, amount, ResponseBuyResource.INVALID_RES_TYPE), user);
             } else if (notEnoughG) {
-                send(new ResponseBuyResource(ResponseConst.SEMANTIC_INVALID, resType, amount, ResponseBuyResource.INVALID_RES_TYPE), user);
+                send(new ResponseBuyResource(ResponseConst.SEMANTIC_INVALID, resType, amount, ResponseBuyResource.NOT_ENOUGH_G), user);
             } else {
                 send(new ResponseBuyResource(ResponseConst.OK, resType, amount), user);
             }
