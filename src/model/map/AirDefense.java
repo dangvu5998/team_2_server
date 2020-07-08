@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class AirDefense extends Defense {
-    private static final String AIR_DEFENSE_CONFIG_PATH = "config/GameStatsConfig/Defense.json";
+    private static final String AIR_DEFENSE_CONFIG_PATH = "conf/GameStatsConfig/Defense.json";
     private static final String AIR_DEFENSE_CONFIG_NAME = "DEF_5";
     private static int timeToBuild;
     private static int goldToBuild;

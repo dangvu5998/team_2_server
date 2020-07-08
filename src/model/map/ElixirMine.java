@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class ElixirMine extends MineBuilding {
-    private static final String ELIXIR_MINE_CONFIG_PATH = "config/GameStatsConfig/Resource.json";
+    private static final String ELIXIR_MINE_CONFIG_PATH = "conf/GameStatsConfig/Resource.json";
     private static final String ELIXIR_MINE_CONFIG_NAME = "RES_2";
     private static JSONObject elixirMineConfig;
     private static int timeToBuild;

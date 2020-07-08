@@ -19,7 +19,7 @@ public class Obstacle extends MapObject {
     public static final int NORMAL_STATUS = 0;
     public static final int REMOVING_STATUS = 1;
     public static final int REMOVED_STATUS = 2;
-    private static final String OBSTACLE_CONFIG_PATH = "config/GameStatsConfig/Obstacle.json";
+    private static final String OBSTACLE_CONFIG_PATH = "conf/GameStatsConfig/Obstacle.json";
 
     private static JSONObject obtacleConfig;
 

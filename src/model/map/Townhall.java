@@ -20,7 +20,7 @@ public class Townhall extends Building {
     private int darkElixirCapacity;
     private HashMap<Integer, Integer> maxNumberBuilding;
 
-    private static final String TOWNHALL_CONFIG_PATH = "config/GameStatsConfig/TownHall.json";
+    private static final String TOWNHALL_CONFIG_PATH = "conf/GameStatsConfig/TownHall.json";
     private static final String TOWNHALL_CONFIG_NAME = "TOW_1";
     private static JSONObject townhallConfig;
     public static final int MAX_LEVEL = 11;

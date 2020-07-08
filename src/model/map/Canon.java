@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class Canon extends Defense {
-    private static final String CANON_CONFIG_PATH = "config/GameStatsConfig/Defence.json";
+    private static final String CANON_CONFIG_PATH = "conf/GameStatsConfig/Defence.json";
     private static final String CANON_CONFIG_NAME = "DEF_1";
     private static int timeToBuild;
     private static int goldToBuild;

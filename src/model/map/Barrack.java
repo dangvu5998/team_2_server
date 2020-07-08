@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class Barrack extends Building {
-    private static final String BARRACK_CONFIG_PATH = "config/GameStatsConfig/Barrack.json";
+    private static final String BARRACK_CONFIG_PATH = "conf/GameStatsConfig/Barrack.json";
     private static final String BARRACK_CONFIG_NAME = "BAR_1";
     private static int timeToBuild;
     private static int elixirToBuild;

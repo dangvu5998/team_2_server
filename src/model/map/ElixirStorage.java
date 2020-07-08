@@ -7,7 +7,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class ElixirStorage extends Building {
-    private static final String ELIXIR_STORAGE_CONFIG_PATH = "config/GameStatsConfig/Storage.json";
+    private static final String ELIXIR_STORAGE_CONFIG_PATH = "conf/GameStatsConfig/Storage.json";
     private static final String ELIXIR_STORAGE_CONFIG_NAME = "STO_2";
 
     private static JSONObject elixirStorageConfig;

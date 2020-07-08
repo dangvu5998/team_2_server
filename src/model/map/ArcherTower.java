@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class ArcherTower extends Defense {
-    private static final String ARCHER_TOWER_CONFIG_PATH = "config/GameStatsConfig/Defense.json";
+    private static final String ARCHER_TOWER_CONFIG_PATH = "conf/GameStatsConfig/Defense.json";
     private static final String ARCHER_TOWER_CONFIG_NAME = "DEF_2";
     private static JSONObject archerTowerConfig;
     private static int timeToBuild;

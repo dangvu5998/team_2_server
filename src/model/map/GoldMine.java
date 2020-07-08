@@ -7,7 +7,7 @@ import util.database.DBBuiltInUtil;
 
 public class GoldMine extends MineBuilding {
 
-    private static final String GOLD_MINE_CONFIG_PATH = "config/GameStatsConfig/Resource.json";
+    private static final String GOLD_MINE_CONFIG_PATH = "conf/GameStatsConfig/Resource.json";
     private static final String GOLD_MINE_CONFIG_NAME = "RES_1";
     private static JSONObject goldMineConfig;
     private static int timeToBuild;

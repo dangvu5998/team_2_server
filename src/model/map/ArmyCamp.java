@@ -10,7 +10,7 @@ public class ArmyCamp extends Building {
     private static int timeToBuild;
     private static int elixirToBuild;
     public static final int MAX_LEVEL = 8;
-    private static final String ARMY_CAMP_CONFIG_PATH = "config/GameStatsConfig/ArmyCamp.json";
+    private static final String ARMY_CAMP_CONFIG_PATH = "conf/GameStatsConfig/ArmyCamp.json";
     private static final String ARMY_CAMP_CONFIG_NAME = "AMC_1";
     private static JSONObject armyCampConfig;
     public ArmyCamp(int id_, int x_,int y_, int level_, int buildingStatus_, int finishTime_) {

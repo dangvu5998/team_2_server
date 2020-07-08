@@ -12,7 +12,7 @@ public class GoldStorage extends Building {
     private int gold;
     private int goldCapacity;
 
-    private static final String GOLD_STORAGE_CONFIG_PATH = "config/GameStatsConfig/Storage.json";
+    private static final String GOLD_STORAGE_CONFIG_PATH = "conf/GameStatsConfig/Storage.json";
     private static final String GOLD_STORAGE_CONFIG_NAME = "STO_1";
     private static int elixirToBuild;
     private static int timeToBuild;

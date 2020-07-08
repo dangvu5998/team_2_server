@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class BuilderHut extends Building {
-    private static final String BUILDER_HUT_CONFIG_PATH = "config/GameStatsConfig/BuilderHut.json";
+    private static final String BUILDER_HUT_CONFIG_PATH = "conf/GameStatsConfig/BuilderHut.json";
     private static final String BUILDER_HUT_CONFIG_NAME = "BDH_1";
     private static JSONObject builderHutConfig;
     private int index = 1;

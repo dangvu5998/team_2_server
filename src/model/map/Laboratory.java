@@ -7,7 +7,7 @@ import util.database.DBBuiltInUtil;
 
 public class Laboratory extends Building {
 
-    private static final String LABORATORY_CONFIG_PATH = "config/GameStatsConfig/Laboratory.json";
+    private static final String LABORATORY_CONFIG_PATH = "conf/GameStatsConfig/Laboratory.json";
     private static final String LABORATORY_CONFIG_NAME = "LAB_1";
     private static int elixirToBuild;
     private static int timeToBuild;

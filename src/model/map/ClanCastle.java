@@ -7,7 +7,7 @@ import util.database.DBBuiltInUtil;
 
 public class ClanCastle extends Building {
 
-    private static final String CLAN_CASTLE_CONFIG_PATH = "config/GameStatsConfig/ClanCastle.json";
+    private static final String CLAN_CASTLE_CONFIG_PATH = "conf/GameStatsConfig/ClanCastle.json";
     private static final String CLAN_CASTLE_CONFIG_NAME = "CLC_1";
     private static int timeToBuild;
     private static int goldToBuild;

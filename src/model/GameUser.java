@@ -46,7 +46,7 @@ public class GameUser {
 
     private static final String COLLECTION_NAME = "GameUser";
     private static final String USERNAME_MAP_COLLECTION_NAME = "UsernameMap_GameUser";
-    private static final String INIT_GAME_CONFIG_PATH = "config/GameStatsConfig/InitGame.json";
+    private static final String INIT_GAME_CONFIG_PATH = "conf/GameStatsConfig/InitGame.json";
 
     public int getId() {
         return id;

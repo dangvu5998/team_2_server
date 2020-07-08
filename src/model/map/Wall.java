@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class Wall extends Building {
-    private static final String WALL_CONFIG_PATH = "config/GameStatsConfig/Wall.json";
+    private static final String WALL_CONFIG_PATH = "conf/GameStatsConfig/Wall.json";
     private static final String WALL_CONFIG_NAME = "WAL_1";
     private static JSONObject wallConfig;
     public static final int MAX_LEVEL = 11;
