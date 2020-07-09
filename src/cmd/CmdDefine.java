@@ -15,4 +15,6 @@ public class CmdDefine {
     public static final short MAIN_GAME_INFO = 2010;
 
     public static final short BUY_RESOURCE = 3001;
+
+    public static final short CURRENT_TIME = 4001;
 }

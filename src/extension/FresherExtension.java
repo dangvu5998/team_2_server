@@ -16,6 +16,7 @@ import bitzero.util.socialcontroller.bean.UserInfo;
 
 import event.handler.MainMapHandler;
 import event.handler.ResourceHandler;
+import event.handler.SyncHandler;
 import org.json.JSONObject;
 
 import cmd.receive.authen.RequestLogin;
@@ -50,6 +51,7 @@ public class FresherExtension extends BZExtension {
 
         addRequestHandler(MainMapHandler.MAIN_MAP_IDS, MainMapHandler.class);
         addRequestHandler(ResourceHandler.RESOURCE_IDS, ResourceHandler.class);
+        addRequestHandler(SyncHandler.SYNC_IDS, SyncHandler.class);
     }
 
     @Override

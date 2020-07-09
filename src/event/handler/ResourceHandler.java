@@ -1,9 +1,7 @@
 package event.handler;
 
-import bitzero.server.core.IBZEvent;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.BaseClientRequestHandler;
-import bitzero.server.extensions.IServerEventHandler;
 import bitzero.server.extensions.data.DataCmd;
 import cmd.CmdDefine;
 import cmd.RequestConst;
@@ -14,7 +12,7 @@ import cmd.send.ResponseFormatInvalid;
 import model.GameUser;
 import model.ResourceExchange;
 
-public class ResourceHandler extends BaseClientRequestHandler implements IServerEventHandler {
+public class ResourceHandler extends BaseClientRequestHandler {
     public final static short RESOURCE_IDS = 3000;
     public ResourceHandler() {
         super();
@@ -30,10 +28,6 @@ public class ResourceHandler extends BaseClientRequestHandler implements IServer
         if (dataCmd.getId() == CmdDefine.BUY_RESOURCE) {
             processBuyResource(user, gameUser, dataCmd);
         }
-    }
-
-    public void handleServerEvent(IBZEvent ibzevent) {
-        System.out.println(ibzevent.getType());
     }
 
     public void processBuyResource(User user, GameUser gameUser, DataCmd dataCmd) {
