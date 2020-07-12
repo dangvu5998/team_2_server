@@ -3,7 +3,6 @@ package event.handler;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.core.IBZEvent;
 import bitzero.util.common.business.CommonHandle;
 import cmd.CmdDefine;
 import cmd.RequestConst;

@@ -18,7 +18,6 @@ public class ResponseMainInfo extends BaseMsg {
     @Override
     public byte[] createData() {
         ByteBuffer bf = makeBuffer();
-        // TODO: replace hardcode some fields
         // 0 status
         bf.putInt(status);
         // 1 id

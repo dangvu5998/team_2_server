@@ -6,6 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import util.server.ServerUtil;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 public class DBBuiltInUtil {
     public static final Gson gson = new Gson();
     public static final Gson gsonWithExpose = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -64,6 +67,26 @@ public class DBBuiltInUtil {
         return null;
     }
 
+    public static ArrayList<String> multiget(String collectionName, ArrayList<String> keys) {
+
+        ArrayList<String> globalKeys = new ArrayList<>();
+
+        for(String key: keys) {
+            globalKeys.add(ServerUtil.getModelKeyName(collectionName, key));
+        }
+        ArrayList<String> result = new ArrayList<>();
+        try {
+
+            Map<String, Object> res = DataController.getController().multiget(globalKeys);
+            for(String globalKey: globalKeys) {
+                result.add((String) res.get(globalKey));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error get " + keys + " in " + collectionName);
+        }
+        return result;
+    }
+
     public static int generateId(String collectionName) {
         String globalKey = ServerUtil.getModelKeyName(COUNTER_COLLECTION, collectionName);
         try {
@@ -78,9 +101,8 @@ public class DBBuiltInUtil {
             }
         } catch (Exception err) {
             // TODO: handle exception
-            System.out.println("Error generate id collection " + collectionName);
+            throw new RuntimeException("Error generate id collection " + collectionName);
         }
-        return -1;
     }
 
 }

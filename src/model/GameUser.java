@@ -361,34 +361,35 @@ public class GameUser {
         ArrayList<MapObject> result = new ArrayList<>();
         ArrayList<Integer> removedObstacles = new ArrayList<>();
 
-        boolean mapObjIdsModified = false;
-        for(int mapObjectId: mapObjectIds) {
-            MapObject mapObj = MapObject.getById(mapObjectId);
-            // skip removed obstacle
-            if(mapObj instanceof Obstacle) {
-                Obstacle obstacle = (Obstacle) mapObj;
-                if(obstacle.getStatus() == Obstacle.REMOVED_STATUS) {
-                    removedObstacles.add(mapObjectId);
-                    mapObjIdsModified = true;
-                    continue;
-                }
-            }
-            if(mapObj != null) {
-                result.add(MapObject.getById(mapObjectId));
-            } else {
-                // TODO: warning mapObjId of user is invalid
-                System.out.println("Map object id " + mapObjectId + " is invalid!");
-            }
-        }
-        if(mapObjIdsModified) {
-            mapObjectIds.removeIf(removedObstacles::contains);
-            save();
-            for(int removeId: removedObstacles) {
-                MapObject.removeById(removeId);
-            }
-        }
+        return MapObject.getByIdList(mapObjectIds);
+//        boolean mapObjIdsModified = false;
+//        for(int mapObjectId: mapObjectIds) {
+//            MapObject mapObj = MapObject.getById(mapObjectId);
+//            // skip removed obstacle
+//            if(mapObj instanceof Obstacle) {
+//                Obstacle obstacle = (Obstacle) mapObj;
+//                if(obstacle.getStatus() == Obstacle.REMOVED_STATUS) {
+//                    removedObstacles.add(mapObjectId);
+//                    mapObjIdsModified = true;
+//                    continue;
+//                }
+//            }
+//            if(mapObj != null) {
+//                result.add(MapObject.getById(mapObjectId));
+//            } else {
+//                // TODO: warning mapObjId of user is invalid
+//                System.out.println("Map object id " + mapObjectId + " is invalid!");
+//            }
+//        }
+//        if(mapObjIdsModified) {
+//            mapObjectIds.removeIf(removedObstacles::contains);
+//            save();
+//            for(int removeId: removedObstacles) {
+//                MapObject.removeById(removeId);
+//            }
+//        }
 
-        return result;
+//        return result;
     }
 
     /**
@@ -768,8 +769,23 @@ public class GameUser {
         }
         MapObject mapObject = MapObject.getById(mapObjId);
         if(mapObject instanceof Obstacle) {
-            // TODO: handle obstacle
-            return -1000;
+            Obstacle obstacle = (Obstacle) mapObject;
+            if(obstacle.getStatus() != Obstacle.REMOVING_STATUS) {
+                return ResponseQuickFinish.INVALID_MAP_OBJECT_STATUS;
+            }
+            if(gToQuickFinish > g) {
+                return ResponseQuickFinish.NOT_ENOUGH_G;
+            }
+            int finishTime = obstacle.getFinishTime();
+            int gToQuickFinishValidate = ResourceExchange.timeToG(finishTime - Common.currentTimeInSecond());
+            if(gToQuickFinishValidate > gToQuickFinish) {
+                return ResponseQuickFinish.INVALID_G;
+            }
+            g -= gToQuickFinish;
+            // TODO: remove record in map object db
+            mapObjectIds.removeIf(currId -> currId == mapObjId);
+            save();
+            return mapObjId;
         }
         if(mapObject instanceof Building) {
             Building building = (Building) mapObject;

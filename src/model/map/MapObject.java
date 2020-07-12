@@ -86,7 +86,7 @@ public abstract class MapObject {
     public static final Map<String, Integer> MAP_OBJ_CONFIG_NAME_TO_ID = new HashMap<String, Integer>() {
         {
             put("AMC_1", MapObject.ARMY_CAMP);
-            put("BAR_2", BARRACK);
+            put("BAR_1", BARRACK);
             put("BDH_1", BUILDER_HUT);
             put("CLC_1", CLAN_CASTLE);
             put("DEF_2", ARCHER_TOWER);
@@ -133,7 +133,7 @@ public abstract class MapObject {
     public static final Map<Integer, String> MAP_ID_OBJ_TO_CONFIG_NAME = new HashMap<Integer, String>() {
         {
             put(ARMY_CAMP, "AMC_1");
-            put(BARRACK, "BAR_2");
+            put(BARRACK, "BAR_1");
             put(BUILDER_HUT, "BDH_1");
             put(CLAN_CASTLE, "CLC_1");
             put(ARCHER_TOWER, "DEF_2");
@@ -238,8 +238,7 @@ public abstract class MapObject {
         DBBuiltInUtil.delete(collectionName, String.valueOf(id));
     }
 
-    public static MapObject getById(int id) {
-        String mapObjectStr = DBBuiltInUtil.get(collectionName, String.valueOf(id));
+    public static MapObject loadFromJSONString(String mapObjectStr) {
         if(mapObjectStr == null) {
             return null;
         }
@@ -326,10 +325,27 @@ public abstract class MapObject {
             return mapObject;
 
         } catch (JSONException e) {
-            System.out.println("Eror get map oject " + id);
+            System.out.println("Eror get json map oject " + mapObjectStr);
         }
-        System.out.println("not handle map object by id" + mapObjectStr);
         return null;
+
+    }
+    public static MapObject getById(int id) {
+        String mapObjectStr = DBBuiltInUtil.get(collectionName, String.valueOf(id));
+        return loadFromJSONString(mapObjectStr);
+    }
+
+    public static ArrayList<MapObject> getByIdList(ArrayList<Integer> ids) {
+        ArrayList<String> idStrings = new ArrayList<>();
+        for(int id: ids) {
+            idStrings.add(String.valueOf(id));
+        }
+        ArrayList<String> mapObjectStrs = DBBuiltInUtil.multiget(collectionName, idStrings);
+        ArrayList<MapObject> mapObjects = new ArrayList<>();
+        for(String mapObjectStr: mapObjectStrs) {
+            mapObjects.add(loadFromJSONString(mapObjectStr));
+        }
+        return mapObjects;
     }
 
     public static MapObject createMapObject(int mapObjectType, int x, int y) {
