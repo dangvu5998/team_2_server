@@ -361,35 +361,33 @@ public class GameUser {
         ArrayList<MapObject> result = new ArrayList<>();
         ArrayList<Integer> removedObstacles = new ArrayList<>();
 
-        return MapObject.getByIdList(mapObjectIds);
-//        boolean mapObjIdsModified = false;
-//        for(int mapObjectId: mapObjectIds) {
-//            MapObject mapObj = MapObject.getById(mapObjectId);
-//            // skip removed obstacle
-//            if(mapObj instanceof Obstacle) {
-//                Obstacle obstacle = (Obstacle) mapObj;
-//                if(obstacle.getStatus() == Obstacle.REMOVED_STATUS) {
-//                    removedObstacles.add(mapObjectId);
-//                    mapObjIdsModified = true;
-//                    continue;
-//                }
-//            }
-//            if(mapObj != null) {
-//                result.add(MapObject.getById(mapObjectId));
-//            } else {
-//                // TODO: warning mapObjId of user is invalid
-//                System.out.println("Map object id " + mapObjectId + " is invalid!");
-//            }
-//        }
-//        if(mapObjIdsModified) {
-//            mapObjectIds.removeIf(removedObstacles::contains);
-//            save();
-//            for(int removeId: removedObstacles) {
-//                MapObject.removeById(removeId);
-//            }
-//        }
+        ArrayList<MapObject> mapObjects = MapObject.getByIdList(mapObjectIds);
+        boolean mapObjIdsModified = false;
+        for(MapObject mapObj: mapObjects) {
+            if(mapObj instanceof Obstacle) {
+                Obstacle obstacle = (Obstacle) mapObj;
+                if(obstacle.getStatus() == Obstacle.REMOVED_STATUS) {
+                    removedObstacles.add(mapObj.getId());
+                    mapObjIdsModified = true;
+                    continue;
+                }
+            }
+            if(mapObj != null) {
+                result.add(mapObj);
+            } else {
+                // TODO: warning mapObjId of user is invalid
+                System.out.println("Map object id  of user " + getId() + " is invalid!");
+            }
 
-//        return result;
+        }
+        if(mapObjIdsModified) {
+            mapObjectIds.removeIf(removedObstacles::contains);
+            save();
+            for(int removeId: removedObstacles) {
+                MapObject.removeById(removeId);
+            }
+        }
+        return result;
     }
 
     /**
