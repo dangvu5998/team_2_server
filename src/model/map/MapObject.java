@@ -262,6 +262,9 @@ public abstract class MapObject {
                 case ELIXIR_STORAGE:
                     mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ElixirStorage.class);
                     break;
+                case ELIXIR_MINE:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ElixirMine.class);
+                    break;
                 case CLAN_CASTLE:
                     mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ClanCastle.class);
                     break;
