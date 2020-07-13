@@ -14,6 +14,10 @@ import bitzero.util.common.business.CommonHandle;
 import bitzero.util.datacontroller.business.DataController;
 import bitzero.util.socialcontroller.bean.UserInfo;
 
+import cmd.ResponseConst;
+import cmd.send.ResponseMainInfo;
+import cmd.send.ResponseTimeStamp;
+import cmd.send.mainmap.ResponseLoadMainMap;
 import event.handler.MainMapHandler;
 import event.handler.ResourceHandler;
 import event.handler.SyncHandler;
@@ -21,6 +25,7 @@ import org.json.JSONObject;
 
 import cmd.receive.authen.RequestLogin;
 import model.GameUser;
+import util.Common;
 
 
 public class FresherExtension extends BZExtension {
@@ -92,7 +97,7 @@ public class FresherExtension extends BZExtension {
             RequestLogin reqGet = new RequestLogin(objData);
             reqGet.unpackData();
             String username = reqGet.getUsername();
-            GameUser gameUser = GameUser.getGeneralInfoByUsername(username);
+            GameUser gameUser = GameUser.getGameUserByUsername(username);
             if (gameUser == null) {
                 gameUser = GameUser.createGameUserByUsername(username);
             }
@@ -101,6 +106,13 @@ public class FresherExtension extends BZExtension {
             userInfo.setUsername(username);
             User user = ExtensionUtility.instance().canLogin(userInfo, "", session);
             ExtensionUtility.instance().sendLoginOK(user);
+            try {
+                send(new ResponseTimeStamp(Common.currentTimeInSecond()), user);
+                send(new ResponseMainInfo(ResponseConst.OK, gameUser), user);
+                send(new ResponseLoadMainMap(ResponseConst.OK, gameUser.getAllMapObjects()), user);
+            } catch ( Exception e) {
+                CommonHandle.writeErrLog(e);
+            }
         } catch(Exception e) {
             CommonHandle.writeErrLog(e);
         }

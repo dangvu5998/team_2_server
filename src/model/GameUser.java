@@ -133,7 +133,7 @@ public class GameUser {
         }
         int townhallGoldCapacity = townhall.getGoldCapacity();
         ArrayList<GoldStorage> goldStorages = getAllGoldStorageBuilding();
-        if(gold > townhallGoldCapacity) {
+        if(gold >= townhallGoldCapacity) {
             gold -= townhallGoldCapacity;
             townhall.setGold(townhallGoldCapacity);
         }
@@ -147,7 +147,7 @@ public class GameUser {
                 continue;
             }
             int goldStorageCapacity = goldStorage.getGoldCapacity();
-            if(gold > goldStorageCapacity) {
+            if(gold >= goldStorageCapacity) {
                 goldStorage.setGold(goldStorageCapacity);
                 gold -= goldStorageCapacity;
             } else {
@@ -236,9 +236,13 @@ public class GameUser {
         DBBuiltInUtil.save(COLLECTION_NAME, String.valueOf(id), this);
     }
 
-    public static GameUser getGeneralInfoByUsername(String username) {
+    public static GameUser getGameUserByUsername(String username) {
         String idStr = DBBuiltInUtil.get(USERNAME_MAP_COLLECTION_NAME, username);
-        return (GameUser) DBBuiltInUtil.get(COLLECTION_NAME, idStr, GameUser.class);
+        if(idStr != null) {
+            return (GameUser) getGameUserById(Integer.parseInt(idStr));
+        } else {
+            return null;
+        }
     }
 
     public static GameUser createGameUserByUsername(String username) {
@@ -256,6 +260,9 @@ public class GameUser {
         );
         gameUser.initGame();
         gameUser.save();
+        gameUser.loadBuilders();
+        gameUser.loadGold();
+        gameUser.loadElixir();
         return gameUser;
     }
 
@@ -748,7 +755,12 @@ public class GameUser {
             // deduct resources and upgrade building
             deductGold(goldToUpgrade);
             deductElixir(elixirToUpgrade);
-            building.upgrade();
+            // TODO: optimize by cached map object
+            if(building instanceof GoldStorage || building instanceof ElixirStorage || building instanceof Townhall) {
+                ((Building) MapObject.getById(buildingId)).upgrade();
+            } else {
+                building.upgrade();
+            }
 
             return buildingId;
         }
