@@ -1,5 +1,6 @@
 package model.map;
 
+import bitzero.util.common.business.CommonHandle;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -37,7 +38,8 @@ public class Barrack extends Building {
             timeToBuild = level1Config.getInt("buildTime");
             elixirToBuild = level1Config.getInt("elixir");
         } catch (JSONException e) {
-            throw new RuntimeException("Archer tower config is invalid");
+            CommonHandle.writeErrLog(e);
+            throw new RuntimeException("Barrack config is invalid");
         }
     }
 
@@ -52,7 +54,7 @@ public class Barrack extends Building {
             health = currConfig.getInt("hitpoints");
             if(level < MAX_LEVEL) {
                 JSONObject nextLevelConfig = barrackConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
+                elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
             }
@@ -63,7 +65,8 @@ public class Barrack extends Building {
                 timeToUpgrade = 0;
             }
         } catch (JSONException e) {
-            throw new RuntimeException("Trebuchet config is invalid");
+            CommonHandle.writeErrLog(e);
+            throw new RuntimeException("Barrack config is invalid");
         }
     }
 

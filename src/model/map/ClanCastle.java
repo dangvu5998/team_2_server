@@ -1,5 +1,6 @@
 package model.map;
 
+import bitzero.util.common.business.CommonHandle;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -38,6 +39,7 @@ public class ClanCastle extends Building {
             timeToBuild = level1Config.getInt("buildTime");
             goldToBuild = level1Config.getInt("gold");
         } catch (JSONException e) {
+            CommonHandle.writeErrLog(e);
             throw new RuntimeException("Clan castle config is invalid");
         }
     }
@@ -64,6 +66,7 @@ public class ClanCastle extends Building {
                 timeToUpgrade = 0;
             }
         } catch (JSONException e) {
+            CommonHandle.writeErrLog(e);
             throw new RuntimeException("Clan castle config is invalid");
         }
 
