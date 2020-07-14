@@ -744,6 +744,14 @@ public class GameUser {
         Building building = (Building) mapObject;
 
         if(building.getStatus() == Building.NORMAL_STATUS) {
+            if(building.getMaxLevel() <= building.getLevel()) {
+                return ResponseUpgradeBuilding.BUILDING_MAX_LEVEL;
+            }
+
+            Building townhall = getTownhallBuilding();
+            if(townhall.getLevel() < building.getTownhallLevelToUpgrade()) {
+                return ResponseUpgradeBuilding.NOT_ENOUGH_TOWNHALL_LEVEL;
+            }
 
             int goldToUpgrade = building.getGoldToUpgrade();
             int elixirToUpgrade = building.getElixirToUpgrade();

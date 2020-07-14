@@ -58,6 +58,7 @@ public class ClanCastle extends Building {
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
             }
             else {
                 goldToUpgrade = 0;

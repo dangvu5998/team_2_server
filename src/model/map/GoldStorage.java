@@ -54,6 +54,7 @@ public class GoldStorage extends Building {
                 elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
             }
             else {
                 goldToUpgrade = 0;

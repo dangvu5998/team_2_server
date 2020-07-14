@@ -57,6 +57,7 @@ public class ElixirMine extends MineBuilding {
                 JSONObject nextLevelConfig = elixirMineConfig.getJSONObject(String.valueOf(level + 1));
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
             }
         } catch (JSONException e) {
             throw new RuntimeException("Elixir mine config is invalid");

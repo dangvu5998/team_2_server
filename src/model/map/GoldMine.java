@@ -59,6 +59,7 @@ public class GoldMine extends MineBuilding {
                 elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
             }
         } catch (JSONException e) {
             throw new RuntimeException("Gold mine config is invalid");

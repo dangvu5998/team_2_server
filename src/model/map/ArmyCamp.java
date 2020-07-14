@@ -1,5 +1,6 @@
 package model.map;
 
+import bitzero.util.common.business.CommonHandle;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -59,6 +60,7 @@ public class ArmyCamp extends Building {
                 elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
             }
             else {
                 goldToUpgrade = 0;
@@ -67,6 +69,7 @@ public class ArmyCamp extends Building {
                 timeToUpgrade = 0;
             }
         } catch (JSONException e) {
+            CommonHandle.writeErrLog(e);
             throw new RuntimeException("Army camp config is invalid");
         }
     }

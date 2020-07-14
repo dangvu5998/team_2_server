@@ -53,6 +53,7 @@ public class ElixirStorage extends Building {
                 JSONObject nextLevelConfig = elixirStorageConfig.getJSONObject(String.valueOf(level + 1));
                 goldToUpgrade = nextLevelConfig.getInt("gold");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
             }
             else {
                 goldToUpgrade = 0;

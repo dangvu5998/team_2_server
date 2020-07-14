@@ -15,6 +15,7 @@ public abstract class Building extends MapObject {
     protected int elixirToUpgrade = 0;
     protected int darkElixirToUpgrade = 0;
     protected int timeToUpgrade = 0;
+    protected int townhallLevelToUpgrade = 0;
 
     public static final int NORMAL_STATUS = 0;
     public static final int BUILDING_STATUS = 1;
@@ -146,6 +147,10 @@ public abstract class Building extends MapObject {
             status = BUILDING_STATUS;
             finishTime = Common.currentTimeInSecond() + timeToBuild;
         }
+    }
+
+    public int getTownhallLevelToUpgrade() {
+        return townhallLevelToUpgrade;
     }
 
     @Override

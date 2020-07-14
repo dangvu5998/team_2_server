@@ -14,6 +14,8 @@ public class ResponseUpgradeBuilding extends BaseMsg {
     public static final int INVALID_BUILDING_STATUS = -2;
     public static final int NOT_ENOUGH_RESOURCE = -3;
     public static final int NOT_ENOUGH_BUILDERS = -4;
+    public static final int BUILDING_MAX_LEVEL = -5;
+    public static final int NOT_ENOUGH_TOWNHALL_LEVEL = -6;
     public static final int NO_ERROR = 0;
     public ResponseUpgradeBuilding(int status, int buildingId, int error) {
         super(CmdDefine.UPGRADE_BUILDING);
