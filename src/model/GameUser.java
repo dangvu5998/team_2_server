@@ -5,6 +5,8 @@ import com.google.gson.annotations.Expose;
 import model.map.*;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.Common;
 import util.database.DBBuiltInUtil;
 
@@ -13,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class GameUser {
+    public static final Logger logger = LoggerFactory.getLogger("GameUser");
     @Expose
     private final int id;
     @Expose
@@ -318,7 +321,7 @@ public class GameUser {
                     newMapObject.save();
                     boolean objAdded = addMapObject(newMapObject);
                     if(!objAdded) {
-                        System.out.println("Cannot add " + buildingConfig);
+                        logger.warn("Cannot add " + buildingConfig);
                     }
                 }
             }
@@ -336,7 +339,7 @@ public class GameUser {
                     newMapObject.save();
                     boolean objAdded = addMapObject(newMapObject);
                     if(!objAdded) {
-                        System.out.println("Cannot add " + obsConfig);
+                        logger.warn("Cannot add " + obsConfig);
                     }
                 }
             }
@@ -382,8 +385,7 @@ public class GameUser {
             if(mapObj != null) {
                 result.add(mapObj);
             } else {
-                // TODO: warning mapObjId of user is invalid
-                System.out.println("Map object id  of user " + getId() + " is invalid!");
+                logger.warn("Map object id  of user " + getId() + " is invalid!");
             }
 
         }

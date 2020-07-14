@@ -1,16 +1,19 @@
 package util.database;
 
+import bitzero.util.common.business.CommonHandle;
 import bitzero.util.datacontroller.business.DataController;
 import com.google.gson.Gson;
 
 import com.google.gson.GsonBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.server.ServerUtil;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class DBBuiltInUtil {
-    public static final Gson gson = new Gson();
+    private static final Logger logger = LoggerFactory.getLogger("DBBuiltInUtil");
     public static final Gson gsonWithExpose = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     static final String COUNTER_COLLECTION = "COUNTER";
 
@@ -20,8 +23,8 @@ public class DBBuiltInUtil {
         try {
             DataController.getController().set(globalKey, sobj);
         } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Error save " + key + " in " + collectionName);
+            CommonHandle.writeErrLog(e);
+            logger.warn("Get error to save key '" + key + "' to collection '" + collectionName);
         }
     }
 
@@ -30,8 +33,7 @@ public class DBBuiltInUtil {
         try {
             DataController.getController().set(globalKey, val);
         } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Error save " + key + " in " + collectionName);
+            CommonHandle.writeErrLog(e);
         }
     }
 
@@ -40,8 +42,8 @@ public class DBBuiltInUtil {
         try {
             DataController.getController().delete(globalKey);
         } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Error delete " + key + " in " + collectionName);
+            CommonHandle.writeErrLog(e);
+            logger.warn("Get error to delete key '" + key + "' to collection '" + collectionName);
         }
     }
 
@@ -50,8 +52,8 @@ public class DBBuiltInUtil {
         try {
             return gsonWithExpose.fromJson((String) DataController.getController().get(globalKey), c);
         } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Error get " + key + " in " + collectionName);
+            CommonHandle.writeErrLog(e);
+            logger.warn("Get error to get key '" + key + "' to collection '" + collectionName);
         }
         return null;
     }
@@ -61,8 +63,8 @@ public class DBBuiltInUtil {
         try {
             return (String) DataController.getController().get(globalKey);
         } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Error get " + key + " in " + collectionName);
+            CommonHandle.writeErrLog(e);
+            logger.warn("Get error to get key '" + key + "' to collection '" + collectionName);
         }
         return null;
     }
@@ -101,6 +103,7 @@ public class DBBuiltInUtil {
             }
         } catch (Exception err) {
             // TODO: handle exception
+            CommonHandle.writeErrLog(err);
             throw new RuntimeException("Error generate id collection " + collectionName);
         }
     }

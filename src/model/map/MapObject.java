@@ -1,13 +1,17 @@
 package model.map;
 
+import bitzero.util.common.business.CommonHandle;
 import com.google.gson.annotations.Expose;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.database.DBBuiltInUtil;
 
 import java.util.*;
 
 public abstract class MapObject {
+    private static final Logger logger = LoggerFactory.getLogger("MapObject");
 
     @Expose
     protected int id;
@@ -230,7 +234,8 @@ public abstract class MapObject {
         try {
             DBBuiltInUtil.save(collectionName, String.valueOf(id), this);
         } catch (Exception e) {
-            System.out.println("Save map object" + id + " error");
+            CommonHandle.writeErrLog(e);
+            logger.warn("Save map object" + id + " error");
         }
     }
 
@@ -323,12 +328,13 @@ public abstract class MapObject {
                 mapObject.loadExtraInfo();
                 mapObject.updateStatus();
             } else {
-                System.out.println("not handle map object by id" + mapObjectStr);
+                logger.warn("not handle map object by id" + mapObjectStr);
             }
             return mapObject;
 
         } catch (JSONException e) {
-            System.out.println("Eror get json map oject " + mapObjectStr);
+            CommonHandle.writeErrLog(e);
+            logger.warn("Eror get json map oject " + mapObjectStr);
         }
         return null;
 
