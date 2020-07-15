@@ -15,7 +15,7 @@ import java.util.Map;
 public class DBBuiltInUtil {
     private static final Logger logger = LoggerFactory.getLogger("DBBuiltInUtil");
     public static final Gson gsonWithExpose = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-    static final String COUNTER_COLLECTION = "COUNTER";
+    static final String COUNTER_COLLECTION = "COUNTER_P";
 
     public static void save(String collectionName, String key, Object obj) {
         String globalKey = ServerUtil.getModelKeyName(collectionName, key);
