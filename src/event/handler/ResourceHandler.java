@@ -7,7 +7,9 @@ import cmd.CmdDefine;
 import cmd.RequestConst;
 import cmd.ResponseConst;
 import cmd.receive.RequestBuyResource;
+import cmd.receive.RequestCheatResource;
 import cmd.send.ResponseBuyResource;
+import cmd.send.ResponseCheatResource;
 import cmd.send.ResponseFormatInvalid;
 import model.GameUser;
 import model.ResourceExchange;
@@ -25,9 +27,16 @@ public class ResourceHandler extends BaseClientRequestHandler {
             // TODO: handle game user null
             return;
         }
-        if (dataCmd.getId() == CmdDefine.BUY_RESOURCE) {
-            processBuyResource(user, gameUser, dataCmd);
+        switch (dataCmd.getId()) {
+            case CmdDefine.BUY_RESOURCE:
+                processBuyResource(user, gameUser, dataCmd);
+                break;
+            case CmdDefine.CHEAT_RESOURCE:
+                processCheatResource(user, gameUser, dataCmd);
+                break;
+
         }
+
     }
 
     public void processBuyResource(User user, GameUser gameUser, DataCmd dataCmd) {
@@ -67,6 +76,34 @@ public class ResourceHandler extends BaseClientRequestHandler {
             } else {
                 send(new ResponseBuyResource(ResponseConst.OK, resType, amount), user);
             }
+
+        } else {
+            send(new ResponseFormatInvalid(dataCmd.getId()), user);
+        }
+    }
+    private void processCheatResource(User user, GameUser gameUser, DataCmd dataCmd) {
+        RequestCheatResource requestCheatResource = new RequestCheatResource(dataCmd);
+        if(requestCheatResource.getStatus() == RequestConst.OK) {
+            int resType = requestCheatResource.getResType();
+            int amount = requestCheatResource.getAmount();
+            int clientReqId = requestCheatResource.getClientReqId();
+            if(amount > 1000000000) {
+                send(new ResponseCheatResource(ResponseConst.SEMANTIC_INVALID, clientReqId, ResponseCheatResource.INVALID_AMOUNT), user);
+                return;
+            }
+            if(resType == RequestCheatResource.G_TYPE) {
+                gameUser.setG(amount);
+            } else
+            if(resType == RequestCheatResource.GOLD_TYPE) {
+                gameUser.setGold(amount);
+            } else
+            if(resType == RequestCheatResource.ELIXIR_TYPE) {
+                gameUser.setElixir(amount);
+            } else {
+                send(new ResponseCheatResource(ResponseConst.SEMANTIC_INVALID, clientReqId, ResponseCheatResource.INVALID_RES_TYPE), user);
+                return;
+            }
+            send(new ResponseCheatResource(ResponseConst.OK, clientReqId), user);
 
         } else {
             send(new ResponseFormatInvalid(dataCmd.getId()), user);
