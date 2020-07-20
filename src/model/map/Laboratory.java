@@ -19,6 +19,10 @@ public class Laboratory extends Building {
         super(id_, x_, y_, Building.LABORATORY, level_, buildingStatus_, finishTime_);
     }
 
+    public Laboratory(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, Building.LABORATORY, level_);
+    }
+
     private void loadConfig() {
         if (laboratoryConfig != null) {
             return;

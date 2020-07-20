@@ -17,6 +17,10 @@ public class ArcherTower extends Defense {
         super(id_, x_, y_, ARCHER_TOWER, level_, buildingStatus_, finishTime_);
     }
 
+    public ArcherTower(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, ARCHER_TOWER, level_);
+    }
+
     private void loadConfig() {
         if (archerTowerConfig != null) {
             return;

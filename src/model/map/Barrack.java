@@ -18,6 +18,10 @@ public class Barrack extends Building {
         super(id_, x_, y_, BARRACK, level_, buildingStatus_, finishTime_);
     }
 
+    public Barrack(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, BARRACK, level_);
+    }
+
     private void loadConfig() {
         if (barrackConfig != null) {
             return;

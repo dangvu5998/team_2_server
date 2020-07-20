@@ -54,6 +54,10 @@ public class Townhall extends Building {
         super(id_, x_, y_, Building.TOWNHALL, level_, buildingStatus_, finishTime_);
     }
 
+    public Townhall(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, Building.TOWNHALL, level_);
+    }
+
     public static Townhall createTownhall(int x_, int y_) {
         int newId = DBBuiltInUtil.generateId(collectionName);
         return new Townhall(newId, x_, y_, 1, Building.NORMAL_STATUS, 0);

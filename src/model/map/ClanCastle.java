@@ -19,6 +19,10 @@ public class ClanCastle extends Building {
         super(id_, x_, y_, Building.CLAN_CASTLE, level_, buildingStatus_, finishTime_);
     }
 
+    public ClanCastle(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, Building.CLAN_CASTLE, level_);
+    }
+
     private void loadConfig() {
         if (clanCastleConfig != null) {
             return;

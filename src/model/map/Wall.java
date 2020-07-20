@@ -15,6 +15,10 @@ public class Wall extends Building {
         super(id_, x_, y_, Building.WALL, level_, buildingStatus_, finishTime_);
     }
 
+    public Wall(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, WALL, level_);
+    }
+
     private void loadConfig() {
         if (wallConfig != null) {
             return;

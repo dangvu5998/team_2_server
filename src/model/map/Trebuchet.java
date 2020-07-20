@@ -17,6 +17,10 @@ public class Trebuchet extends Defense {
         super(id_, x_, y_, TREBUCHET, level_, buildingStatus_, finishTime_);
     }
 
+    public Trebuchet(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, TREBUCHET, level_);
+    }
+
     private void loadConfig() {
         if (trebuchetConfig != null) {
             return;

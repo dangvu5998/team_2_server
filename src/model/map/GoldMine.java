@@ -18,6 +18,10 @@ public class GoldMine extends MineBuilding {
         super(id_, x_,y_, GOLD_MINE, level_, buildingStatus_, finishTime_);
     }
 
+    public GoldMine(int id_, int x_,int y_, int level_) {
+        super(id_, x_,y_, GOLD_MINE, level_);
+    }
+
     private void loadConfig() {
         if (goldMineConfig != null) {
             return;

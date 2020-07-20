@@ -80,6 +80,10 @@ public abstract class Building extends MapObject {
         finishTime = finishTime_;
     }
 
+    public Building(int id_, int x_, int y_, int mapObjectType_, int level_) {
+        this(id_, x_, y_, mapObjectType_, level_, NORMAL_STATUS, 0);
+    }
+
     public abstract void setLevel(int level);
 
     public abstract int getMaxLevel();

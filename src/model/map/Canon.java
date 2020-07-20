@@ -17,6 +17,10 @@ public class Canon extends Defense {
         super(id_, x_, y_, Building.CANON, level_, buildingStatus_, finishTime_);
     }
 
+    public Canon(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, Building.CANON, level_);
+    }
+
     private void loadConfig() {
         if (canonConfig != null) {
             return;

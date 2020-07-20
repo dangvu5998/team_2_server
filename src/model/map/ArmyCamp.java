@@ -18,6 +18,10 @@ public class ArmyCamp extends Building {
         super(id_, x_, y_, Building.ARMY_CAMP, level_, buildingStatus_, finishTime_);
     }
 
+    public ArmyCamp(int id_, int x_,int y_, int level_) {
+        super(id_, x_, y_, Building.ARMY_CAMP, level_);
+    }
+
     private static void loadConfig() {
         if(armyCampConfig != null) {
             return;

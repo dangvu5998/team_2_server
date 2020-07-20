@@ -35,6 +35,10 @@ public class GoldStorage extends Building {
         super(id_, x_, y_, Building.GOLD_STORAGE, level_, buildingStatus_, finishTime_);
     }
 
+    public GoldStorage(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, Building.GOLD_STORAGE, level_);
+    }
+
     @Override
     public void setLevel(int level) {
         loadConfig();

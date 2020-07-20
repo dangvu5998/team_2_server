@@ -17,6 +17,10 @@ public class AirDefense extends Defense {
         super(id_, x_, y_, AIR_DEFENSE, level_, buildingStatus_, finishTime_);
     }
 
+    public AirDefense(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, AIR_DEFENSE, level_);
+    }
+
     private void loadConfig() {
         if (airDefenseConfig != null) {
             return;

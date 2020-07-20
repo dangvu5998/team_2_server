@@ -360,6 +360,86 @@ public abstract class MapObject {
         return mapObjects;
     }
 
+    /**
+     * create new map object have normal status
+     * @param id id of map object
+     * @param mapObjectType type of map object
+     * @param x x position
+     * @param y y position
+     * @param level level if it's building
+     * @return new map object
+     */
+    public static MapObject createMapObject(int id, int mapObjectType, int x, int y, int level) {
+        switch (mapObjectType) {
+            case TOWNHALL:
+                return new Townhall(id, x, y, level);
+            case GOLD_STORAGE:
+                return new GoldStorage(id, x, y, level);
+            case ARMY_CAMP:
+                return new ArmyCamp(id, x, y, level);
+            case ELIXIR_STORAGE:
+                return new ElixirStorage(id, x, y, level);
+            case ELIXIR_MINE:
+                return new ElixirMine(id, x, y, level);
+            case CLAN_CASTLE:
+                return new ClanCastle(id, x, y, level);
+            case BUILDER_HUT:
+                return new BuilderHut(id, x, y);
+            case GOLD_MINE:
+                return new GoldMine(id, x, y, level);
+            case OBSTACLE_1:
+            case OBSTACLE_2:
+            case OBSTACLE_3:
+            case OBSTACLE_4:
+            case OBSTACLE_5:
+            case OBSTACLE_6:
+            case OBSTACLE_7:
+            case OBSTACLE_8:
+            case OBSTACLE_9:
+            case OBSTACLE_10:
+            case OBSTACLE_11:
+            case OBSTACLE_12:
+            case OBSTACLE_13:
+            case OBSTACLE_14:
+            case OBSTACLE_15:
+            case OBSTACLE_16:
+            case OBSTACLE_17:
+            case OBSTACLE_18:
+            case OBSTACLE_19:
+            case OBSTACLE_20:
+            case OBSTACLE_21:
+            case OBSTACLE_22:
+            case OBSTACLE_23:
+            case OBSTACLE_24:
+            case OBSTACLE_25:
+            case OBSTACLE_26:
+            case OBSTACLE_27:
+                return new Obstacle(id, x, y, mapObjectType);
+            case AIR_DEFENSE:
+                return new AirDefense(id, x, y, level);
+            case ARCHER_TOWER:
+                return new ArcherTower(id, x, y, level);
+            case TREBUCHET:
+                return new Trebuchet(id, x, y, level);
+            case BARRACK:
+                return new Barrack(id, x, y, level);
+            case LABORATORY:
+                return new Laboratory(id, x, y, level);
+            case CANON:
+                return new Canon(id, x, y, level);
+            case WALL:
+                return new Wall(id, x, y, level);
+        }
+        return null;
+    }
+
+    /**
+     * create new map object for main map with generated id from database counter
+     * @param mapObjectType map object type id
+     * @param x x position
+     * @param y y position
+     * @return new map object
+     */
     public static MapObject createMapObject(int mapObjectType, int x, int y) {
         switch (mapObjectType) {
             case TOWNHALL:
@@ -421,7 +501,6 @@ public abstract class MapObject {
             case WALL:
                 return Wall.createWall(x, y);
         }
-        ;
         return null;
     }
 

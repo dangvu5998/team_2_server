@@ -17,6 +17,10 @@ public class ElixirMine extends MineBuilding {
         super(id_, x_, y_, ELIXIR_MINE, level_, buildingStatus_, finishTime_);
     }
 
+    public ElixirMine(int id_, int x_,int y_, int level_) {
+        super(id_, x_, y_, ELIXIR_MINE, level_);
+    }
+
     private void loadConfig() {
         if (elixirMineConfig != null) {
             return;

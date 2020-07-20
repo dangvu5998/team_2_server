@@ -36,6 +36,10 @@ public class ElixirStorage extends Building {
         super(id_, x_, y_, Building.ELIXIR_STORAGE, level_, buildingStatus_, finishTime_);
     }
 
+    public ElixirStorage(int id_, int x_, int y_, int level_) {
+        super(id_, x_, y_, Building.ELIXIR_STORAGE, level_);
+    }
+
     @Override
     public void setLevel(int level) {
         loadConfig();

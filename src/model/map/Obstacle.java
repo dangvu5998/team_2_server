@@ -29,6 +29,12 @@ public class Obstacle extends MapObject {
         finishTime = finishTime_;
     }
 
+    public Obstacle(int id_, int x_, int y_, int objectType_) {
+        super(id_, x_, y_, objectType_);
+        status = NORMAL_STATUS;
+        finishTime = 0;
+    }
+
     public static void loadConfig() {
         if(obtacleConfig != null) {
             return;
