@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class AirDefense extends Defense {
-    private static final String AIR_DEFENSE_CONFIG_PATH = "conf/GameStatsConfig/Defense.json";
+    private static final String AIR_DEFENSE_CONFIG_PATH = "conf/GameStatsConfig/Defence.json";
     private static final String AIR_DEFENSE_CONFIG_NAME = "DEF_5";
     private static int timeToBuild;
     private static int goldToBuild;
@@ -30,7 +30,7 @@ public class AirDefense extends Defense {
             airDefenseConfig = null;
         }
         if (airDefenseConfig == null) {
-            throw new RuntimeException("Cannot load defense config");
+            throw new RuntimeException("Cannot load air defense config");
         }
         try {
             JSONObject level1Config = airDefenseConfig.getJSONObject(String.valueOf(1));

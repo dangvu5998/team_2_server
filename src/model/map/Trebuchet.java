@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class Trebuchet extends Defense {
-    private static final String TREBUCHET_CONFIG_PATH = "conf/GameStatsConfig/Defense.json";
+    private static final String TREBUCHET_CONFIG_PATH = "conf/GameStatsConfig/Defence.json";
     private static final String TREBUCHET_CONFIG_NAME = "DEF_3";
     private static int timeToBuild;
     private static int goldToBuild;

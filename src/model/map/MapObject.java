@@ -311,6 +311,9 @@ public abstract class MapObject {
                 case BARRACK:
                     mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Barrack.class);
                     break;
+                case LABORATORY:
+                    mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, Laboratory.class);
+                    break;
                 case ARCHER_TOWER:
                     mapObject = DBBuiltInUtil.gsonWithExpose.fromJson(mapObjectStr, ArcherTower.class);
                     break;
@@ -407,8 +410,12 @@ public abstract class MapObject {
                 return AirDefense.createAirDefense(x, y);
             case ARCHER_TOWER:
                 return ArcherTower.createArcherTower(x, y);
+            case TREBUCHET:
+                return Trebuchet.createTrebuchet(x, y);
             case BARRACK:
                 return Barrack.createBarrack(x, y);
+            case LABORATORY:
+                return Laboratory.createLaboratory(x, y);
             case CANON:
                 return Canon.createCanon(x, y);
             case WALL:

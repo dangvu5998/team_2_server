@@ -30,7 +30,7 @@ public class Canon extends Defense {
             canonConfig = null;
         }
         if (canonConfig == null) {
-            throw new RuntimeException("Cannot load defense config");
+            throw new RuntimeException("Cannot load canon config");
         }
         try {
             JSONObject level1Config = canonConfig.getJSONObject(String.valueOf(1));

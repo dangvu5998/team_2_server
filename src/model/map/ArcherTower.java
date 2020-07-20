@@ -6,7 +6,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class ArcherTower extends Defense {
-    private static final String ARCHER_TOWER_CONFIG_PATH = "conf/GameStatsConfig/Defense.json";
+    private static final String ARCHER_TOWER_CONFIG_PATH = "conf/GameStatsConfig/Defence.json";
     private static final String ARCHER_TOWER_CONFIG_NAME = "DEF_2";
     private static JSONObject archerTowerConfig;
     private static int timeToBuild;
@@ -30,7 +30,7 @@ public class ArcherTower extends Defense {
             archerTowerConfig = null;
         }
         if (archerTowerConfig == null) {
-            throw new RuntimeException("Cannot load defense config");
+            throw new RuntimeException("Cannot load archer tower config");
         }
         try {
             JSONObject level1Config = archerTowerConfig.getJSONObject(String.valueOf(1));

@@ -1,5 +1,6 @@
 package model.map;
 
+import bitzero.util.common.business.CommonHandle;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -33,6 +34,14 @@ public class Laboratory extends Building {
         if (laboratoryConfig == null) {
             throw new RuntimeException("Cannot load laboratory config");
         }
+        try {
+            JSONObject level1Config = laboratoryConfig.getJSONObject(String.valueOf(1));
+            timeToBuild = level1Config.getInt("buildTime");
+            elixirToBuild = level1Config.getInt("elixir");
+        } catch (JSONException e) {
+            CommonHandle.writeErrLog(e);
+            throw new RuntimeException("Laboratory config is invalid");
+        }
     }
 
     @Override
@@ -46,7 +55,7 @@ public class Laboratory extends Building {
             health = currConfig.getInt("hitpoints");
             if(level < MAX_LEVEL) {
                 JSONObject nextLevelConfig = laboratoryConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
+                elixirToUpgrade = nextLevelConfig.getInt("elixir");
                 darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
                 timeToUpgrade = nextLevelConfig.getInt("buildTime");
                 townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
@@ -58,6 +67,7 @@ public class Laboratory extends Building {
                 timeToUpgrade = 0;
             }
         } catch (JSONException e) {
+            CommonHandle.writeErrLog(e);
             throw new RuntimeException("Laboratory config is invalid");
         }
 
