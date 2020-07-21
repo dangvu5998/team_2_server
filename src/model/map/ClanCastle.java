@@ -99,4 +99,9 @@ public class ClanCastle extends Building {
         return timeToBuild;
     }
 
+
+    @Override
+    public ClanCastle clone() {
+        return new ClanCastle(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

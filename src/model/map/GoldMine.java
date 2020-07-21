@@ -91,4 +91,9 @@ public class GoldMine extends MineBuilding {
         loadConfig();
         return timeToBuild;
     }
+
+    @Override
+    public GoldMine clone() {
+        return new GoldMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

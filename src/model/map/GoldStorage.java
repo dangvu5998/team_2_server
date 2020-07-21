@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import util.Common;
 import util.database.DBBuiltInUtil;
 
-public class GoldStorage extends Building {
+public class GoldStorage extends Building implements GoldContainable {
     @Expose
     private int gold;
     private int goldCapacity;
@@ -115,5 +115,10 @@ public class GoldStorage extends Building {
     public int getTimeToBuild() {
         loadConfig();
         return timeToBuild;
+    }
+
+    @Override
+    public GoldStorage clone() {
+        return new GoldStorage(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

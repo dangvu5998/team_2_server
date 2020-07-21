@@ -94,4 +94,9 @@ public class AirDefense extends Defense {
         return timeToBuild;
     }
 
+
+    @Override
+    public AirDefense clone() {
+        return new AirDefense(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

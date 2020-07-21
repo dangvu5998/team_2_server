@@ -515,4 +515,5 @@ public abstract class MapObject {
 
     public abstract void updateStatus();
 
+    public abstract MapObject clone();
 }

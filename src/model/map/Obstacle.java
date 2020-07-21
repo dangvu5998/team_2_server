@@ -184,4 +184,9 @@ public class Obstacle extends MapObject {
     public int getElixirToRemove() {
         return elixirToRemove;
     }
+
+    @Override
+    public Obstacle clone() {
+        return new Obstacle(this.id, this.x, this.y, this.objectType, this.status, this.finishTime);
+    }
 }

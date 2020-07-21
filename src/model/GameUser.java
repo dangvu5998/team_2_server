@@ -124,6 +124,12 @@ public class GameUser {
                     nbOfAvaiBuilder -= 1;
                 }
             }
+            if(mapObject instanceof Obstacle) {
+                Obstacle obstacle = (Obstacle) mapObject;
+                if(obstacle.getStatus() == Obstacle.REMOVING_STATUS) {
+                    nbOfAvaiBuilder -= 1;
+                }
+            }
         }
     }
 

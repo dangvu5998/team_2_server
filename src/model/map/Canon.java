@@ -94,4 +94,8 @@ public class Canon extends Defense {
         return timeToBuild;
     }
 
+    @Override
+    public Canon clone() {
+        return new Canon(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

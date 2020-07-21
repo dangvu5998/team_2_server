@@ -97,4 +97,9 @@ public class Barrack extends Building {
         return timeToBuild;
     }
 
+
+    @Override
+    public Barrack clone() {
+        return new Barrack(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

@@ -18,4 +18,6 @@ public class CmdDefine {
     public static final short CHEAT_RESOURCE = 3002;
 
     public static final short CURRENT_TIME = 4001;
+
+    public static final short LOAD_SINGLE_BATTLE_LIST = 5001;
 }

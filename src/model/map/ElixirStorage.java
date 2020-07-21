@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import util.Common;
 import util.database.DBBuiltInUtil;
 
-public class ElixirStorage extends Building {
+public class ElixirStorage extends Building implements ElixirContainable {
     private static final String ELIXIR_STORAGE_CONFIG_PATH = "conf/GameStatsConfig/Storage.json";
     private static final String ELIXIR_STORAGE_CONFIG_NAME = "STO_2";
 
@@ -116,5 +116,10 @@ public class ElixirStorage extends Building {
     public int getTimeToBuild() {
         loadConfig();
         return timeToBuild;
+    }
+
+    @Override
+    public ElixirStorage clone() {
+        return new ElixirStorage(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

@@ -94,4 +94,9 @@ public class ArcherTower extends Defense {
         return timeToBuild;
     }
 
+
+    @Override
+    public ArcherTower clone() {
+        return new ArcherTower(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

@@ -94,4 +94,9 @@ public class Trebuchet extends Defense {
         return timeToBuild;
     }
 
+
+    @Override
+    public Trebuchet clone() {
+        return new Trebuchet(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

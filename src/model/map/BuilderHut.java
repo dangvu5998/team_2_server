@@ -61,4 +61,9 @@ public class BuilderHut extends Building {
         // TODO: fix hardcode, load from json
         return 250 * index;
     }
+
+    @Override
+    public BuilderHut clone() {
+        return new BuilderHut(this.id, this.x, this.y);
+    }
 }

@@ -7,9 +7,8 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class Townhall extends Building {
+public class Townhall extends Building implements GoldContainable, ElixirContainable {
     @Expose
     private int gold;
     @Expose
@@ -128,5 +127,10 @@ public class Townhall extends Building {
     @Override
     public int getMaxLevel() {
         return MAX_LEVEL;
+    }
+
+    @Override
+    public Townhall clone() {
+        return new Townhall(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

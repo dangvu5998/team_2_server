@@ -98,4 +98,9 @@ public class Laboratory extends Building {
         loadConfig();
         return timeToBuild;
     }
+
+    @Override
+    public Laboratory clone() {
+        return new Laboratory(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

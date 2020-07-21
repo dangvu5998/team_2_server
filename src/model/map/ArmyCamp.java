@@ -99,4 +99,9 @@ public class ArmyCamp extends Building {
         loadConfig();
         return timeToBuild;
     }
+
+    @Override
+    public ArmyCamp clone() {
+        return new ArmyCamp(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

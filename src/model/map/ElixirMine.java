@@ -89,4 +89,9 @@ public class ElixirMine extends MineBuilding {
         loadConfig();
         return timeToBuild;
     }
+
+    @Override
+    public ElixirMine clone() {
+        return new ElixirMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }

@@ -66,4 +66,8 @@ public class Wall extends Building {
         return new Wall(newId,  x, y, 1, Building.NORMAL_STATUS, 0);
     }
 
+    @Override
+    public Wall clone() {
+        return new Wall(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
 }
