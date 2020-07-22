@@ -44,6 +44,9 @@ public class GameUser {
     private int elixirCapacity;
     private int nbOfAvaiBuilder;
     private int nbOfBuilder;
+    private int nbOfMaxSodiers;
+    private ArrayList<MapObject> mapObjects;
+    private boolean mapObjectsChanged;
 
     private static JSONObject initGameConfig;
 
@@ -293,6 +296,9 @@ public class GameUser {
             return false;
         }
         mapObjectIds.add(mapObject.getId());
+        if(mapObjects != null) {
+            mapObjects.add(mapObject);
+        }
         save();
         if(mapObject instanceof Townhall || mapObject instanceof GoldStorage) {
             updateGoldCapacity();
@@ -374,10 +380,13 @@ public class GameUser {
     }
 
     public ArrayList<MapObject> getAllMapObjects() {
+        if(mapObjects != null && !mapObjectsChanged) {
+            return mapObjects;
+        }
         ArrayList<MapObject> result = new ArrayList<>();
         ArrayList<Integer> removedObstacles = new ArrayList<>();
 
-        ArrayList<MapObject> mapObjects = MapObject.getByIdList(mapObjectIds);
+        mapObjects = MapObject.getByIdList(mapObjectIds);
         boolean mapObjIdsModified = false;
         for(MapObject mapObj: mapObjects) {
             if(mapObj instanceof Obstacle) {
@@ -402,7 +411,9 @@ public class GameUser {
                 MapObject.removeById(removeId);
             }
         }
-        return result;
+        mapObjects = result;
+        mapObjectsChanged = false;
+        return mapObjects;
     }
 
     /**
@@ -461,6 +472,7 @@ public class GameUser {
         }
         building.setX(x);
         building.setY(y);
+        mapObjectsChanged = true;
         building.save();
         return true;
     }
@@ -638,7 +650,9 @@ public class GameUser {
         }
 
         // check max number of building
-        ArrayList<MapObject> mapObjects = getAllMapObjects();
+        if(mapObjects == null) {
+            getAllMapObjects();
+        }
         int nbOfCurrBuyingBuilding = 0;
         for(MapObject mapObject: mapObjects) {
             if(mapObject.getObjectType() == buildingTypeId) {
@@ -692,6 +706,7 @@ public class GameUser {
         building.build();
         building.save();
         save();
+        mapObjects.add(building);
         return building.getId();
     }
 
@@ -719,6 +734,9 @@ public class GameUser {
 
             // remove building
             mapObjectIds.removeIf(mapObjectId -> mapObjectId == buildingId);
+            if(mapObjects != null) {
+                mapObjects.removeIf(mapObj -> mapObj.getId() == buildingId);
+            }
             save();
             MapObject.removeById(buildingId);
             return buildingId;
@@ -777,7 +795,7 @@ public class GameUser {
             } else {
                 building.upgrade();
             }
-
+            mapObjectsChanged = true;
             return buildingId;
         }
         return ResponseUpgradeBuilding.INVALID_BUILDING_STATUS;
@@ -810,7 +828,11 @@ public class GameUser {
             g -= gToQuickFinish;
             // TODO: remove record in map object db
             mapObjectIds.removeIf(currId -> currId == mapObjId);
+            if(mapObjects != null) {
+                mapObjects.removeIf(mapObj -> mapObj.getId() == mapObjId);
+            }
             save();
+            mapObjectsChanged = true;
             return mapObjId;
         }
         if(mapObject instanceof Building) {
@@ -831,6 +853,7 @@ public class GameUser {
                 building.quickFinish();
                 g -= gToQuickFinish;
                 save();
+                mapObjectsChanged = true;
                 return mapObjId;
             }
         }
@@ -858,12 +881,26 @@ public class GameUser {
                 deductGold(goldToRemove);
                 deductElixir(elixirToRemove);
                 obstacle.remove();
+                mapObjectsChanged = true;
                 return obstacleId;
             } else {
                 return ResponseRemoveObstacle.INVALID_MAP_OBJ_STATUS;
             }
         }
         return ResponseRemoveObstacle.INVALID_MAP_OBJ_ID;
+    }
+
+    public int getNbOfMaxSodiers() {
+        if(nbOfMaxSodiers > 0) {
+            return nbOfMaxSodiers;
+        }
+        nbOfMaxSodiers = 0;
+        for(MapObject mapObject: getAllMapObjects()) {
+            if(mapObject instanceof ArmyCamp) {
+                nbOfMaxSodiers += ((ArmyCamp) mapObject).getCapacity();
+            }
+        }
+        return nbOfMaxSodiers;
     }
 }
 

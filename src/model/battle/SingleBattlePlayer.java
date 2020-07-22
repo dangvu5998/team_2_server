@@ -5,7 +5,7 @@ import util.database.DBBuiltInUtil;
 
 import java.util.ArrayList;
 
-public class BattleSinglePlayer {
+public class SingleBattlePlayer {
     @Expose
     private int id;
     @Expose
@@ -13,7 +13,7 @@ public class BattleSinglePlayer {
 
     private static final String COLLECTION_NAME = "BattleSinglePlayer_P";
 
-    public BattleSinglePlayer(int id,ArrayList<SingleBattle> battles) {
+    public SingleBattlePlayer(int id, ArrayList<SingleBattle> battles) {
         this.id = id;
         this.battles = battles;
     }
@@ -23,23 +23,39 @@ public class BattleSinglePlayer {
      * @param id user id
      * @return new battle single player
      */
-    public static BattleSinglePlayer createBattleSinglePlayer(int id) {
+    public static SingleBattlePlayer createBattleSinglePlayer(int id) {
         ArrayList<SingleBattle> battles = new ArrayList<>();
         for(int battleId = SingleBattle.MIN_ID; battleId <= SingleBattle.MAX_ID; battleId++) {
             battles.add(new SingleBattle(battleId));
         }
-        return new BattleSinglePlayer(id, battles);
+        return new SingleBattlePlayer(id, battles);
     }
 
     public void save() {
         DBBuiltInUtil.save(COLLECTION_NAME, String.valueOf(id), this);
     }
 
-    public static BattleSinglePlayer getBattleSinglePlayerById(int id) {
-        return (BattleSinglePlayer) DBBuiltInUtil.get(COLLECTION_NAME, String.valueOf(id), BattleSinglePlayer.class);
+    public static SingleBattlePlayer getBattleSinglePlayerById(int id) {
+        return (SingleBattlePlayer) DBBuiltInUtil.get(COLLECTION_NAME, String.valueOf(id), SingleBattlePlayer.class);
+    }
+
+    public int getMaxSingleBattleCanPlayed() {
+        int maxBattle = 0;
+        for(int i = battles.size() - 1; i > 0; i--) {
+            SingleBattle battle = battles.get(i);
+            if(battle.getStar() > 0) {
+                maxBattle = i;
+                break;
+            }
+        }
+        return maxBattle;
     }
 
     public static void deleteBattleSinglePlayerById(int id) {
         DBBuiltInUtil.delete(COLLECTION_NAME, String.valueOf(id));
+    }
+
+    public ArrayList<SingleBattle> getBattles() {
+        return battles;
     }
 }

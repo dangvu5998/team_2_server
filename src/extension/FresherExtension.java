@@ -18,6 +18,7 @@ import cmd.ResponseConst;
 import cmd.send.ResponseMainInfo;
 import cmd.send.ResponseTimeStamp;
 import cmd.send.mainmap.ResponseLoadMainMap;
+import event.handler.BattleHandler;
 import event.handler.MainMapHandler;
 import event.handler.ResourceHandler;
 import event.handler.SyncHandler;
@@ -57,6 +58,7 @@ public class FresherExtension extends BZExtension {
         addRequestHandler(MainMapHandler.MAIN_MAP_IDS, MainMapHandler.class);
         addRequestHandler(ResourceHandler.RESOURCE_IDS, ResourceHandler.class);
         addRequestHandler(SyncHandler.SYNC_IDS, SyncHandler.class);
+        addRequestHandler(BattleHandler.BATTLE_IDS, BattleHandler.class);
     }
 
     @Override

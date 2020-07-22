@@ -33,7 +33,7 @@ public class ResponseMainInfo extends BaseMsg {
         // 6 current nb of sodiers
         bf.putInt(0);
         // 7 max nb of sodiers
-        bf.putInt(0);
+        bf.putInt(gameUser.getNbOfMaxSodiers());
         // 8 current of available builder
         bf.putInt(gameUser.getNbOfAvaiBuilder());
         // 9 max nb of builders

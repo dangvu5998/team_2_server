@@ -104,4 +104,8 @@ public class ArmyCamp extends Building {
     public ArmyCamp clone() {
         return new ArmyCamp(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
+
+    public int getCapacity() {
+        return capacity;
+    }
 }
