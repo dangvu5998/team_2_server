@@ -23,7 +23,6 @@ public class ElixirStorage extends Building implements ElixirContainable {
         this.elixir = elixir;
     }
 
-    @Expose
     private int elixir;
 
     public int getElixirCapacity() {

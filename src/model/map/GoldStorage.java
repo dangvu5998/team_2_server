@@ -8,7 +8,6 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class GoldStorage extends Building implements GoldContainable {
-    @Expose
     private int gold;
     private int goldCapacity;
 

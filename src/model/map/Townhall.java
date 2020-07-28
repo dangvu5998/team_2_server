@@ -9,9 +9,7 @@ import util.database.DBBuiltInUtil;
 import java.util.HashMap;
 
 public class Townhall extends Building implements GoldContainable, ElixirContainable {
-    @Expose
     private int gold;
-    @Expose
     private int elixir;
     @Expose
     private int darkElixir;

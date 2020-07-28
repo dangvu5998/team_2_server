@@ -140,36 +140,7 @@ public class GameUser {
 
     public void setGold(int gold) {
         this.gold = gold;
-        // distribute to townhall and gold storage
-        Townhall townhall = getTownhallBuilding();
-        if(townhall == null) {
-            return;
-        }
-        int townhallGoldCapacity = townhall.getGoldCapacity();
-        ArrayList<GoldStorage> goldStorages = getAllGoldStorageBuilding();
-        if(gold >= townhallGoldCapacity) {
-            gold -= townhallGoldCapacity;
-            townhall.setGold(townhallGoldCapacity);
-        }
-        else {
-            townhall.setGold(gold);
-            gold = 0;
-        }
-        townhall.save();
-        for(GoldStorage goldStorage : goldStorages) {
-            if(goldStorage.getStatus() == Building.BUILDING_STATUS) {
-                continue;
-            }
-            int goldStorageCapacity = goldStorage.getGoldCapacity();
-            if(gold >= goldStorageCapacity) {
-                goldStorage.setGold(goldStorageCapacity);
-                gold -= goldStorageCapacity;
-            } else {
-                goldStorage.setGold(gold);
-                gold = 0;
-            }
-            goldStorage.save();
-        }
+        save();
     }
 
     public int getElixir() {
@@ -178,36 +149,7 @@ public class GameUser {
 
     public void setElixir(int elixir) {
         this.elixir = elixir;
-        // distribute to townhall and gold storage
-        Townhall townhall = getTownhallBuilding();
-        if(townhall == null) {
-            return;
-        }
-        int townhallElixirCapacity = townhall.getElixirCapacity();
-        ArrayList<ElixirStorage> elixirStorages = getAllElixirStorageBuilding();
-        if(elixir > townhallElixirCapacity) {
-            elixir -= townhallElixirCapacity;
-            townhall.setElixir(townhallElixirCapacity);
-        }
-        else {
-            townhall.setElixir(elixir);
-            elixir = 0;
-        }
-        townhall.save();
-        for(ElixirStorage elixirStorage : elixirStorages) {
-            if(elixirStorage.getStatus() == Building.BUILDING_STATUS) {
-                continue;
-            }
-            int elixirStorageCapacity = elixirStorage.getElixirCapacity();
-            if(elixir > elixirStorageCapacity) {
-                elixirStorage.setElixir(elixirStorageCapacity);
-                elixir -= elixirStorageCapacity;
-            } else {
-                elixirStorage.setElixir(elixir);
-                elixir = 0;
-            }
-            elixirStorage.save();
-        }
+        save();
     }
 
     public int getGoldCapacity() {
@@ -515,7 +457,6 @@ public class GameUser {
     }
 
     private void loadGold() {
-        int amount = 0;
         int capacity = 0;
         Townhall townhall = getTownhallBuilding();
         if(townhall == null) {
@@ -524,12 +465,9 @@ public class GameUser {
         capacity += townhall.getGoldCapacity();
         for(GoldStorage goldStorage : getAllGoldStorageBuilding()) {
             if(goldStorage.getStatus() != Building.BUILDING_STATUS) {
-                amount += goldStorage.getGold();
                 capacity += goldStorage.getGoldCapacity();
             }
         }
-        amount += townhall.getGold();
-        gold = amount;
         goldCapacity = capacity;
     }
 
@@ -594,22 +532,18 @@ public class GameUser {
     }
 
     public void loadElixir() {
-        int amount = 0;
         int capacity = 0;
         Townhall townhall = getTownhallBuilding();
         if(townhall == null) {
             return;
         }
-        amount += townhall.getElixir();
         capacity += townhall.getElixirCapacity();
         for(ElixirStorage elixirStorage : getAllElixirStorageBuilding()) {
             if(elixirStorage.getStatus() == Building.BUILDING_STATUS) {
                 continue;
             }
-            amount += elixirStorage.getElixir();
             capacity += elixirStorage.getElixirCapacity();
         }
-        elixir = amount;
         elixirCapacity = capacity;
     }
 

@@ -5,7 +5,8 @@ import org.json.JSONObject;
 import util.Common;
 import util.database.DBBuiltInUtil;
 
-public class GoldMine extends MineBuilding {
+public class GoldMine extends MineBuilding implements GoldContainable {
+    private int gold;
 
     private static final String GOLD_MINE_CONFIG_PATH = "conf/GameStatsConfig/Resource.json";
     private static final String GOLD_MINE_CONFIG_NAME = "RES_1";
@@ -105,5 +106,20 @@ public class GoldMine extends MineBuilding {
         if(mode == BATTLE_MODE)
             return new GoldMine(this.id, this.x, this.y, this.level, this.mode);
         return new GoldMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
+
+    @Override
+    public void setGold(int gold) {
+        this.gold = gold;
+    }
+
+    @Override
+    public int getGold() {
+        return gold;
+    }
+
+    @Override
+    public int getGoldCapacity() {
+        return capacity;
     }
 }

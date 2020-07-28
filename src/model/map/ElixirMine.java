@@ -5,7 +5,8 @@ import org.json.JSONObject;
 import util.Common;
 import util.database.DBBuiltInUtil;
 
-public class ElixirMine extends MineBuilding {
+public class ElixirMine extends MineBuilding implements ElixirContainable {
+    private int elixir;
     private static final String ELIXIR_MINE_CONFIG_PATH = "conf/GameStatsConfig/Resource.json";
     private static final String ELIXIR_MINE_CONFIG_NAME = "RES_2";
     private static JSONObject elixirMineConfig;
@@ -99,5 +100,23 @@ public class ElixirMine extends MineBuilding {
         if(mode == BATTLE_MODE)
             return new ElixirMine(this.id, this.x, this.y, this.level, this.mode);
         return new ElixirMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
+
+    @Override
+    public void setElixir(int elixir) {
+        if(elixir > capacity) {
+            throw new RuntimeException("Elixir exceeded capacity");
+        }
+        this.elixir = elixir;
+    }
+
+    @Override
+    public int getElixir() {
+        return elixir;
+    }
+
+    @Override
+    public int getElixirCapacity() {
+        return capacity;
     }
 }
