@@ -15,6 +15,10 @@ public class BuilderHut extends Building {
         super(id_, x_, y_, BUILDER_HUT, 1, NORMAL_STATUS, 0);
     }
 
+    public BuilderHut(int id_, int x_, int y_, int mode) {
+        super(id_, x_, y_, BUILDER_HUT, 1, mode);
+    }
+
     private static void loadConfig() {
         if(builderHutConfig != null) {
             return;
@@ -33,7 +37,9 @@ public class BuilderHut extends Building {
             JSONObject currConfig = builderHutConfig.getJSONObject(BUILDER_HUT_CONFIG_NAME).getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
+            }
         } catch (JSONException e) {
             throw new RuntimeException("Builder hut config is invalid");
         }
@@ -64,6 +70,8 @@ public class BuilderHut extends Building {
 
     @Override
     public BuilderHut clone() {
+        if(mode == BATTLE_MODE)
+            return new BuilderHut(this.id, this.x, this.y, this.mode);
         return new BuilderHut(this.id, this.x, this.y);
     }
 }

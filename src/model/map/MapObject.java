@@ -2,6 +2,7 @@ package model.map;
 
 import bitzero.util.common.business.CommonHandle;
 import com.google.gson.annotations.Expose;
+import model.BattleObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import util.database.DBBuiltInUtil;
 
 import java.util.*;
 
-public abstract class MapObject {
+public abstract class MapObject implements BattleObject {
     private static final Logger logger = LoggerFactory.getLogger("MapObject");
 
     @Expose
@@ -21,6 +22,7 @@ public abstract class MapObject {
     protected int y;
     @Expose
     protected int objectType;
+    protected int mode;
     protected int width;
     protected int height;
 
@@ -86,6 +88,9 @@ public abstract class MapObject {
 
     public static final int MAP_WIDTH = 40;
     public static final int MAP_HEIGHT = 40;
+
+    public static final int MAIN_MAP_MODE = 0;
+    public static final int BATTLE_MODE = 1;
 
     public static final Map<String, Integer> MAP_OBJ_CONFIG_NAME_TO_ID = new HashMap<String, Integer>() {
         {
@@ -434,6 +439,79 @@ public abstract class MapObject {
     }
 
     /**
+     * create new map object in battle mode
+     * @param id id of map object
+     * @param mapObjectType type of map object
+     * @param x x position
+     * @param y y position
+     * @param level level if it's building
+     * @return new battle map object
+     */
+    public static MapObject createBattleMapObject(int id, int mapObjectType, int x, int y, int level) {
+        switch (mapObjectType) {
+            case TOWNHALL:
+                return new Townhall(id, x, y, level, MapObject.BATTLE_MODE);
+            case GOLD_STORAGE:
+                return new GoldStorage(id, x, y, level, MapObject.BATTLE_MODE);
+            case ARMY_CAMP:
+                return new ArmyCamp(id, x, y, level, MapObject.BATTLE_MODE);
+            case ELIXIR_STORAGE:
+                return new ElixirStorage(id, x, y, level, MapObject.BATTLE_MODE);
+            case ELIXIR_MINE:
+                return new ElixirMine(id, x, y, level, MapObject.BATTLE_MODE);
+            case CLAN_CASTLE:
+                return new ClanCastle(id, x, y, level, MapObject.BATTLE_MODE);
+            case BUILDER_HUT:
+                return new BuilderHut(id, x, y, MapObject.BATTLE_MODE);
+            case GOLD_MINE:
+                return new GoldMine(id, x, y, level, MapObject.BATTLE_MODE);
+            case OBSTACLE_1:
+            case OBSTACLE_2:
+            case OBSTACLE_3:
+            case OBSTACLE_4:
+            case OBSTACLE_5:
+            case OBSTACLE_6:
+            case OBSTACLE_7:
+            case OBSTACLE_8:
+            case OBSTACLE_9:
+            case OBSTACLE_10:
+            case OBSTACLE_11:
+            case OBSTACLE_12:
+            case OBSTACLE_13:
+            case OBSTACLE_14:
+            case OBSTACLE_15:
+            case OBSTACLE_16:
+            case OBSTACLE_17:
+            case OBSTACLE_18:
+            case OBSTACLE_19:
+            case OBSTACLE_20:
+            case OBSTACLE_21:
+            case OBSTACLE_22:
+            case OBSTACLE_23:
+            case OBSTACLE_24:
+            case OBSTACLE_25:
+            case OBSTACLE_26:
+            case OBSTACLE_27:
+                return new Obstacle(id, x, y, mapObjectType, MapObject.BATTLE_MODE);
+            case AIR_DEFENSE:
+                return new AirDefense(id, x, y, level, MapObject.BATTLE_MODE);
+            case ARCHER_TOWER:
+                return new ArcherTower(id, x, y, level, MapObject.BATTLE_MODE);
+            case TREBUCHET:
+                return new Trebuchet(id, x, y, level, MapObject.BATTLE_MODE);
+            case BARRACK:
+                return new Barrack(id, x, y, level, MapObject.BATTLE_MODE);
+            case LABORATORY:
+                return new Laboratory(id, x, y, level, MapObject.BATTLE_MODE);
+            case CANON:
+                return new Canon(id, x, y, level, MapObject.BATTLE_MODE);
+            case WALL:
+                return new Wall(id, x, y, level, MapObject.BATTLE_MODE);
+        }
+        return null;
+    }
+
+    /**
      * create new map object for main map with generated id from database counter
      * @param mapObjectType map object type id
      * @param x x position
@@ -516,4 +594,15 @@ public abstract class MapObject {
     public abstract void updateStatus();
 
     public abstract MapObject clone();
+
+    @Override
+    public double getBattleX() {
+        return (double) x + (double) width / 2;
+    }
+
+    @Override
+    public double getBattleY() {
+        return (double) y + (double) height / 2;
+    }
+
 }

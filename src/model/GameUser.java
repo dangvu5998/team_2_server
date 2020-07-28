@@ -38,7 +38,9 @@ public class GameUser {
     private boolean notifications;
     @Expose
     private final ArrayList<Integer> mapObjectIds;
+    @Expose
     private int gold;
+    @Expose
     private int elixir;
     private int goldCapacity;
     private int elixirCapacity;

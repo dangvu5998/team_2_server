@@ -39,6 +39,10 @@ public class GoldStorage extends Building implements GoldContainable {
         super(id_, x_, y_, Building.GOLD_STORAGE, level_);
     }
 
+    public GoldStorage(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, Building.GOLD_STORAGE, level_, mode);
+    }
+
     @Override
     public void setLevel(int level) {
         loadConfig();
@@ -50,21 +54,24 @@ public class GoldStorage extends Building implements GoldContainable {
             JSONObject currConfig = goldStorageConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
             goldCapacity = currConfig.getInt("capacity");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = goldStorageConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                elixirToUpgrade = nextLevelConfig.getInt("elixir");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = goldStorageConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Gold storage config is invalid");
@@ -119,6 +126,8 @@ public class GoldStorage extends Building implements GoldContainable {
 
     @Override
     public GoldStorage clone() {
+        if(mode == BATTLE_MODE)
+            return new GoldStorage(this.id, this.x, this.y, this.level, this.mode);
         return new GoldStorage(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

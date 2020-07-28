@@ -20,4 +20,7 @@ public class CmdDefine {
     public static final short CURRENT_TIME = 4001;
 
     public static final short LOAD_SINGLE_BATTLE_LIST = 5001;
+    public static final short SELECT_SINGLE_BATTLE = 5002;
+    public static final short DROP_SOLDIERS = 5003;
+    public static final short END_BATTLE = 5004;
 }

@@ -1,16 +1,17 @@
 package model.map;
 
 import com.google.gson.annotations.Expose;
+import model.CanBeAttacked;
 import util.Common;
 
-public abstract class Building extends MapObject {
+public abstract class Building extends MapObject implements CanBeAttacked {
     @Expose
     protected int level;
     @Expose
     protected int finishTime;
     @Expose
     protected int status;
-    protected int health;
+    protected double health;
     protected int goldToUpgrade = 0;
     protected int elixirToUpgrade = 0;
     protected int darkElixirToUpgrade = 0;
@@ -75,6 +76,7 @@ public abstract class Building extends MapObject {
 
     public Building(int id_, int x_, int y_, int mapObjectType_, int level_, int status_, int finishTime_) {
         super(id_, x_, y_, mapObjectType_);
+        mode = MAIN_MAP_MODE;
         status = status_;
         setLevel(level_);
         finishTime = finishTime_;
@@ -82,6 +84,14 @@ public abstract class Building extends MapObject {
 
     public Building(int id_, int x_, int y_, int mapObjectType_, int level_) {
         this(id_, x_, y_, mapObjectType_, level_, NORMAL_STATUS, 0);
+    }
+
+    public Building(int id, int x, int y, int mapObjectType, int level, int mode) {
+        super(id, x, y, mapObjectType);
+        this.mode = mode;
+        status = NORMAL_STATUS;
+        finishTime = 0;
+        setLevel(level);
     }
 
     public abstract void setLevel(int level);
@@ -160,5 +170,10 @@ public abstract class Building extends MapObject {
     @Override
     public void loadExtraInfo() {
         setLevel(level);
+    }
+
+    @Override
+    public void takeDamage(double dmg) {
+        health -= dmg;
     }
 }

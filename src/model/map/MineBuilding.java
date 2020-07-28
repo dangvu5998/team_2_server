@@ -13,6 +13,10 @@ public abstract class MineBuilding extends Building {
         super(id_, x_,y_, mapObjectType_, level_, buildingStatus_, finishTime_);
     }
 
+    public MineBuilding(int id_, int x_,int y_, int mapObjectType_, int level_, int mode) {
+        super(id_, x_,y_, mapObjectType_, level_, mode);
+    }
+
     public MineBuilding(int id_, int x_,int y_, int mapObjectType_, int level_) {
         super(id_, x_,y_, mapObjectType_, level_);
     }

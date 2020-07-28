@@ -35,6 +35,13 @@ public class Obstacle extends MapObject {
         finishTime = 0;
     }
 
+    public Obstacle(int id_, int x_, int y_, int objectType_, int mode) {
+        super(id_, x_, y_, objectType_);
+        status = NORMAL_STATUS;
+        finishTime = 0;
+        this.mode = mode;
+    }
+
     public static void loadConfig() {
         if(obtacleConfig != null) {
             return;
@@ -187,6 +194,8 @@ public class Obstacle extends MapObject {
 
     @Override
     public Obstacle clone() {
+        if(mode == BATTLE_MODE)
+            return new Obstacle(this.id, this.x, this.y, this.objectType, this.mode);
         return new Obstacle(this.id, this.x, this.y, this.objectType, this.status, this.finishTime);
     }
 }

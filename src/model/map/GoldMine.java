@@ -22,6 +22,10 @@ public class GoldMine extends MineBuilding {
         super(id_, x_,y_, GOLD_MINE, level_);
     }
 
+    public GoldMine(int id_, int x_,int y_, int level_, int mode) {
+        super(id_, x_,y_, GOLD_MINE, level_, mode);
+    }
+
     private void loadConfig() {
         if (goldMineConfig != null) {
             return;
@@ -55,15 +59,19 @@ public class GoldMine extends MineBuilding {
             JSONObject currConfig = goldMineConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
             capacity = currConfig.getInt("capacity");
-            productionRate = currConfig.getInt("productivity");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = goldMineConfig.getJSONObject(String.valueOf(level + 1));
-                elixirToUpgrade = nextLevelConfig.getInt("elixir");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
+            }
+            else {
+                productionRate = currConfig.getInt("productivity");
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = goldMineConfig.getJSONObject(String.valueOf(level + 1));
+                    elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Gold mine config is invalid");
@@ -94,6 +102,8 @@ public class GoldMine extends MineBuilding {
 
     @Override
     public GoldMine clone() {
+        if(mode == BATTLE_MODE)
+            return new GoldMine(this.id, this.x, this.y, this.level, this.mode);
         return new GoldMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

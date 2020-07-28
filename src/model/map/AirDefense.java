@@ -21,6 +21,10 @@ public class AirDefense extends Defense {
         super(id_, x_, y_, AIR_DEFENSE, level_);
     }
 
+    public AirDefense(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, AIR_DEFENSE, level_, mode);
+    }
+
     private void loadConfig() {
         if (airDefenseConfig != null) {
             return;
@@ -53,19 +57,22 @@ public class AirDefense extends Defense {
             JSONObject currConfig = airDefenseConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = airDefenseConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = airDefenseConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Air defense config is invalid");
@@ -97,6 +104,8 @@ public class AirDefense extends Defense {
 
     @Override
     public AirDefense clone() {
+        if(mode == BATTLE_MODE)
+            return new AirDefense(this.id, this.x, this.y, this.level, this.mode);
         return new AirDefense(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

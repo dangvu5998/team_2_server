@@ -21,6 +21,10 @@ public class ElixirMine extends MineBuilding {
         super(id_, x_, y_, ELIXIR_MINE, level_);
     }
 
+    public ElixirMine(int id_, int x_,int y_, int level_, int mode) {
+        super(id_, x_, y_, ELIXIR_MINE, level_, mode);
+    }
+
     private void loadConfig() {
         if (elixirMineConfig != null) {
             return;
@@ -92,6 +96,8 @@ public class ElixirMine extends MineBuilding {
 
     @Override
     public ElixirMine clone() {
+        if(mode == BATTLE_MODE)
+            return new ElixirMine(this.id, this.x, this.y, this.level, this.mode);
         return new ElixirMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

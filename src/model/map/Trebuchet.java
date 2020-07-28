@@ -21,6 +21,10 @@ public class Trebuchet extends Defense {
         super(id_, x_, y_, TREBUCHET, level_);
     }
 
+    public Trebuchet(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, TREBUCHET, level_, mode);
+    }
+
     private void loadConfig() {
         if (trebuchetConfig != null) {
             return;
@@ -53,19 +57,29 @@ public class Trebuchet extends Defense {
             JSONObject currConfig = trebuchetConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = trebuchetConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                minRange = 4;
+                maxRange = 11;
+                attackSpeed = 5;
+                attackRadius = 1.5;
+                attackArea = 1;
+                attackType = 3;
+                health = currConfig.getInt("hitpoints");
+                dmgPerShot = currConfig.getDouble("damagePerShot");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = trebuchetConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Trebuchet config is invalid");
@@ -97,6 +111,8 @@ public class Trebuchet extends Defense {
 
     @Override
     public Trebuchet clone() {
+        if(mode == BATTLE_MODE)
+            return new Trebuchet(this.id, this.x, this.y, this.level, this.mode);
         return new Trebuchet(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

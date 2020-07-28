@@ -91,7 +91,7 @@ public class SingleBattle {
                     int objTypeId = MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.get(objTypeIdName);
                     int objId = mapObjConf.getInt("objId");
                     int level = mapObjConf.getInt("level");
-                    MapObject mapObject = MapObject.createMapObject(objId, objTypeId, x, y, level);
+                    MapObject mapObject = MapObject.createBattleMapObject(objId, objTypeId, x, y, level);
                     if(mapObject == null) {
                         throw new RuntimeException(configFileName + " config is invalid, cannot create map obj " + objTypeId);
                     }

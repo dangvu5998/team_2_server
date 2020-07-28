@@ -57,6 +57,10 @@ public class Townhall extends Building implements GoldContainable, ElixirContain
         super(id_, x_, y_, Building.TOWNHALL, level_);
     }
 
+    public Townhall(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, Building.TOWNHALL, level_, mode);
+    }
+
     public static Townhall createTownhall(int x_, int y_) {
         int newId = DBBuiltInUtil.generateId(collectionName);
         return new Townhall(newId, x_, y_, 1, Building.NORMAL_STATUS, 0);
@@ -87,26 +91,28 @@ public class Townhall extends Building implements GoldContainable, ElixirContain
             JSONObject currConfig = townhallConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            elixirToUpgrade = 0;
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = townhallConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-            }
             goldCapacity = currConfig.getInt("capacityGold");
             elixirCapacity = currConfig.getInt("capacityElixir");
-            darkElixirCapacity = currConfig.getInt("capacityDarkElixir");
-            maxNumberBuilding = new HashMap<>();
-            for(int buildingTypeId: MapObject.BUILDING_TYPES) {
-                if(buildingTypeId == MapObject.BUILDER_HUT || buildingTypeId == MapObject.TOWNHALL) {
-                    continue;
-                }
-                String configBuildingName = MapObject.MAP_ID_OBJ_TO_CONFIG_NAME.get(buildingTypeId);
-                maxNumberBuilding.put(buildingTypeId, currConfig.getInt(configBuildingName));
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
-            // TODO: load config other buildings condition
+            else {
+                elixirToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = townhallConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                }
+                maxNumberBuilding = new HashMap<>();
+                for (int buildingTypeId : MapObject.BUILDING_TYPES) {
+                    if (buildingTypeId == MapObject.BUILDER_HUT || buildingTypeId == MapObject.TOWNHALL) {
+                        continue;
+                    }
+                    String configBuildingName = MapObject.MAP_ID_OBJ_TO_CONFIG_NAME.get(buildingTypeId);
+                    maxNumberBuilding.put(buildingTypeId, currConfig.getInt(configBuildingName));
+                }
+            }
         } catch (JSONException e) {
             throw new RuntimeException("Townhall config is invalid");
         }
@@ -131,6 +137,8 @@ public class Townhall extends Building implements GoldContainable, ElixirContain
 
     @Override
     public Townhall clone() {
+        if(mode == BATTLE_MODE)
+            return new Townhall(this.id, this.x, this.y, this.level, this.mode);
         return new Townhall(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

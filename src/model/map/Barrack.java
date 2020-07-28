@@ -22,6 +22,10 @@ public class Barrack extends Building {
         super(id_, x_, y_, BARRACK, level_);
     }
 
+    public Barrack(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, BARRACK, level_, mode);
+    }
+
     private void loadConfig() {
         if (barrackConfig != null) {
             return;
@@ -55,19 +59,22 @@ public class Barrack extends Building {
             JSONObject currConfig = barrackConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = barrackConfig.getJSONObject(String.valueOf(level + 1));
-                elixirToUpgrade = nextLevelConfig.getInt("elixir");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = barrackConfig.getJSONObject(String.valueOf(level + 1));
+                    elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             CommonHandle.writeErrLog(e);
@@ -100,6 +107,8 @@ public class Barrack extends Building {
 
     @Override
     public Barrack clone() {
+        if(mode == BATTLE_MODE)
+            return new Barrack(this.id, this.x, this.y, this.level, this.mode);
         return new Barrack(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

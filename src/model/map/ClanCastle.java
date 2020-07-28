@@ -23,6 +23,10 @@ public class ClanCastle extends Building {
         super(id_, x_, y_, Building.CLAN_CASTLE, level_);
     }
 
+    public ClanCastle(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, Building.CLAN_CASTLE, level_, mode);
+    }
+
     private void loadConfig() {
         if (clanCastleConfig != null) {
             return;
@@ -56,19 +60,22 @@ public class ClanCastle extends Building {
             JSONObject currConfig = clanCastleConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = clanCastleConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = clanCastleConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             CommonHandle.writeErrLog(e);
@@ -102,6 +109,8 @@ public class ClanCastle extends Building {
 
     @Override
     public ClanCastle clone() {
+        if(mode == BATTLE_MODE)
+            return new ClanCastle(this.id, this.x, this.y, this.level, this.mode);
         return new ClanCastle(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

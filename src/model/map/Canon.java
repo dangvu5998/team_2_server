@@ -1,5 +1,6 @@
 package model.map;
 
+import model.BattleConst;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -19,6 +20,10 @@ public class Canon extends Defense {
 
     public Canon(int id_, int x_, int y_, int level_) {
         super(id_, x_, y_, Building.CANON, level_);
+    }
+
+    public Canon(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, Building.CANON, level_, mode);
     }
 
     private void loadConfig() {
@@ -53,19 +58,29 @@ public class Canon extends Defense {
             JSONObject currConfig = canonConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = canonConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
+                minRange = 0;
+                maxRange = 9;
+                attackSpeed = 0.8;
+                attackRadius = 0;
+                attackArea = BattleConst.GROUND_ATTACK_AREA;
+                attackType = BattleConst.RANGED_ATTACK_TYPE;
+                dmgPerShot = currConfig.getDouble("damagePerShot");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = canonConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Canon config is invalid");
@@ -96,6 +111,8 @@ public class Canon extends Defense {
 
     @Override
     public Canon clone() {
+        if(mode == BATTLE_MODE)
+            return new Canon(this.id, this.x, this.y, this.level, this.mode);
         return new Canon(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

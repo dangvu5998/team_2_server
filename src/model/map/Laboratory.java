@@ -23,6 +23,10 @@ public class Laboratory extends Building {
         super(id_, x_, y_, Building.LABORATORY, level_);
     }
 
+    public Laboratory(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, Building.LABORATORY, level_, mode);
+    }
+
     private void loadConfig() {
         if (laboratoryConfig != null) {
             return;
@@ -56,19 +60,22 @@ public class Laboratory extends Building {
             JSONObject currConfig = laboratoryConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = laboratoryConfig.getJSONObject(String.valueOf(level + 1));
-                elixirToUpgrade = nextLevelConfig.getInt("elixir");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = laboratoryConfig.getJSONObject(String.valueOf(level + 1));
+                    elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             CommonHandle.writeErrLog(e);
@@ -101,6 +108,8 @@ public class Laboratory extends Building {
 
     @Override
     public Laboratory clone() {
+        if(mode == BATTLE_MODE)
+            return new Laboratory(this.id, this.x, this.y, this.level, this.mode);
         return new Laboratory(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

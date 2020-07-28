@@ -1,5 +1,6 @@
 package model.map;
 
+import model.BattleConst;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -19,6 +20,10 @@ public class ArcherTower extends Defense {
 
     public ArcherTower(int id_, int x_, int y_, int level_) {
         super(id_, x_, y_, ARCHER_TOWER, level_);
+    }
+
+    public ArcherTower(int id_, int x_, int y_, int level_, int mode) {
+        super(id_, x_, y_, ARCHER_TOWER, level_, mode);
     }
 
     private void loadConfig() {
@@ -53,19 +58,29 @@ public class ArcherTower extends Defense {
             JSONObject currConfig = archerTowerConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = archerTowerConfig.getJSONObject(String.valueOf(level + 1));
-                goldToUpgrade = nextLevelConfig.getInt("gold");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
+                minRange = 0;
+                maxRange = 10;
+                attackSpeed = 1;
+                attackRadius = 0;
+                attackArea = BattleConst.GROUND_AERIAL_ATTACK_AREA;
+                attackType = BattleConst.RANGED_ATTACK_TYPE;
+                dmgPerShot = currConfig.getDouble("damagePerShot");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = archerTowerConfig.getJSONObject(String.valueOf(level + 1));
+                    goldToUpgrade = nextLevelConfig.getInt("gold");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException("Archer tower config is invalid");
@@ -97,6 +112,8 @@ public class ArcherTower extends Defense {
 
     @Override
     public ArcherTower clone() {
+        if(mode == BATTLE_MODE)
+            return new ArcherTower(this.id, this.x, this.y, this.level, this.mode);
         return new ArcherTower(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 }

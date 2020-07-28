@@ -22,6 +22,10 @@ public class ArmyCamp extends Building {
         super(id_, x_, y_, Building.ARMY_CAMP, level_);
     }
 
+    public ArmyCamp(int id_, int x_,int y_, int level_, int mode) {
+        super(id_, x_, y_, Building.ARMY_CAMP, level_, mode);
+    }
+
     private static void loadConfig() {
         if(armyCampConfig != null) {
             return;
@@ -57,20 +61,23 @@ public class ArmyCamp extends Building {
             JSONObject currConfig = armyCampConfig.getJSONObject(String.valueOf(level));
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            health = currConfig.getInt("hitpoints");
-            capacity = currConfig.getInt("capacity");
-            if(level < MAX_LEVEL) {
-                JSONObject nextLevelConfig = armyCampConfig.getJSONObject(String.valueOf(level + 1));
-                elixirToUpgrade = nextLevelConfig.getInt("elixir");
-                darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
-                timeToUpgrade = nextLevelConfig.getInt("buildTime");
-                townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+            if(mode == BATTLE_MODE) {
+                health = currConfig.getInt("hitpoints");
             }
             else {
-                goldToUpgrade = 0;
-                elixirToUpgrade = 0;
-                darkElixirToUpgrade = 0;
-                timeToUpgrade = 0;
+                capacity = currConfig.getInt("capacity");
+                if (level < MAX_LEVEL) {
+                    JSONObject nextLevelConfig = armyCampConfig.getJSONObject(String.valueOf(level + 1));
+                    elixirToUpgrade = nextLevelConfig.getInt("elixir");
+                    darkElixirToUpgrade = nextLevelConfig.getInt("darkElixir");
+                    timeToUpgrade = nextLevelConfig.getInt("buildTime");
+                    townhallLevelToUpgrade = nextLevelConfig.getInt("townHallLevelRequired");
+                } else {
+                    goldToUpgrade = 0;
+                    elixirToUpgrade = 0;
+                    darkElixirToUpgrade = 0;
+                    timeToUpgrade = 0;
+                }
             }
         } catch (JSONException e) {
             CommonHandle.writeErrLog(e);
@@ -102,6 +109,8 @@ public class ArmyCamp extends Building {
 
     @Override
     public ArmyCamp clone() {
+        if(mode == BATTLE_MODE)
+            return new ArmyCamp(this.id, this.x, this.y, this.level, this.mode);
         return new ArmyCamp(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
 
