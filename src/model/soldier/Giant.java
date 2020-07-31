@@ -21,6 +21,7 @@ public class Giant extends Soldier {
         try {
             moveSpeed = getBaseConfig().getInt("moveSpeed");
             attackSpeed = getBaseConfig().getDouble("attackSpeed");
+            attackRange = getBaseConfig().getDouble("attackRange");
         } catch (JSONException e) {
             CommonHandle.writeErrLog(e);
         }

@@ -3,6 +3,7 @@ package cmd.receive.battle;
 import bitzero.server.extensions.data.BaseCmd;
 import bitzero.server.extensions.data.DataCmd;
 import cmd.RequestConst;
+import model.battle.BattleSession;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -10,25 +11,8 @@ import java.util.ArrayList;
 public class RequestSelectSingleBattle extends BaseCmd {
     private int status;
     private int clientReqId;
-    private ArrayList<SoldierNumber> soldierNumbers;
-
-    public static class SoldierNumber {
-        private final String soldierType;
-        private final int nbOfSoldier;
-
-        public SoldierNumber(String type, int number) {
-            soldierType = type;
-            nbOfSoldier = number;
-        }
-
-        public String getSoldierType() {
-            return soldierType;
-        }
-
-        public int getNbOfSoldier() {
-            return nbOfSoldier;
-        }
-    }
+    private int battleId;
+    private ArrayList<BattleSession.SoldierNumber> soldierNumbers;
 
     public RequestSelectSingleBattle(DataCmd dataCmd) {
         super(dataCmd);
@@ -45,7 +29,7 @@ public class RequestSelectSingleBattle extends BaseCmd {
             for(int i = 0; i < nbOfSoldierTypes; i++) {
                 String soldierType = readString(bf);
                 int nbOfSoldier = readInt(bf);
-                soldierNumbers.add(new SoldierNumber(soldierType, nbOfSoldier));
+                soldierNumbers.add(new BattleSession.SoldierNumber(soldierType, nbOfSoldier));
             }
             status = RequestConst.OK;
         } catch (Exception e) {
@@ -61,7 +45,11 @@ public class RequestSelectSingleBattle extends BaseCmd {
         return clientReqId;
     }
 
-    public ArrayList<SoldierNumber> getSoldierNumbers() {
+    public ArrayList<BattleSession.SoldierNumber> getSoldierNumbers() {
         return soldierNumbers;
+    }
+
+    public int getBattleId() {
+        return battleId;
     }
 }

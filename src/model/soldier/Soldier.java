@@ -7,6 +7,9 @@ import model.map.Defense;
 import util.Common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Soldier implements Attackable, CanBeAttacked {
     protected int attackType;
@@ -19,48 +22,58 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
     protected double x;
     protected double y;
     protected double health;
+    protected CanBeAttacked attackTarget;
 
-    public static boolean checkTargetType(Object obj, String targetType) {
-        if(targetType.equals(BattleConst.NONE_FAVOR_TARGET)) {
+//    public static final String[] SOLDIER_TYPES = new String[]
+    public static final Set<String> SOLDIER_TYPES = new HashSet<>(Arrays.asList
+        (
+            "ARM_1",
+            "ARM_2",
+            "ARM_4"));
+
+    public boolean isFavoriteTarget(Object obj) {
+        if(favoriteTarget.equals(BattleConst.NONE_FAVOR_TARGET)) {
             return true;
         }
-        if(targetType.equals(BattleConst.DEF_FAVOR_TARGET)) {
+        if(favoriteTarget.equals(BattleConst.DEF_FAVOR_TARGET)) {
             return obj instanceof Defense;
         }
         return false;
     }
 
-    public CanBeAttacked findTarget(ArrayList<CanBeAttacked> canBeAttackeds) {
+    @Override
+    public CanBeAttacked findNewTarget(ArrayList<CanBeAttacked> canBeAttackeds) {
         CanBeAttacked res = null;
         double bestDistance = Double.MAX_VALUE;
-        boolean bestTrueType = false;
+        boolean isFavorBest = false;
         for(CanBeAttacked canBeAttacked: canBeAttackeds) {
+            if(!canBeAttacked.isAlive()) {
+                continue;
+            }
+            boolean isFavorCurrTarget = isFavoriteTarget(canBeAttacked);
+            double currDistance = Common.calcSquareDistance(x, y, canBeAttacked.getBattleX(), canBeAttacked.getBattleY());
             if(res == null) {
                 res = canBeAttacked;
                 bestDistance = Common.calcSquareDistance(x, y, res.getBattleX(), res.getBattleY());
-                if(checkTargetType(canBeAttacked, favoriteTarget)) {
-                    bestTrueType = true;
-                }
+                isFavorBest = isFavorCurrTarget;
                 continue;
             }
-            boolean checkTypeTarget = checkTargetType(canBeAttacked, favoriteTarget);
-            if(bestTrueType && !checkTypeTarget) {
+            if(isFavorBest && !isFavorCurrTarget) {
                 continue;
             }
-            double distance = Common.calcSquareDistance(x, y, canBeAttacked.getBattleX(), canBeAttacked.getBattleY());
-            if(!bestTrueType && checkTypeTarget) {
+            if(!isFavorBest && isFavorCurrTarget) {
                 res = canBeAttacked;
-                bestTrueType = true;
-                bestDistance = distance;
+                isFavorBest = true;
+                bestDistance = currDistance;
                 continue;
             }
-            if(bestDistance > distance) {
+            if(bestDistance > currDistance) {
                 res = canBeAttacked;
-                bestDistance = distance;
+                bestDistance = currDistance;
             }
         }
         return res;
-    };
+    }
 
     @Override
     public double getBattleX() {
@@ -80,5 +93,10 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
     @Override
     public void takeDamage(double dmg) {
         health -= dmg;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return health > 0;
     }
 }

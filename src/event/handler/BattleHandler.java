@@ -5,13 +5,19 @@ import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.DataCmd;
 import cmd.CmdDefine;
 import cmd.RequestConst;
-import cmd.ResponseConst;
 import cmd.receive.battle.RequestDropSoldier;
 import cmd.receive.battle.RequestEndBattle;
 import cmd.receive.battle.RequestSelectSingleBattle;
 import cmd.receive.battle.RequestSingleBattleList;
+import cmd.send.battle.ResponseDropSoldier;
+import cmd.send.battle.ResponseSelectSingleBattle;
 import cmd.send.battle.ResponseSingleBattleList;
+import model.battle.BattleSession;
 import model.battle.SingleBattlePlayer;
+import model.soldier.Soldier;
+import util.Common;
+
+import java.util.ArrayList;
 
 public class BattleHandler extends BaseClientRequestHandler {
     public final static short BATTLE_IDS = 5000;
@@ -44,7 +50,35 @@ public class BattleHandler extends BaseClientRequestHandler {
     private void processDropSoldiers(User user, DataCmd dataCmd) {
         RequestDropSoldier requestDropSoldier = new RequestDropSoldier(dataCmd);
         if(requestDropSoldier.getStatus() == RequestConst.OK) {
-
+            int userId = user.getId();
+            int reqId = requestDropSoldier.getClientReqId();
+            int sessId = requestDropSoldier.getSessBattleId();
+            ArrayList<BattleSession.DropSoldier> dropSoldiers = requestDropSoldier.getDropSoldiers();
+            BattleSession battleSession = BattleSession.getOrCreateBattleSessionById(userId);
+            if(sessId != battleSession.getBattleId()) {
+                send(new ResponseDropSoldier(reqId, ResponseDropSoldier.INVALID_SESSION_ID), user);
+                return;
+            }
+            ArrayList<BattleSession.DropSoldier> currDropSodiers = battleSession.getDropSoldiers();
+            boolean isInvalidSoldierType = false;
+            for(BattleSession.DropSoldier dropSoldier: dropSoldiers) {
+                // TODO: validate number soldier
+                if(Soldier.SOLDIER_TYPES.contains(dropSoldier.getSoldierType())) {
+                    currDropSodiers.add(dropSoldier);
+                }
+                else
+                {
+                    isInvalidSoldierType = true;
+                    break;
+                }
+            }
+            if(isInvalidSoldierType) {
+                send(new ResponseDropSoldier(reqId, ResponseDropSoldier.INVALID_SOLDIER_TYPE), user);
+                return;
+            }
+            battleSession.setDropSoldiers(currDropSodiers);
+            battleSession.save();
+            send(new ResponseDropSoldier(reqId), user);
         }
     }
 
@@ -52,7 +86,19 @@ public class BattleHandler extends BaseClientRequestHandler {
         RequestSelectSingleBattle requestSelectSingleBattle = new RequestSelectSingleBattle(dataCmd);
         if(requestSelectSingleBattle.getStatus() == RequestConst.OK) {
             int reqId = requestSelectSingleBattle.getClientReqId();
+            int battleId = requestSelectSingleBattle.getBattleId();
+            ArrayList<BattleSession.SoldierNumber> soldierNumbers = requestSelectSingleBattle.getSoldierNumbers();
             int id = user.getId();
+            BattleSession battleSession = BattleSession.getOrCreateBattleSessionById(id);
+            battleSession.setBattleId(battleId);
+            // TODO: check valid available soldier
+            battleSession.setAvailSoldiers(soldierNumbers);
+            int currTime = Common.currentTimeInSecond();
+            battleSession.setStartTime(currTime);
+            battleSession.setSessionId(currTime);
+            battleSession.setDropSoldiers(new ArrayList<>());
+            battleSession.save();
+            send(new ResponseSelectSingleBattle(reqId, currTime), user);
         }
     }
 

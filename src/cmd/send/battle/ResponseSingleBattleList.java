@@ -9,8 +9,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ResponseSingleBattleList extends BaseMsg {
-    ArrayList<SingleBattle> singleBattles;
-    int reqId;
+    private final ArrayList<SingleBattle> singleBattles;
+    private final int reqId;
     public ResponseSingleBattleList(int reqId, ArrayList<SingleBattle> singleBattles) {
         super(CmdDefine.LOAD_SINGLE_BATTLE_LIST);
         this.singleBattles = singleBattles;
