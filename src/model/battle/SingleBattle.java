@@ -152,8 +152,6 @@ public class SingleBattle {
             throw new RuntimeException("Cannot distribute resource, have elixir capacity " +
                     totalElixirCapacity + " but available elixir is " + availElixir);
         }
-        int goldToDistribute = availGold;
-        int elixirToDistribute = availElixir;
 
         goldContainables.sort((gc1, gc2) -> {
             if(gc1.getGoldCapacity() > gc2.getGoldCapacity()) {
@@ -174,39 +172,43 @@ public class SingleBattle {
             return Integer.compare(((MapObject) ec1).getId(), ((MapObject) ec2).getId());
         });
 
+        // distribute gold
+        int goldToDistribute = availGold;
         int goldIndex = 0;
         while(goldToDistribute > 0) {
             int goldAvg = goldToDistribute / (goldContainables.size() - goldIndex);
             if(goldAvg <= goldContainables.get(goldIndex).getGoldCapacity()) {
                 for(int i = goldIndex; i < goldContainables.size() - 1; i++) {
-                    goldContainables.get(i).setGold(goldAvg);
+                    goldContainables.get(i).setMaxGoldBattle(goldAvg);
                     goldToDistribute -= goldAvg;
                 }
-                goldContainables.get(goldContainables.size() - 1).setGold(goldToDistribute);
+                goldContainables.get(goldContainables.size() - 1).setMaxGoldBattle(goldToDistribute);
                 goldToDistribute = 0;
             }
             else {
                 GoldContainable currGoldContainer = goldContainables.get(goldIndex);
-                currGoldContainer.setGold(currGoldContainer.getGoldCapacity());
+                currGoldContainer.setMaxGoldBattle(currGoldContainer.getGoldCapacity());
                 goldToDistribute -= currGoldContainer.getGoldCapacity();
                 goldIndex += 1;
             }
         }
 
+        // distribute elixir
+        int elixirToDistribute = availElixir;
         int elixirIndex = 0;
         while(elixirToDistribute > 0) {
             int elixirAvg = elixirToDistribute / (elixirContainables.size() - elixirIndex);
             if(elixirAvg <= elixirContainables.get(elixirIndex).getElixirCapacity()) {
                 for(int i = elixirIndex; i < elixirContainables.size() - 1; i++) {
-                    elixirContainables.get(i).setElixir(elixirAvg);
+                    elixirContainables.get(i).setMaxElixirBattle(elixirAvg);
                     elixirToDistribute -= elixirAvg;
                 }
-                elixirContainables.get(elixirContainables.size() - 1).setElixir(elixirToDistribute);
+                elixirContainables.get(elixirContainables.size() - 1).setMaxElixirBattle(elixirToDistribute);
                 elixirToDistribute = 0;
             }
             else {
                 ElixirContainable currElixirContainer = elixirContainables.get(elixirIndex);
-                currElixirContainer.setElixir(currElixirContainer.getElixirCapacity());
+                currElixirContainer.setMaxElixirBattle(currElixirContainer.getElixirCapacity());
                 elixirToDistribute -= currElixirContainer.getElixirCapacity();
                 elixirIndex += 1;
             }

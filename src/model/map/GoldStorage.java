@@ -10,6 +10,7 @@ import util.database.DBBuiltInUtil;
 public class GoldStorage extends Building implements GoldContainable {
     private int gold;
     private int goldCapacity;
+    private int maxGoldBattle;
 
     private static final String GOLD_STORAGE_CONFIG_PATH = "conf/GameStatsConfig/Storage.json";
     private static final String GOLD_STORAGE_CONFIG_NAME = "STO_1";
@@ -121,6 +122,17 @@ public class GoldStorage extends Building implements GoldContainable {
     public int getTimeToBuild() {
         loadConfig();
         return timeToBuild;
+    }
+
+    @Override
+    public int getMaxGoldBattle() {
+        return maxGoldBattle;
+    }
+
+    @Override
+    public void setMaxGoldBattle(int maxGoldBattle) {
+        this.maxGoldBattle = maxGoldBattle;
+        this.setGold(maxGoldBattle);
     }
 
     @Override

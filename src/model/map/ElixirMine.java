@@ -7,6 +7,7 @@ import util.database.DBBuiltInUtil;
 
 public class ElixirMine extends MineBuilding implements ElixirContainable {
     private int elixir;
+    private int maxElixirBattle;
     private static final String ELIXIR_MINE_CONFIG_PATH = "conf/GameStatsConfig/Resource.json";
     private static final String ELIXIR_MINE_CONFIG_NAME = "RES_2";
     private static JSONObject elixirMineConfig;
@@ -119,4 +120,16 @@ public class ElixirMine extends MineBuilding implements ElixirContainable {
     public int getElixirCapacity() {
         return capacity;
     }
+
+    @Override
+    public int getMaxElixirBattle() {
+        return maxElixirBattle;
+    }
+
+    @Override
+    public void setMaxElixirBattle(int maxElixirBattle) {
+        this.maxElixirBattle = maxElixirBattle;
+        this.setElixir(maxElixirBattle);
+    }
+
 }

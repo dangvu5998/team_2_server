@@ -16,6 +16,8 @@ public class Townhall extends Building implements GoldContainable, ElixirContain
     private int goldCapacity;
     private int elixirCapacity;
     private int darkElixirCapacity;
+    private int maxElixirBattle;
+    private int maxGoldBattle;
     private HashMap<Integer, Integer> maxNumberBuilding;
 
     private static final String TOWNHALL_CONFIG_PATH = "conf/GameStatsConfig/TownHall.json";
@@ -131,6 +133,28 @@ public class Townhall extends Building implements GoldContainable, ElixirContain
     @Override
     public int getMaxLevel() {
         return MAX_LEVEL;
+    }
+
+    @Override
+    public int getMaxElixirBattle() {
+        return maxElixirBattle;
+    }
+
+    @Override
+    public void setMaxElixirBattle(int maxElixirBattle) {
+        this.maxElixirBattle = maxElixirBattle;
+        this.setElixir(maxElixirBattle);
+    }
+
+    @Override
+    public int getMaxGoldBattle() {
+        return maxGoldBattle;
+    }
+
+    @Override
+    public void setMaxGoldBattle(int maxGoldBattle) {
+        this.maxGoldBattle = maxGoldBattle;
+        this.setGold(maxGoldBattle);
     }
 
     @Override

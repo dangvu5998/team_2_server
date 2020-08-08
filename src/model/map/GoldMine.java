@@ -7,6 +7,7 @@ import util.database.DBBuiltInUtil;
 
 public class GoldMine extends MineBuilding implements GoldContainable {
     private int gold;
+    private int maxGoldBattle;
 
     private static final String GOLD_MINE_CONFIG_PATH = "conf/GameStatsConfig/Resource.json";
     private static final String GOLD_MINE_CONFIG_NAME = "RES_1";
@@ -106,6 +107,17 @@ public class GoldMine extends MineBuilding implements GoldContainable {
         if(mode == BATTLE_MODE)
             return new GoldMine(this.id, this.x, this.y, this.level, this.mode);
         return new GoldMine(this.id, this.x, this.y, this.level, this.status, this.finishTime);
+    }
+
+    @Override
+    public int getMaxGoldBattle() {
+        return maxGoldBattle;
+    }
+
+    @Override
+    public void setMaxGoldBattle(int maxGoldBattle) {
+        this.maxGoldBattle = maxGoldBattle;
+        this.setGold(maxGoldBattle);
     }
 
     @Override

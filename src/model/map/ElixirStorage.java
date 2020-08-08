@@ -7,6 +7,7 @@ import util.Common;
 import util.database.DBBuiltInUtil;
 
 public class ElixirStorage extends Building implements ElixirContainable {
+    private int maxElixirBattle;
     private static final String ELIXIR_STORAGE_CONFIG_PATH = "conf/GameStatsConfig/Storage.json";
     private static final String ELIXIR_STORAGE_CONFIG_NAME = "STO_2";
 
@@ -129,4 +130,16 @@ public class ElixirStorage extends Building implements ElixirContainable {
             return new ElixirStorage(this.id, this.x, this.y, this.level, this.mode);
         return new ElixirStorage(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
+
+    @Override
+    public int getMaxElixirBattle() {
+        return maxElixirBattle;
+    }
+
+    @Override
+    public void setMaxElixirBattle(int maxElixirBattle) {
+        this.maxElixirBattle = maxElixirBattle;
+        this.setElixir(maxElixirBattle);
+    }
+
 }

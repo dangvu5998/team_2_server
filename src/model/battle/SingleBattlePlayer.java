@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class SingleBattlePlayer {
     @Expose
-    private int id;
+    private final int id;
     @Expose
-    private ArrayList<SingleBattle> battles;
+    private final ArrayList<SingleBattle> battles;
 
     private static final String COLLECTION_NAME = "BattleSinglePlayer_P";
 
