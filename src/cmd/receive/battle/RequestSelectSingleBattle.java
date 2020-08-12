@@ -25,6 +25,7 @@ public class RequestSelectSingleBattle extends BaseCmd {
         soldierNumbers = new ArrayList<>();
         try {
             clientReqId = readInt(bf);
+            battleId = readInt(bf);
             int nbOfSoldierTypes = readInt(bf);
             for(int i = 0; i < nbOfSoldierTypes; i++) {
                 String soldierType = readString(bf);

@@ -11,6 +11,9 @@ public class RequestEndBattle extends BaseCmd {
     private int clientReqId;
     private int timestep;
     private int sessBattleId;
+    private int availGold;
+    private int availElixir;
+    private int proportionDestroyed;
 
     public RequestEndBattle(DataCmd dataCmd) {
         super(dataCmd);
@@ -24,6 +27,9 @@ public class RequestEndBattle extends BaseCmd {
             clientReqId = readInt(bf);
             sessBattleId = readInt(bf);
             timestep = readInt(bf);
+            availGold = readInt(bf);
+            availElixir = readInt(bf);
+            proportionDestroyed = readInt(bf);
             status = RequestConst.OK;
         } catch (Exception e) {
             status = RequestConst.INVALID;
@@ -44,5 +50,17 @@ public class RequestEndBattle extends BaseCmd {
 
     public int getSessBattleId() {
         return sessBattleId;
+    }
+
+    public int getAvailGold() {
+        return availGold;
+    }
+
+    public int getAvailElixir() {
+        return availElixir;
+    }
+
+    public int getProportionDestroyed() {
+        return proportionDestroyed;
     }
 }

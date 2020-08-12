@@ -8,18 +8,20 @@ import util.Common;
 
 public class Giant extends Soldier {
     private int level;
-    public static String TYPE_ID = "ARM_4";
+    public static final String TYPE_ID = "ARM_4";
     private static JSONObject baseConfig;
     private static JSONObject config;
 
-    public Giant(int x, int y, int level) {
+    public Giant(int id, int x, int y, int level) {
+        this.id = id;
         this.x = x;
         this.y = y;
+        type = TYPE_ID;
         attackType = BattleConst.MELEE_ATTACK_TYPE;
         attackArea = BattleConst.GROUND_ATTACK_AREA;
         favoriteTarget = BattleConst.DEF_FAVOR_TARGET;
         try {
-            moveSpeed = getBaseConfig().getInt("moveSpeed");
+            moveSpeed = getBaseConfig().getInt("moveSpeed") * BattleConst.MOVE_SPEED_FACTOR_CONFIG;
             attackSpeed = getBaseConfig().getDouble("attackSpeed");
             attackRange = getBaseConfig().getDouble("attackRange");
         } catch (JSONException e) {
@@ -49,7 +51,7 @@ public class Giant extends Soldier {
             if (config != null) {
                 config = config.getJSONObject(TYPE_ID);
             }
-            String BASE_CONFIG_PATH = "conf/GameStatsConfig/BaseTroop.json";
+            String BASE_CONFIG_PATH = "conf/GameStatsConfig/TroopBase.json";
             baseConfig = Common.loadJSONObjectFromFile(BASE_CONFIG_PATH);
             if (baseConfig != null) {
                 baseConfig = baseConfig.getJSONObject(TYPE_ID);

@@ -479,10 +479,7 @@ public class GameUser {
     }
 
     public void addGold(int amount) {
-        if(amount + gold > goldCapacity) {
-            setGold(goldCapacity);
-        }
-        setGold(amount + gold);
+        setGold(Math.min(amount + gold, goldCapacity));
     }
 
     public void deductElixir(int amount) {
@@ -525,10 +522,7 @@ public class GameUser {
     }
 
     public void addElixir(int amount) {
-        if(amount + elixir > elixirCapacity) {
-            setElixir(elixirCapacity);
-        }
-        setElixir(elixir + amount);
+        setElixir(Math.min(amount + elixir, elixirCapacity));
     }
 
     public void loadElixir() {

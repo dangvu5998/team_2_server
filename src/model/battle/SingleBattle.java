@@ -82,8 +82,9 @@ public class SingleBattle {
                     }
                     JSONObject mapObjConf = (JSONObject) mapObjConfObj;
                     int cellPos = mapObjConf.getInt("cell");
-                    int x = cellPos % MapObject.MAP_WIDTH;
-                    int y = (cellPos -  x) / MapObject.MAP_WIDTH;
+                    final int MAP_CONFIG_WIDTH_HEIGHT = 44;
+                    int x = cellPos % MAP_CONFIG_WIDTH_HEIGHT;
+                    int y = (cellPos -  x) / MAP_CONFIG_WIDTH_HEIGHT;
                     String objTypeIdName = mapObjConf.getString("objType");
                     if(!MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.containsKey(objTypeIdName)) {
                         continue;
@@ -250,5 +251,28 @@ public class SingleBattle {
             loadBattleMap();
         }
         return battleMapObjects;
+    }
+
+    public void simulateBattle(int maxTimeStep, ArrayList<BattleSession.DropSoldier> dropSoldiers) {
+        BattleSimulator battleSimulator = new BattleSimulator(battleMapObjects, dropSoldiers);
+        battleSimulator.simulate(500);
+    }
+
+    public void setStar(int star) {
+        this.star = star;
+    }
+
+    public void setAvailGold(int availGold) {
+        if(availGold > getDefaultGold(id) || availGold < 0) {
+            return;
+        }
+        this.availGold = availGold;
+    }
+
+    public void setAvailElixir(int availElixir) {
+        if(availElixir > getDefaultElixir(id) || availElixir < 0) {
+            return;
+        }
+        this.availElixir = availElixir;
     }
 }

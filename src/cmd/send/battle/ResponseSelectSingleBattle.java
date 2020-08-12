@@ -11,21 +11,34 @@ public class ResponseSelectSingleBattle extends BaseMsg {
     private final int status;
     private final int error;
     private final int battleSessId;
-    public ResponseSelectSingleBattle(int reqId, int battleSessId) {
+
+    public static final int NO_ERROR = 0;
+    public static final int INVALID_BATTLE_ID = -1;
+    public ResponseSelectSingleBattle(int error, int reqId, int battleSessId) {
         super(CmdDefine.SELECT_SINGLE_BATTLE);
         this.reqId = reqId;
         this.battleSessId = battleSessId;
         this.status = ResponseConst.OK;
-        this.error = 0;
+        this.error = error;
+    }
+
+    public ResponseSelectSingleBattle(int error, int reqId) {
+        this(error, reqId, -1);
     }
 
     @Override
     public byte[] createData() {
         ByteBuffer bf = makeBuffer();
-        bf.putInt(status);
-        bf.putInt(reqId);
-        bf.putInt(battleSessId);
-        bf.putInt(error);
+        if(error == NO_ERROR) {
+            bf.putInt(status);
+            bf.putInt(reqId);
+            bf.putInt(battleSessId);
+        }
+        else {
+            bf.putInt(status);
+            bf.putInt(reqId);
+            bf.putInt(error);
+        }
         return packBuffer(bf);
     }
 }

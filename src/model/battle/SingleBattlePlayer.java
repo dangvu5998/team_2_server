@@ -6,6 +6,7 @@ import util.database.DBBuiltInUtil;
 import java.util.ArrayList;
 
 public class SingleBattlePlayer {
+    // is user id
     @Expose
     private final int id;
     @Expose
@@ -39,6 +40,14 @@ public class SingleBattlePlayer {
         return (SingleBattlePlayer) DBBuiltInUtil.get(COLLECTION_NAME, String.valueOf(id), SingleBattlePlayer.class);
     }
 
+    public static SingleBattlePlayer getOrCreateBattleSinglePlayerById(int id) {
+        SingleBattlePlayer singleBattlePlayer = getBattleSinglePlayerById(id);
+        if(singleBattlePlayer == null) {
+            singleBattlePlayer = createBattleSinglePlayer(id);
+        }
+        return singleBattlePlayer;
+    }
+
     public int getMaxSingleBattleCanPlayed() {
         int maxBattle = 0;
         for(int i = battles.size() - 1; i > 0; i--) {
@@ -48,7 +57,16 @@ public class SingleBattlePlayer {
                 break;
             }
         }
-        return maxBattle;
+        return maxBattle + 1;
+    }
+
+    public SingleBattle getSingleBattleById(int id) {
+        for(SingleBattle singleBattle: battles) {
+            if(singleBattle.getId() == id) {
+                return singleBattle;
+            }
+        }
+        return null;
     }
 
     public static void deleteBattleSinglePlayerById(int id) {

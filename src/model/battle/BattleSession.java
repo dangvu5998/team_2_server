@@ -1,7 +1,6 @@
 package model.battle;
 
 import com.google.gson.annotations.Expose;
-import model.GameUser;
 import util.database.DBBuiltInUtil;
 
 import java.util.ArrayList;
@@ -59,10 +58,15 @@ public class BattleSession {
         public int getTimestep() {
             return timestep;
         }
+
+        @Override
+        public String toString() {
+            return "{soldierType: " + soldierType + ", x: " + x + ", y: " + y + ", timestep: " + timestep + "}";
+        }
     }
 
     @Expose
-    private int userId;
+    private final int userId;
     @Expose
     private int startTime;
     @Expose
