@@ -181,4 +181,8 @@ public abstract class Building extends MapObject implements CanBeAttacked {
     public boolean isAlive() {
         return this.health > 0;
     }
+
+    public double getHealth() {
+        return health;
+    }
 }

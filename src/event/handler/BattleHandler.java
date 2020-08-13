@@ -68,7 +68,7 @@ public class BattleHandler extends BaseClientRequestHandler {
             }
             SingleBattlePlayer singleBattlePlayer = SingleBattlePlayer.getBattleSinglePlayerById(userId);
             if(singleBattlePlayer == null) {
-                logger.error("Error end battle " + battleSession.getBattleId());
+                logger.error("Error null end battle " + battleSession.getBattleId());
                 logger.error("Error user id " + userId);
                 return;
             }
@@ -99,7 +99,6 @@ public class BattleHandler extends BaseClientRequestHandler {
             }
             gameUser.addGold(earnedGold);
             gameUser.addElixir(earnedElixir);
-
 
         }
     }

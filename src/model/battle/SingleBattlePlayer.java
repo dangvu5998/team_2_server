@@ -50,10 +50,11 @@ public class SingleBattlePlayer {
 
     public int getMaxSingleBattleCanPlayed() {
         int maxBattle = 0;
-        for(int i = battles.size() - 1; i > 0; i--) {
+        for(int i = battles.size() - 1; i >= 0; i--) {
             SingleBattle battle = battles.get(i);
             if(battle.getStar() > 0) {
-                maxBattle = i;
+                // index correspond to id + 1
+                maxBattle = i + 1;
                 break;
             }
         }

@@ -10,7 +10,6 @@ public class BattleSimulatorTest extends TestCase {
     }
 
     public void testMap1() {
-        System.out.println("test map 1");
         SingleBattle singleBattle = new SingleBattle(1, 0, 500, 500);
         singleBattle.loadBattleMap();
         ArrayList<BattleSession.DropSoldier> dropSoldiers = new ArrayList<>();

@@ -128,7 +128,6 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
 
     public void updateStatus() {
         timeStep += 1;
-        System.out.println("status" + id + " " + Common.calcSquareDistance(x, y, targetPosX, targetPosY));
         if(target == null || !target.isAlive()) {
             status = BattleConst.IDLE_SOLDIER_STATUS;
             targetPosX = -1;
@@ -223,5 +222,9 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
 
     public CanBeAttacked getTarget() {
         return target;
+    }
+
+    public double getHealth() {
+        return health;
     }
 }

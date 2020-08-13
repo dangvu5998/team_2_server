@@ -12,19 +12,21 @@ import model.soldier.Giant;
 import util.Common;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BattleSimulator {
     private final Queue<BattleSession.DropSoldier> dropSoldiers;
     private int timestep;
     private final ArrayList<Soldier> aliveSoldiers;
     private final ArrayList<Building> aliveBuildings;
-    private ArrayList<SoldierTargetPath> soldierTargetPaths;
+    private final ArrayList<SoldierTargetPath> soldierTargetPaths;
     private final ArrayList<Wall> aliveWallBuildings;
     private final ArrayList<BreakingWall> breakingWalls;
     private final MapBattleGraph mapGraph;
     private int idCounter;
     private final Common.LinearCongruentialGenerator lcg;
+
+    private String stateLogger;
+    public boolean debug = true;
 
     static class BreakingWall {
         private final Building buildingTarget;
@@ -108,6 +110,9 @@ public class BattleSimulator {
         lcg = new Common.LinearCongruentialGenerator(2333, 8121, 28411, 134457);
         aliveSoldiers = new ArrayList<>();
         idCounter = 0;
+
+        // debug
+        stateLogger = "";
     }
 
     private void addMapObj(MapObject mapObject) {
@@ -129,6 +134,9 @@ public class BattleSimulator {
     public void simulate(int totalTimestep) {
         for(int i = 0; i < totalTimestep; i++) {
             forwardStep();
+        }
+        if(debug) {
+            System.out.println(stateLogger);
         }
     }
 
@@ -172,6 +180,9 @@ public class BattleSimulator {
                 return breakingWall.wall;
             }
         }
+        if(aliveWallBuildings.size() == 0) {
+            return null;
+        }
         Wall wallToBreak = aliveWallBuildings.get(0);
         double distanceToWall = Common.calcGridDistance(wallToBreak.getX(), wallToBreak.getY(), soldier.getBattleX(), soldier.getBattleY());
         double distanceToMove = distanceToWall + Common.calcGridDistance(wallToBreak.getX(), wallToBreak.getY(), buildingTarget.getX(), buildingTarget.getY());
@@ -191,19 +202,10 @@ public class BattleSimulator {
         return wallToBreak;
     }
 
-    public void forwardStep() {
-        timestep += 1;
-        // add new soldier
-        BattleSession.DropSoldier dropSoldier = dropSoldiers.peek();
-        if(dropSoldier != null && dropSoldier.getTimestep() == timestep) {
-            dropSoldiers.poll();
-            addSoldier(dropSoldier.getSoldierType(), dropSoldier.getX(), dropSoldier.getY());
-        }
+    private void simulateSoldiers() {
         // handle soldier find path, move and attack buildings
         for(Soldier soldier: aliveSoldiers) {
             soldier.updateStatus();
-        }
-        for(Soldier soldier: aliveSoldiers) {
             if(soldier.getStatus() == BattleConst.IDLE_SOLDIER_STATUS) {
                 double soldierPosX = soldier.getBattleX();
                 double soldierPosY = soldier.getBattleY();
@@ -220,8 +222,8 @@ public class BattleSimulator {
                             break;
                         }
                         if(mapGraph.hasPathCoord(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getPosX(), soldierTargetPath.getPosY())
-                        && Common.calcGridDistance(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getTarget().getBattleX(),soldierTargetPath.getTarget().getBattleY())
-                        > Common.calcGridDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), soldierTargetPath.getTarget().getBattleX(),soldierTargetPath.getTarget().getBattleY())) {
+                                && Common.calcGridDistance(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getTarget().getBattleX(),soldierTargetPath.getTarget().getBattleY())
+                                > Common.calcGridDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), soldierTargetPath.getTarget().getBattleX(),soldierTargetPath.getTarget().getBattleY())) {
                             targetPathPreCalc = soldierTargetPath;
                             break;
                         }
@@ -271,6 +273,9 @@ public class BattleSimulator {
                     if(pathToTarget == null) {
                         // handle breaking wall to have path
                         target = findWallToBreak(soldier, target);
+                        if(target == null) {
+                            continue;
+                        }
                         soldier.setTarget(target);
                         int vertexIndex = 0;
                         // vertexIndex follow left to right, top to bottom
@@ -298,7 +303,7 @@ public class BattleSimulator {
                             for(int i = pathToTarget.size() - 2; i > 0; i--) {
                                 int[] coord = pathToTarget.get(i);
                                 if(Common.calcSquareDistance(coord[0], coord[1], soldier.getX(), soldier.getY())
-                                    < Math.pow(soldier.getAttackRange(), 2)) {
+                                        < Math.pow(soldier.getAttackRange(), 2)) {
                                     isPrune = true;
                                 }
                                 else {
@@ -400,20 +405,43 @@ public class BattleSimulator {
                 }
                 pathToTargetFinal.add(new double[] {targetPosX, targetPosY});
                 soldier.setPath(pathToTargetFinal);
-                System.out.println("soldier target path " + timestep + " " + soldier.getId() + " " + soldier.getTarget().getId() + " " + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(",")));
             }
+        }
+        for(Soldier soldier: aliveSoldiers) {
             if(soldier.getStatus() == BattleConst.ATTACKING_SOLDIER_STATUS) {
                 soldier.attackTarget();
-                System.out.println("attaking " + timestep+ " " + soldier.getTarget().getId());
             }
             if(soldier.getStatus() == BattleConst.MOVING_SOLDIER_STATUS) {
                 soldier.move();
-//                System.out.println("soldier move " + timestep + " " + soldier.getId() + " " + soldier.getX() + " " + soldier.getY());
             }
         }
+
+    }
+
+    public void forwardStep() {
+        timestep += 1;
+        // add new soldier
+        BattleSession.DropSoldier dropSoldier = dropSoldiers.peek();
+        if(dropSoldier != null && dropSoldier.getTimestep() == timestep) {
+            dropSoldiers.poll();
+            addSoldier(dropSoldier.getSoldierType(), dropSoldier.getX(), dropSoldier.getY());
+        }
+        simulateSoldiers();
         updateBuildings();
         // TODO: code simulate defense buildings attack soldier
         updateSoldiers();
+
+        if(debug) {
+            StringBuilder sb = new StringBuilder();
+            for(Soldier soldier: aliveSoldiers) {
+                sb.append(String.format("S - id: %d - timestep: %d - x: %.2f - y: %.2f - health: %d - targetId: %d\n", soldier.getId(), timestep, soldier.getX(),
+                        soldier.getY(), (int) soldier.getHealth(), soldier.getTarget().getId()));
+            }
+            for(Building building: aliveBuildings) {
+                sb.append(String.format("B - id: %d - timestep: %d - health: %d\n", building.getId(), timestep, (int) building.getHealth()));
+            }
+            stateLogger += sb.toString();
+        }
     }
 
     public void updateBuildings() {
@@ -437,6 +465,10 @@ public class BattleSimulator {
 
     public void updateSoldiers() {
         // TODO: wait for merge vietnha code
+    }
+
+    public String getStateLogger() {
+        return stateLogger;
     }
 }
 
