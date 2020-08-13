@@ -115,7 +115,7 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
                 bestDistance = currDistance;
                 continue;
             }
-            if((Math.abs(Math.round(bestDistance - currDistance)) < 0.1 && canBeAttacked.getId() < target.getId()) || (bestDistance > currDistance + 0.1)) {
+            if((Math.abs(bestDistance - currDistance) < BattleConst.DISTANCE_EPSILON && canBeAttacked.getId() < target.getId()) || (bestDistance > currDistance + BattleConst.DISTANCE_EPSILON)) {
                 target = canBeAttacked;
                 bestDistance = currDistance;
             }

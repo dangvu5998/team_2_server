@@ -597,12 +597,12 @@ public abstract class MapObject implements BattleObject {
 
     @Override
     public double getBattleX() {
-        return (double) x + (double) width / 2;
+        return x;
     }
 
     @Override
     public double getBattleY() {
-        return (double) y + (double) height / 2;
+        return y;
     }
 
 }
