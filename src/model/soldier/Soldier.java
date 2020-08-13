@@ -29,14 +29,14 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
     protected double y;
     protected double health;
     protected CanBeAttacked target;
-    protected double targetPosX;
-    protected double targetPosY;
+    protected double targetPosX = -1;
+    protected double targetPosY = -1;
     // list of coordinates to move
     // each element is an array size 2, element 0 is x to move
     // element 1 is y to move
     protected ArrayList<double[]> path;
     protected int pathIndex;
-    protected int status;
+    protected int status = BattleConst.IDLE_SOLDIER_STATUS;
     protected int lastAttackStep;
     protected int timeStep;
 
@@ -52,9 +52,6 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
     }
 
     public boolean isFavoriteTarget(Object obj) {
-        if(favoriteTarget.equals(BattleConst.NONE_FAVOR_TARGET)) {
-            return true;
-        }
         if(favoriteTarget.equals(BattleConst.DEF_FAVOR_TARGET)) {
             return obj instanceof Defense;
         }
@@ -118,7 +115,7 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
                 bestDistance = currDistance;
                 continue;
             }
-            if((Math.round(bestDistance - currDistance) < 0.1 && canBeAttacked.getId() < target.getId()) || (bestDistance > currDistance + 0.1)) {
+            if((Math.abs(Math.round(bestDistance - currDistance)) < 0.1 && canBeAttacked.getId() < target.getId()) || (bestDistance > currDistance + 0.1)) {
                 target = canBeAttacked;
                 bestDistance = currDistance;
             }
@@ -226,5 +223,13 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
 
     public double getHealth() {
         return health;
+    }
+
+    public double getTargetPosX() {
+        return targetPosX;
+    }
+
+    public double getTargetPosY() {
+        return targetPosY;
     }
 }

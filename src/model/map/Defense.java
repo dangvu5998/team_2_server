@@ -55,7 +55,7 @@ public abstract class Defense extends Building {
     }
     protected boolean canAttackPos(double squareDistance) {
         final boolean isConstraintMin = this.minRange*this.minRange <= squareDistance;
-        final boolean isConstraintMax = this.maxRange*this.maxRange <= squareDistance;
+        final boolean isConstraintMax = this.maxRange*this.maxRange >= squareDistance;
         return isConstraintMin && isConstraintMax;
     }
     private boolean isAlwaysHit() {
@@ -192,7 +192,7 @@ public abstract class Defense extends Building {
         }
         else {
             targetInfo = new TargetInfo(
-                    BattleConst.DEFENSE_ATTACK_ALWAYS_HIT,
+                    BattleConst.DEFENSE_ATTACK_CAN_MISS,
                     this.targetX,
                     this.targetY,
                     this.dmgPerShot,

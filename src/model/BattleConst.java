@@ -28,8 +28,8 @@ public class BattleConst {
     public static final int SOLDIER_X_START = -1;
     public static final int SOLDIER_Y_START = -1;
 
-    public static final int DEFENSE_ATTACK_CAN_MISS = 1;
-    public static final int DEFENSE_ATTACK_ALWAYS_HIT = 2;
+    public static final short DEFENSE_ATTACK_CAN_MISS = 1;
+    public static final short DEFENSE_ATTACK_ALWAYS_HIT = 2;
 
     public static final Map<String, Integer> NUMBER_TIME_STEP_TO_HIT = new HashMap<String, Integer>() {
         {
