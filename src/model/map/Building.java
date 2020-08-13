@@ -17,10 +17,14 @@ public abstract class Building extends MapObject implements CanBeAttacked {
     protected int darkElixirToUpgrade = 0;
     protected int timeToUpgrade = 0;
     protected int townhallLevelToUpgrade = 0;
+    protected int statusBattle;
 
     public static final int NORMAL_STATUS = 0;
     public static final int BUILDING_STATUS = 1;
     public static final int UPGRADING_STATUS = 2;
+
+    public static final int BATTLE_STATUS_ATTACK = 2;
+    public static final int BATTLE_STATUS_IDLE = 1;
 
     public int getLevel() {
         return level;
@@ -184,5 +188,9 @@ public abstract class Building extends MapObject implements CanBeAttacked {
 
     public double getHealth() {
         return health;
+    }
+
+    protected void setStatusBattle(int status) {
+        this.statusBattle = status;
     }
 }
