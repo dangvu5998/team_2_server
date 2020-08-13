@@ -36,6 +36,8 @@ public class SingleBattle {
     public static final int MIN_ID = 1;
     public static final int MAX_ID = 10;
 
+    private BattleSimulator battleSimulator;
+
     public SingleBattle(int id, int star, int availGold, int availElixir) {
         if(id < 1 || id > 10) {
             throw new RuntimeException("Battle id " + id + " is invalid");
@@ -253,9 +255,14 @@ public class SingleBattle {
         return battleMapObjects;
     }
 
+    public void simulateBattle(int maxTimeStep, ArrayList<BattleSession.DropSoldier> dropSoldiers, boolean debug) {
+        battleSimulator = new BattleSimulator(battleMapObjects, dropSoldiers);
+        battleSimulator.setDebug(debug);
+        battleSimulator.simulate(maxTimeStep);
+    }
+
     public void simulateBattle(int maxTimeStep, ArrayList<BattleSession.DropSoldier> dropSoldiers) {
-        BattleSimulator battleSimulator = new BattleSimulator(battleMapObjects, dropSoldiers);
-        battleSimulator.simulate(500);
+        simulateBattle(maxTimeStep, dropSoldiers, false);
     }
 
     public void setStar(int star) {
@@ -274,5 +281,9 @@ public class SingleBattle {
             return;
         }
         this.availElixir = availElixir;
+    }
+
+    public BattleSimulator getBattleSimulator() {
+        return battleSimulator;
     }
 }

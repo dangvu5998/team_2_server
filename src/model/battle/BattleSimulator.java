@@ -12,6 +12,7 @@ import model.soldier.Giant;
 import util.Common;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BattleSimulator {
     private final Queue<BattleSession.DropSoldier> dropSoldiers;
@@ -25,7 +26,7 @@ public class BattleSimulator {
     private int idCounter;
     private final Common.LinearCongruentialGenerator lcg;
 
-    private String stateLogger;
+    private final StringBuilder stateLogger;
     public boolean debug = true;
 
     static class BreakingWall {
@@ -105,6 +106,8 @@ public class BattleSimulator {
         for(MapObject mapObject: battleMapObjects) {
             addMapObj(mapObject);
         }
+        aliveBuildings.sort(Comparator.comparingInt(MapObject::getId));
+        aliveWallBuildings.sort(Comparator.comparingInt(MapObject::getId));
         dropSoldiers.sort(Comparator.comparingInt(BattleSession.DropSoldier::getTimestep));
         this.dropSoldiers = new LinkedList<>(dropSoldiers);
         lcg = new Common.LinearCongruentialGenerator(2333, 8121, 28411, 134457);
@@ -112,7 +115,15 @@ public class BattleSimulator {
         idCounter = 0;
 
         // debug
-        stateLogger = "";
+        stateLogger = new StringBuilder();
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 
     private void addMapObj(MapObject mapObject) {
@@ -134,9 +145,6 @@ public class BattleSimulator {
     public void simulate(int totalTimestep) {
         for(int i = 0; i < totalTimestep; i++) {
             forwardStep();
-        }
-        if(debug) {
-            System.out.println(stateLogger);
         }
     }
 
@@ -207,13 +215,14 @@ public class BattleSimulator {
         for(Soldier soldier: aliveSoldiers) {
             soldier.updateStatus();
             if(soldier.getStatus() == BattleConst.IDLE_SOLDIER_STATUS) {
-                double soldierPosX = soldier.getBattleX();
-                double soldierPosY = soldier.getBattleY();
-                int roundedSoldPosX = (int) soldierPosX;
-                int roundedSoldPosY = (int) soldierPosY;
+                double soldierPosX = soldier.getX();
+                double soldierPosY = soldier.getY();
+                int roundedSoldPosX = (int) Math.round(soldierPosX);
+                int roundedSoldPosY = (int) Math.round(soldierPosY);
                 double targetPosX, targetPosY;
                 Building target;
                 ArrayList<int[]> pathToTarget = null;
+
                 SoldierTargetPath targetPathPreCalc = null;
                 for(SoldierTargetPath soldierTargetPath: soldierTargetPaths) {
                     if(soldier.getType().equals(soldierTargetPath.getSoldierType())) {
@@ -222,8 +231,8 @@ public class BattleSimulator {
                             break;
                         }
                         if(mapGraph.hasPathCoord(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getPosX(), soldierTargetPath.getPosY())
-                                && Common.calcGridDistance(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getTarget().getBattleX(),soldierTargetPath.getTarget().getBattleY())
-                                > Common.calcGridDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), soldierTargetPath.getTarget().getBattleX(),soldierTargetPath.getTarget().getBattleY())) {
+                                && (Common.calcGridDistance(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getCornerTargetPosX(),soldierTargetPath.getCornerTargetPosY()) -
+                                Common.calcGridDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), soldierTargetPath.getCornerTargetPosX(), soldierTargetPath.getCornerTargetPosY()) > 0.1)) {
                             targetPathPreCalc = soldierTargetPath;
                             break;
                         }
@@ -233,8 +242,8 @@ public class BattleSimulator {
                     target = (Building) targetPathPreCalc.getTarget();
                     soldier.setTarget(target);
                     pathToTarget = new ArrayList<>(targetPathPreCalc.getPath());
-                    targetPosX = targetPathPreCalc.getPosX();
-                    targetPosY = targetPathPreCalc.getPosY();
+                    targetPosX = targetPathPreCalc.getCornerTargetPosX();
+                    targetPosY = targetPathPreCalc.getCornerTargetPosY();
                 }
                 else {
                     target = (Building) soldier.findNewTarget(aliveBuildings);
@@ -432,15 +441,15 @@ public class BattleSimulator {
         updateSoldiers();
 
         if(debug) {
-            StringBuilder sb = new StringBuilder();
             for(Soldier soldier: aliveSoldiers) {
-                sb.append(String.format("S - id: %d - timestep: %d - x: %.2f - y: %.2f - health: %d - targetId: %d\n", soldier.getId(), timestep, soldier.getX(),
-                        soldier.getY(), (int) soldier.getHealth(), soldier.getTarget().getId()));
+                String pathStr = "[" + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(", ")) + "]";
+                stateLogger.append(String.format("S - id: %d - timestep: %d - status: %d - x: %.2f - y: %.2f - health: %d - targetId: %d - targetPosX: %.2f - targetPosY: %.2f - path: %s\n",
+                        soldier.getId(), timestep, soldier.getStatus(), soldier.getX(),
+                        soldier.getY(), (int) soldier.getHealth(), (soldier.getTarget() == null ? -1 :soldier.getTarget().getId()), soldier.getTargetPosX(), soldier.getTargetPosY(), pathStr));
             }
             for(Building building: aliveBuildings) {
-                sb.append(String.format("B - id: %d - timestep: %d - health: %d\n", building.getId(), timestep, (int) building.getHealth()));
+                stateLogger.append(String.format("B - id: %d - timestep: %d - health: %d\n", building.getId(), timestep, (int) building.getHealth()));
             }
-            stateLogger += sb.toString();
         }
     }
 
@@ -468,7 +477,7 @@ public class BattleSimulator {
     }
 
     public String getStateLogger() {
-        return stateLogger;
+        return stateLogger.toString();
     }
 }
 

@@ -52,9 +52,6 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
     }
 
     public boolean isFavoriteTarget(Object obj) {
-        if(favoriteTarget.equals(BattleConst.NONE_FAVOR_TARGET)) {
-            return true;
-        }
         if(favoriteTarget.equals(BattleConst.DEF_FAVOR_TARGET)) {
             return obj instanceof Defense;
         }
@@ -118,7 +115,7 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
                 bestDistance = currDistance;
                 continue;
             }
-            if((Math.round(bestDistance - currDistance) < 0.1 && canBeAttacked.getId() < target.getId()) || (bestDistance > currDistance + 0.1)) {
+            if((Math.abs(Math.round(bestDistance - currDistance)) < 0.1 && canBeAttacked.getId() < target.getId()) || (bestDistance > currDistance + 0.1)) {
                 target = canBeAttacked;
                 bestDistance = currDistance;
             }
@@ -226,5 +223,13 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
 
     public double getHealth() {
         return health;
+    }
+
+    public double getTargetPosX() {
+        return targetPosX;
+    }
+
+    public double getTargetPosY() {
+        return targetPosY;
     }
 }
