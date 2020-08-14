@@ -308,7 +308,6 @@ public class BattleSimulator {
                             pathToTarget = mapGraph.findPathByCoords(soldier.getBattleX(), soldier.getBattleY(), targetPosX, targetPosY);
                         }
                         if(pathToTarget == null) {
-                            System.out.println("break" + timestep + " " + vertexIndex);
                             break;
                         }
                         if(soldier.getAttackType() == BattleConst.RANGED_ATTACK_TYPE) {
@@ -327,7 +326,6 @@ public class BattleSimulator {
                                 }
                             }
                         }
-                        System.out.println("wall" + timestep + " " + targetPosX + " " + targetPosY);
                     }
                     soldierTargetPaths.add(new SoldierTargetPath(
                             soldier.getType(),
