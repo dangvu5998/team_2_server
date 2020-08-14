@@ -106,6 +106,8 @@ public class BattleSimulator {
         breakingWalls = new ArrayList<>();
         soldierTargetPaths = new ArrayList<>();
         isTownhallDestroyed = false;
+        totalOriginHealthBuilding = 0;
+        totalRemainingHealthBuilding = 0;
         for(MapObject mapObject: battleMapObjects) {
             addMapObj(mapObject);
         }
@@ -134,6 +136,8 @@ public class BattleSimulator {
         if(mapObject instanceof Building) {
             if(!(mapObject instanceof Wall)) {
                 aliveBuildings.add((Building) mapObject);
+                this.totalOriginHealthBuilding += ((Building) mapObject).getHealth();
+                this.totalRemainingHealthBuilding = this.totalOriginHealthBuilding;
             }
             else {
                 aliveWallBuildings.add((Wall) mapObject);
@@ -141,8 +145,6 @@ public class BattleSimulator {
             if (mapObject instanceof Defense) {
                 ((Defense) mapObject).setBattleModel(this);
             }
-            this.totalOriginHealthBuilding += ((Building) mapObject).getHealth();
-            this.totalRemainingHealthBuilding = this.totalOriginHealthBuilding;
             ((Building) mapObject).setMaxHealth(((Building) mapObject).getHealth());
         }
     }
@@ -278,10 +280,11 @@ public class BattleSimulator {
                     targetPosY = targetPathPreCalc.getCornerTargetPosY();
                 }
                 else {
-                    target = (Building) soldier.findNewTarget(aliveBuildings);
-                    if (target == null) {
+                    CanBeAttacked canBeAttacked = soldier.findNewTarget(aliveBuildings);
+                    if(canBeAttacked == null) {
                         break;
                     }
+                    target = (Building) canBeAttacked;
                     // find target point for soldier
                     targetPosX = target.getX();
                     targetPosY = target.getY();
@@ -479,8 +482,11 @@ public class BattleSimulator {
 
         if(debug) {
             for(Soldier soldier: aliveSoldiers) {
-//                String pathStr = "[" + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(", ")) + "]";
                 String pathStr = "[]";
+                if(soldier.getPath() != null) {
+                    pathStr = "[" + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(", ")) + "]";
+                }
+//                System.out.println(soldier.isAlive() + " " + (soldier.getPath() == null));
                 stateLogger.append(String.format("S - id: %d - timestep: %d - status: %d - x: %.2f - y: %.2f - health: %d - targetId: %d - targetPosX: %.2f - targetPosY: %.2f - path: %s\n",
                         soldier.getId(), timestep, soldier.getStatus(), soldier.getX(),
                         soldier.getY(), (int) soldier.getHealth(), (soldier.getTarget() == null ? -1 :soldier.getTarget().getId()), soldier.getTargetPosX(), soldier.getTargetPosY(), pathStr));
@@ -512,7 +518,7 @@ public class BattleSimulator {
             }
             return isDead;
         });
-        breakingWalls.removeIf(breakingWall -> !breakingWall.wall.isAlive() || breakingWall.buildingTarget.isAlive());
+        breakingWalls.removeIf(breakingWall -> !breakingWall.wall.isAlive() || !breakingWall.buildingTarget.isAlive());
         soldierTargetPaths.removeIf(soldierTargetPath -> !soldierTargetPath.target.isAlive());
     }
 

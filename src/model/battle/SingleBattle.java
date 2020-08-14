@@ -88,12 +88,12 @@ public class SingleBattle {
                     final int MAP_CONFIG_WIDTH_HEIGHT = 44;
                     int x = cellPos % MAP_CONFIG_WIDTH_HEIGHT;
                     int y = (cellPos -  x) / MAP_CONFIG_WIDTH_HEIGHT;
+                    int objId = mapObjConf.getInt("objId");
                     String objTypeIdName = mapObjConf.getString("objType");
                     if(!MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.containsKey(objTypeIdName)) {
                         continue;
                     }
                     int objTypeId = MapObject.MAP_OBJ_CONFIG_NAME_TO_ID.get(objTypeIdName);
-                    int objId = mapObjConf.getInt("objId");
                     int level = mapObjConf.getInt("level");
                     MapObject mapObject = MapObject.createBattleMapObject(objId, objTypeId, x, y, level);
                     if(mapObject == null) {
