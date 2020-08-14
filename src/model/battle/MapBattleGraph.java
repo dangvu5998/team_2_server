@@ -262,7 +262,7 @@ public class MapBattleGraph {
             addPath(currV, bottomV);
             // init bottom border
             currV = coordsToVertex(x, height + startY - 1);
-            int topLeftV = coordsToVertex(x, height + startY - 2);
+            int topLeftV = coordsToVertex(x - 1, height + startY - 2);
             int topV = coordsToVertex(x, height + startY - 2);
             int topRightV = coordsToVertex(x + 1, height + startY - 2);
             rightV = coordsToVertex(x + 1, height + startY - 1);

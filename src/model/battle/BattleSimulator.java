@@ -214,7 +214,7 @@ public class BattleSimulator {
             double currDistanceToWall = Common.calcGridDistance(currWall.getX(), currWall.getY(), soldier.getBattleX(), soldier.getBattleY());
             double currDistanceToMove = currDistanceToWall + Common.calcGridDistance(currWall.getX(), currWall.getY(), buildingTarget.getX(), buildingTarget.getY());
             if(currDistanceToMove + BattleConst.DISTANCE_EPSILON < distanceToMove ||
-                    (Math.abs(currDistanceToMove - distanceToMove) < BattleConst.DISTANCE_EPSILON && currDistanceToWall > distanceToWall)
+                    (Math.abs(currDistanceToMove - distanceToMove) < BattleConst.DISTANCE_EPSILON && currDistanceToWall < distanceToWall)
             ) {
                 distanceToMove = currDistanceToMove;
                 distanceToWall = currDistanceToWall;
