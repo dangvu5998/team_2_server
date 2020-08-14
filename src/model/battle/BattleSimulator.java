@@ -3,6 +3,7 @@ package model.battle;
 import model.BattleConst;
 import model.CanBeAttacked;
 import model.map.Building;
+import model.map.Defense;
 import model.map.MapObject;
 import model.map.Wall;
 import model.soldier.Soldier;
@@ -18,6 +19,7 @@ public class BattleSimulator {
     private final Queue<BattleSession.DropSoldier> dropSoldiers;
     private int timestep;
     private final ArrayList<Soldier> aliveSoldiers;
+    private ArrayList<Defense.TargetInfo> buildingInfoAttack;
     private final ArrayList<Building> aliveBuildings;
     private final ArrayList<SoldierTargetPath> soldierTargetPaths;
     private final ArrayList<Wall> aliveWallBuildings;
@@ -114,6 +116,7 @@ public class BattleSimulator {
         aliveSoldiers = new ArrayList<>();
         idCounter = 0;
 
+        buildingInfoAttack = new ArrayList<>();
         // debug
         stateLogger = new StringBuilder();
     }
@@ -134,12 +137,19 @@ public class BattleSimulator {
             else {
                 aliveWallBuildings.add((Wall) mapObject);
             }
+            if (mapObject instanceof Defense) {
+                ((Defense) mapObject).setBattleModel(this);
+            }
         }
     }
 
     private int getNewId() {
         idCounter += 1;
         return idCounter;
+    }
+
+    public int getTimeStep() {
+        return this.timestep;
     }
 
     public void simulate(int totalTimestep) {
@@ -428,7 +438,6 @@ public class BattleSimulator {
                 soldier.move();
             }
         }
-
     }
 
     public void forwardStep() {
@@ -442,11 +451,20 @@ public class BattleSimulator {
         simulateSoldiers();
         updateBuildings();
         // TODO: code simulate defense buildings attack soldier
+        for (Building aliveBuilding : aliveBuildings) {
+            if (aliveBuilding instanceof Defense) {
+                ((Defense) aliveBuilding).update(aliveSoldiers);
+            }
+        }
         updateSoldiers();
 
         if(debug) {
             for(Soldier soldier: aliveSoldiers) {
-                String pathStr = "[" + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(", ")) + "]";
+                String pathStr = "[]";
+                if(soldier.getPath() != null) {
+                    pathStr = "[" + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(", ")) + "]";
+                }
+                System.out.println(soldier.isAlive() + " " + (soldier.getPath() == null));
                 stateLogger.append(String.format("S - id: %d - timestep: %d - status: %d - x: %.2f - y: %.2f - health: %d - targetId: %d - targetPosX: %.2f - targetPosY: %.2f - path: %s\n",
                         soldier.getId(), timestep, soldier.getStatus(), soldier.getX(),
                         soldier.getY(), (int) soldier.getHealth(), (soldier.getTarget() == null ? -1 :soldier.getTarget().getId()), soldier.getTargetPosX(), soldier.getTargetPosY(), pathStr));
@@ -456,7 +474,9 @@ public class BattleSimulator {
             }
         }
     }
-
+    public void pushSoldiersQueueAttack(Defense.TargetInfo targetInfo) {
+        this.buildingInfoAttack.add(targetInfo);
+    }
     public void updateBuildings() {
         aliveBuildings.removeIf(building -> {
             boolean isDead = !building.isAlive();
@@ -478,6 +498,40 @@ public class BattleSimulator {
 
     public void updateSoldiers() {
         // TODO: wait for merge vietnha code
+        for (Defense.TargetInfo soldierInfo : buildingInfoAttack) {
+            soldierInfo.needDel = false;
+            if (this.timestep < soldierInfo.getLastAttackStep() + soldierInfo.getNbTimeStep())
+                continue;
+            soldierInfo.needDel = true;
+            if (soldierInfo.getTypeAttack() == BattleConst.DEFENSE_ATTACK_ALWAYS_HIT) {
+                this.attackSoldierAlwaysHit(
+                        soldierInfo.getTarget(),
+                        soldierInfo.getDamage()
+                );
+            }
+            else if (soldierInfo.getTypeAttack() == BattleConst.DEFENSE_ATTACK_CAN_MISS) {
+                this.attackSoldiersCanMiss(
+                        soldierInfo.getTargetX(),
+                        soldierInfo.getTargetY(),
+                        soldierInfo.getDamage(),
+                        soldierInfo.getRadius()
+                );
+            }
+        }
+        buildingInfoAttack.removeIf(targetInfo -> targetInfo.needDel);
+        aliveSoldiers.removeIf(soldier -> !soldier.isAlive());
+    }
+    protected void attackSoldierAlwaysHit(Soldier soldier, double damage) {
+        soldier.takeDamage(damage);
+    }
+    protected void attackSoldiersCanMiss(double posX, double posY, double damage, double radius) {
+        final double squareRadius = radius*radius;
+        for (Soldier soldier : this.aliveSoldiers) {
+            final boolean isNearHit = Common.calcSquareDistance(soldier.getX(), soldier.getY(), posX, posY) < squareRadius;
+            if (isNearHit && soldier.isAlive()) {
+                soldier.takeDamage(damage);
+            }
+        }
     }
 
     public String getStateLogger() {

@@ -1,5 +1,6 @@
 package model.map;
 
+import model.BattleConst;
 import org.json.JSONException;
 import org.json.JSONObject;
 import util.Common;
@@ -66,6 +67,12 @@ public class Trebuchet extends Defense {
                 attackType = 3;
                 health = currConfig.getInt("hitpoints");
                 dmgPerShot = currConfig.getDouble("damagePerShot");
+
+                stringObjectType = "DEF_3";
+                attackCharacter = BattleConst.DEFENSE_ATTACK_CAN_MISS;
+                target = null;
+                statusBattle = Building.BATTLE_STATUS_IDLE;
+                stringObjectType = MapObject.MAP_ID_OBJ_TO_CONFIG_NAME.get(this.objectType);
             }
             else {
                 if (level < MAX_LEVEL) {

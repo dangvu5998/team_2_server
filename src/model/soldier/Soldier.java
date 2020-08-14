@@ -29,14 +29,14 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
     protected double y;
     protected double health;
     protected CanBeAttacked target;
-    protected double targetPosX;
-    protected double targetPosY;
+    protected double targetPosX = -1;
+    protected double targetPosY = -1;
     // list of coordinates to move
     // each element is an array size 2, element 0 is x to move
     // element 1 is y to move
     protected ArrayList<double[]> path;
     protected int pathIndex;
-    protected int status;
+    protected int status = BattleConst.IDLE_SOLDIER_STATUS;
     protected int lastAttackStep;
     protected int timeStep;
 

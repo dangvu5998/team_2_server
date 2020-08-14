@@ -67,6 +67,12 @@ public class ArcherTower extends Defense {
                 attackArea = BattleConst.GROUND_AERIAL_ATTACK_AREA;
                 attackType = BattleConst.RANGED_ATTACK_TYPE;
                 dmgPerShot = currConfig.getDouble("damagePerShot");
+
+                stringObjectType = "DEF_2";
+                attackCharacter = BattleConst.DEFENSE_ATTACK_ALWAYS_HIT;
+                target = null;
+                statusBattle = Building.BATTLE_STATUS_IDLE;
+                stringObjectType = MapObject.MAP_ID_OBJ_TO_CONFIG_NAME.get(this.objectType);
             }
             else {
                 if (level < MAX_LEVEL) {
