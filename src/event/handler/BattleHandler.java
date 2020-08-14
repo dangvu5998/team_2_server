@@ -79,6 +79,10 @@ public class BattleHandler extends BaseClientRequestHandler {
                 logger.error("Error user id " + userId);
                 return;
             }
+
+            // run battle simulator
+            singleBattle.loadBattleMap();
+            singleBattle.simulateBattle();
             int availGold = singleBattle.getAvailGold();
             int availElixir = singleBattle.getAvailElixir();
             // TODO: get this by simulate battle
