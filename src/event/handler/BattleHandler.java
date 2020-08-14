@@ -55,12 +55,13 @@ public class BattleHandler extends BaseClientRequestHandler {
         RequestEndBattle requestEndBattle = new RequestEndBattle(dataCmd);
         if(requestEndBattle.getStatus() == RequestConst.OK) {
             int userId = user.getId();
-            int endTimestep = requestEndBattle.getTimestep();
             int clientReqId = requestEndBattle.getClientReqId();
             int sessBattleId = requestEndBattle.getSessBattleId();
+            int endTimestep = requestEndBattle.getTimestep();
             int availGoldEndClient = requestEndBattle.getAvailGold();
             int availElixirEndClient = requestEndBattle.getAvailElixir();
             int proportionDestroyedEndClient = requestEndBattle.getProportionDestroyed();
+            int starEndClient = requestEndBattle.getStar();
             BattleSession battleSession = BattleSession.getBattleSessionById(userId);
             if(battleSession == null || battleSession.getSessionId() != sessBattleId) {
                 send(new ResponseEndBattle(clientReqId, ResponseEndBattle.INVALID_SESSION_ID), user);
@@ -83,14 +84,14 @@ public class BattleHandler extends BaseClientRequestHandler {
             // TODO: get this by simulate battle
             int earnedGold = availGold - availGoldEndClient;
             int earnedElixir = availElixir - availElixirEndClient;
+
             singleBattle.setAvailElixir(availElixirEndClient);
             singleBattle.setAvailGold(availGoldEndClient);
-            int star = 2;
-            if(proportionDestroyedEndClient == 10000) {
-                star = 3;
+            System.out.println(starEndClient + " " + singleBattle.getStar());
+            if(starEndClient > singleBattle.getStar()) {
+                singleBattle.setStar(starEndClient);
             }
-            singleBattle.setStar(star);
-            send(new ResponseEndBattle(clientReqId, star, earnedGold, earnedElixir), user);
+            send(new ResponseEndBattle(clientReqId, starEndClient, earnedGold, earnedElixir), user);
             singleBattlePlayer.save();
             GameUser gameUser = GameUser.getGameUserById(userId);
             if(gameUser == null) {
@@ -99,7 +100,6 @@ public class BattleHandler extends BaseClientRequestHandler {
             }
             gameUser.addGold(earnedGold);
             gameUser.addElixir(earnedElixir);
-
         }
     }
 

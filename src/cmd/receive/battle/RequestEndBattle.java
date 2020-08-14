@@ -14,6 +14,7 @@ public class RequestEndBattle extends BaseCmd {
     private int availGold;
     private int availElixir;
     private int proportionDestroyed;
+    private int star;
 
     public RequestEndBattle(DataCmd dataCmd) {
         super(dataCmd);
@@ -30,6 +31,7 @@ public class RequestEndBattle extends BaseCmd {
             availGold = readInt(bf);
             availElixir = readInt(bf);
             proportionDestroyed = readInt(bf);
+            star = readInt(bf);
             status = RequestConst.OK;
         } catch (Exception e) {
             status = RequestConst.INVALID;
@@ -62,5 +64,9 @@ public class RequestEndBattle extends BaseCmd {
 
     public int getProportionDestroyed() {
         return proportionDestroyed;
+    }
+
+    public int getStar() {
+        return star;
     }
 }
