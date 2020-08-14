@@ -158,6 +158,17 @@ public class Townhall extends Building implements GoldContainable, ElixirContain
     }
 
     @Override
+    public void takeDamage(double dmg) {
+        super.takeDamage(dmg);
+        if (health < 0) {
+            elixir = 0;
+            gold = 0;
+        }
+        elixir = (int) Math.floor(health / maxHealth * maxElixirBattle);
+        gold = (int) Math.floor(health / maxHealth * maxGoldBattle);
+    }
+
+    @Override
     public Townhall clone() {
         if(mode == BATTLE_MODE)
             return new Townhall(this.id, this.x, this.y, this.level, this.mode);

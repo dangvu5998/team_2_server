@@ -12,6 +12,7 @@ public abstract class Building extends MapObject implements CanBeAttacked {
     @Expose
     protected int status;
     protected double health;
+    protected double maxHealth;
     protected int goldToUpgrade = 0;
     protected int elixirToUpgrade = 0;
     protected int darkElixirToUpgrade = 0;
@@ -188,6 +189,14 @@ public abstract class Building extends MapObject implements CanBeAttacked {
 
     public double getHealth() {
         return health;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
     }
 
     protected void setStatusBattle(int status) {

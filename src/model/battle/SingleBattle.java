@@ -2,6 +2,7 @@ package model.battle;
 
 import bitzero.util.common.business.CommonHandle;
 import com.google.gson.annotations.Expose;
+import model.map.Building;
 import model.map.ElixirContainable;
 import model.map.GoldContainable;
 import model.map.MapObject;
@@ -281,6 +282,48 @@ public class SingleBattle {
             return;
         }
         this.availElixir = availElixir;
+    }
+
+    public int getStarFromBattle() {
+        int star;
+        double destroyedProportion = this.getDestroyedBattle();
+        if (destroyedProportion < 0.5) {
+            star = 0;
+        } else if (destroyedProportion >= 0.5 && destroyedProportion <= 0.99) {
+            star = 1;
+        } else {
+            star = 2;
+        }
+        if (this.battleSimulator.checkIfTownhallDestroyed()) {
+            star += 1;
+        }
+        return star;
+    }
+
+    public double getDestroyedBattle() {
+        double origin = this.battleSimulator.getTotalOriginHealthBuilding();
+        double remain = this.battleSimulator.getTotalRemainingHealthBuilding();
+        return (origin - remain) / origin;
+    }
+
+    public int getAvailGoldBattle() {
+        int availGold = 0;
+        for (Building goldContainer : this.battleSimulator.getAliveBuildings()) {
+            if (goldContainer instanceof GoldContainable) {
+                availGold += ((GoldContainable) goldContainer).getGold();
+            }
+        }
+        return availGold;
+    }
+
+    public int getAvailElixirBattle() {
+        int availElixir = 0;
+        for (Building ElixirContainer : this.battleSimulator.getAliveBuildings()) {
+            if (ElixirContainer instanceof ElixirContainable) {
+                availElixir += ((ElixirContainable) ElixirContainer).getElixir();
+            }
+        }
+        return availElixir;
     }
 
     public BattleSimulator getBattleSimulator() {

@@ -2,10 +2,7 @@ package model.battle;
 
 import model.BattleConst;
 import model.CanBeAttacked;
-import model.map.Building;
-import model.map.Defense;
-import model.map.MapObject;
-import model.map.Wall;
+import model.map.*;
 import model.soldier.Soldier;
 import model.soldier.Warrior;
 import model.soldier.Archer;
@@ -27,6 +24,9 @@ public class BattleSimulator {
     private final MapBattleGraph mapGraph;
     private int idCounter;
     private final Common.LinearCongruentialGenerator lcg;
+    private double totalOriginHealthBuilding;
+    private double totalRemainingHealthBuilding;
+    private boolean isTownhallDestroyed;
 
     private final StringBuilder stateLogger;
     public boolean debug = true;
@@ -105,6 +105,7 @@ public class BattleSimulator {
         aliveBuildings = new ArrayList<>();
         breakingWalls = new ArrayList<>();
         soldierTargetPaths = new ArrayList<>();
+        isTownhallDestroyed = false;
         for(MapObject mapObject: battleMapObjects) {
             addMapObj(mapObject);
         }
@@ -140,6 +141,9 @@ public class BattleSimulator {
             if (mapObject instanceof Defense) {
                 ((Defense) mapObject).setBattleModel(this);
             }
+            this.totalOriginHealthBuilding += ((Building) mapObject).getHealth();
+            this.totalRemainingHealthBuilding = this.totalOriginHealthBuilding;
+            ((Building) mapObject).setMaxHealth(((Building) mapObject).getHealth());
         }
     }
 
@@ -150,6 +154,22 @@ public class BattleSimulator {
 
     public int getTimeStep() {
         return this.timestep;
+    }
+
+    public ArrayList<Building> getAliveBuildings() {
+        return this.aliveBuildings;
+    }
+
+    public double getTotalRemainingHealthBuilding() {
+        return this.totalRemainingHealthBuilding;
+    }
+
+    public double getTotalOriginHealthBuilding() {
+        return this.totalOriginHealthBuilding;
+    }
+
+    public boolean checkIfTownhallDestroyed() {
+        return this.isTownhallDestroyed;
     }
 
     public void simulate(int totalTimestep) {
@@ -477,6 +497,10 @@ public class BattleSimulator {
         aliveBuildings.removeIf(building -> {
             boolean isDead = !building.isAlive();
             if(isDead) {
+                this.totalRemainingHealthBuilding -= building.getMaxHealth();
+                if (building instanceof Townhall) {
+                    this.isTownhallDestroyed = true;
+                }
                 mapGraph.addEmptyArea(building.getX(), building.getY(), building.getWidth(), building.getHeight());
             }
             return isDead;
