@@ -51,12 +51,12 @@ public class BattleSimulator {
         private final int posX;
         private final int posY;
         private final ArrayList<int[]> path;
-        private final CanBeAttacked target;
+        private final Building target;
         private final double cornerTargetPosX;
         private final double cornerTargetPosY;
 
         public SoldierTargetPath(String soldierType, int posX, int posY,
-                                 ArrayList<int[]> path, CanBeAttacked target,
+                                 ArrayList<int[]> path, Building target,
                                  double cornerTargetPosX, double cornerTargetPosY) {
             this.soldierType = soldierType;
             this.posX = posX;
@@ -83,7 +83,7 @@ public class BattleSimulator {
             return path;
         }
 
-        public CanBeAttacked getTarget() {
+        public Building getTarget() {
             return target;
         }
 
@@ -209,7 +209,7 @@ public class BattleSimulator {
             double currDistanceToWall = Common.calcGridDistance(currWall.getX(), currWall.getY(), soldier.getBattleX(), soldier.getBattleY());
             double currDistanceToMove = currDistanceToWall + Common.calcGridDistance(currWall.getX(), currWall.getY(), buildingTarget.getX(), buildingTarget.getY());
             if(currDistanceToMove < distanceToMove ||
-                    (Math.abs(currDistanceToMove - distanceToMove) < 0.1 && currDistanceToWall < distanceToWall)
+                    (Math.abs(currDistanceToMove - distanceToMove) < BattleConst.DISTANCE_EPSILON && currDistanceToWall < distanceToWall)
             ) {
                 distanceToMove = currDistanceToMove;
                 distanceToWall = currDistanceToWall;
@@ -240,9 +240,11 @@ public class BattleSimulator {
                             targetPathPreCalc = soldierTargetPath;
                             break;
                         }
+                        double centerTargetX = soldierTargetPath.getTarget().getX() + soldierTargetPath.getTarget().getWidth() / 2.0;
+                        double centerTargetY = soldierTargetPath.getTarget().getY() + soldierTargetPath.getTarget().getHeight() / 2.0;
                         if(mapGraph.hasPathCoord(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getPosX(), soldierTargetPath.getPosY())
-                                && (Common.calcGridDistance(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getCornerTargetPosX(),soldierTargetPath.getCornerTargetPosY()) -
-                                Common.calcGridDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), soldierTargetPath.getCornerTargetPosX(), soldierTargetPath.getCornerTargetPosY()) > 0.1)) {
+                                && (Common.calcManhattanDistance(roundedSoldPosX, roundedSoldPosY, centerTargetX, centerTargetY) -
+                                Common.calcManhattanDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), centerTargetX, centerTargetY) > BattleConst.DISTANCE_EPSILON)) {
                             targetPathPreCalc = soldierTargetPath;
                             break;
                         }
@@ -264,8 +266,9 @@ public class BattleSimulator {
                     targetPosX = target.getX();
                     targetPosY = target.getY();
                     for (int[] cornerPos : getCornersOfMapObj(target)) {
-                        if (Common.calcGridDistance(soldierPosX, soldierPosY, targetPosX, targetPosY) >
-                                Common.calcGridDistance(soldierPosX, soldierPosY, cornerPos[0], cornerPos[1])) {
+                        if (Common.calcGridDistance(soldierPosX, soldierPosY, targetPosX, targetPosY) -
+                                Common.calcGridDistance(soldierPosX, soldierPosY, cornerPos[0], cornerPos[1]) > BattleConst.DISTANCE_EPSILON
+                        ) {
                             targetPosX = cornerPos[0];
                             targetPosY = cornerPos[1];
                         }
@@ -312,7 +315,7 @@ public class BattleSimulator {
                             else {
                                 targetPosY = target.getY() + 1;
                             }
-                            pathToTarget = mapGraph.findPathByCoords(soldier.getBattleX(), soldier.getBattleY(), target.getX(), target.getY());
+                            pathToTarget = mapGraph.findPathByCoords(soldier.getBattleX(), soldier.getBattleY(), targetPosX, targetPosY);
                         }
                         if(pathToTarget == null) {
                             break;
@@ -444,7 +447,7 @@ public class BattleSimulator {
             dropSoldiers.poll();
             addSoldier(dropSoldier.getSoldierType(), dropSoldier.getX(), dropSoldier.getY());
         }
-//        simulateSoldiers();
+        simulateSoldiers();
         updateBuildings();
         // TODO: code simulate defense buildings attack soldier
         for (Building aliveBuilding : aliveBuildings) {

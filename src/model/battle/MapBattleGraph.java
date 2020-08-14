@@ -30,6 +30,8 @@ public class MapBattleGraph {
         if (!path.get(v1).contains(v2)) {
             path.get(v1).add(v2);
             path.get(v2).add(v1);
+            Collections.sort(path.get(v1));
+            Collections.sort(path.get(v2));
         }
     }
 

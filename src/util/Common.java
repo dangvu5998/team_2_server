@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Common {
@@ -64,7 +65,11 @@ public class Common {
                 }
             }
         }
-        return (int[][]) neighbors.toArray();
+        int[][] result = new int[neighbors.size()][2];
+        for(int i = 0; i < neighbors.size(); i++) {
+            result[i] = neighbors.get(i);
+        }
+        return result;
     }
 
     public static class LinearCongruentialGenerator {
