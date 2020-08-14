@@ -248,10 +248,11 @@ public class BattleSimulator {
                     targetPosY = targetPathPreCalc.getCornerTargetPosY();
                 }
                 else {
-                    target = (Building) soldier.findNewTarget(aliveBuildings);
-                    if (target == null) {
+                    CanBeAttacked canBeAttacked = soldier.findNewTarget(aliveBuildings);
+                    if(canBeAttacked == null) {
                         break;
                     }
+                    target = (Building) canBeAttacked;
                     // find target point for soldier
                     targetPosX = target.getX();
                     targetPosY = target.getY();
@@ -471,7 +472,7 @@ public class BattleSimulator {
             }
             return isDead;
         });
-        breakingWalls.removeIf(breakingWall -> !breakingWall.wall.isAlive() || breakingWall.buildingTarget.isAlive());
+        breakingWalls.removeIf(breakingWall -> !breakingWall.wall.isAlive() || !breakingWall.buildingTarget.isAlive());
         soldierTargetPaths.removeIf(soldierTargetPath -> !soldierTargetPath.target.isAlive());
     }
 

@@ -27,6 +27,7 @@ public class MapBattleGraph {
     }
 
     private void addPath(int v1, int v2) {
+//        System.out.println("add path " + v1 + " " + v2);
         if (!path.get(v1).contains(v2)) {
             path.get(v1).add(v2);
             path.get(v2).add(v1);
@@ -75,6 +76,11 @@ public class MapBattleGraph {
             this.coord = coord;
             this.currDistance = currDistance;
             this.potentialDistance = potentialDistance;
+        }
+
+        @Override
+        public String toString() {
+            return "Vertex " + this.id + ": " + Arrays.toString(coord) + " " + currDistance + " " + potentialDistance;
         }
 
         public int getId() {
@@ -143,11 +149,15 @@ public class MapBattleGraph {
         HashSet<Integer> visitedVertexId = new HashSet<>();
         visitedVertexId.add(srcV);
         boolean pathFound = false;
+//        System.out.println("ver " + srcV + " " + dstV);
+//        int i = 0;
         while (!verticesQueue.isEmpty()) {
             if(pathFound) {
                 break;
             }
             VertexDistance vertexDistance = verticesQueue.poll();
+//            i ++;
+//            System.out.println("ver " + i + " " + vertexDistance + " " + path.get(vertexDistance.getId()));
             for(int verId: path.get(vertexDistance.getId())) {
                 if(!visitedVertexId.contains(verId)) {
                     visitedVertexId.add(verId);
@@ -318,6 +328,7 @@ public class MapBattleGraph {
                 int topRightVertexId = coordsToVertex(x + 1, y);
                 int bottomLeftVertexId = coordsToVertex(x, y + 1);
                 int bottomRightVertexId = coordsToVertex(x + 1, y + 1);
+//                System.out.println("coor" + x + " " + y);
                 if(grid[y][x] == EMPTY_CELL) {
                     // add 2 path diagonal
                     addPath(topLeftVertexId, bottomRightVertexId);
@@ -358,7 +369,7 @@ public class MapBattleGraph {
                 addPath(topLeftV, bottomRightV);
                 addPath(topRightV, bottomLeftV);
                 if(i == x + width - 1) {
-                    addPath(topRightV, topRightV);
+                    addPath(topRightV, bottomRightV);
                 }
                 if(j == y + height - 1) {
                     addPath(bottomLeftV, bottomRightV);

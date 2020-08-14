@@ -40,6 +40,10 @@ public class Obstacle extends MapObject {
         status = NORMAL_STATUS;
         finishTime = 0;
         this.mode = mode;
+        if(mode == BATTLE_MODE) {
+            loadConfig();
+            loadExtraInfo();
+        }
     }
 
     public static void loadConfig() {
@@ -158,10 +162,12 @@ public class Obstacle extends MapObject {
             JSONObject currConfig = obtacleConfig.getJSONObject(obtacleConfigName).getJSONObject("1");
             width = currConfig.getInt("width");
             height = currConfig.getInt("height");
-            timeToRemove = currConfig.getInt("buildTime");
-            elixirToRemove = currConfig.getInt("elixir");
-            goldToRemove = currConfig.getInt("gold");
-            exp = currConfig.getInt("exp");
+            if(mode == MAIN_MAP_MODE) {
+                timeToRemove = currConfig.getInt("buildTime");
+                elixirToRemove = currConfig.getInt("elixir");
+                goldToRemove = currConfig.getInt("gold");
+                exp = currConfig.getInt("exp");
+            }
         } catch (JSONException e) {
             throw new RuntimeException("obtacle config is invalid");
         }
