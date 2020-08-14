@@ -132,4 +132,12 @@ public class ElixirMine extends MineBuilding implements ElixirContainable {
         this.setElixir(maxElixirBattle);
     }
 
+    @Override
+    public void takeDamage(double dmg) {
+        super.takeDamage(dmg);
+        if (health < 0) {
+            elixir = 0;
+        }
+        elixir = (int) Math.floor(health / maxHealth * maxElixirBattle);
+    }
 }

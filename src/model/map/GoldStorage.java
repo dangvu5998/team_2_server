@@ -141,4 +141,13 @@ public class GoldStorage extends Building implements GoldContainable {
             return new GoldStorage(this.id, this.x, this.y, this.level, this.mode);
         return new GoldStorage(this.id, this.x, this.y, this.level, this.status, this.finishTime);
     }
+
+    @Override
+    public void takeDamage(double dmg) {
+        super.takeDamage(dmg);
+        if (health < 0) {
+            gold = 0;
+        }
+        gold = (int) Math.floor(health / maxHealth * maxGoldBattle);
+    }
 }

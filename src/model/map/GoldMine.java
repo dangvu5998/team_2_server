@@ -134,4 +134,13 @@ public class GoldMine extends MineBuilding implements GoldContainable {
     public int getGoldCapacity() {
         return capacity;
     }
+
+    @Override
+    public void takeDamage(double dmg) {
+        super.takeDamage(dmg);
+        if (health < 0) {
+            gold = 0;
+        }
+        gold = (int) Math.floor(health / maxHealth * maxGoldBattle);
+    }
 }
