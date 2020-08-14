@@ -27,9 +27,6 @@ public class MapBattleGraph {
     }
 
     private void addPath(int v1, int v2) {
-        System.out.println("add pa");
-        System.out.println(Arrays.toString(vertexToCoords(v1)));
-        System.out.println(Arrays.toString(vertexToCoords(v2)));
         if (!path.get(v1).contains(v2)) {
             path.get(v1).add(v2);
             path.get(v2).add(v1);
@@ -322,7 +319,6 @@ public class MapBattleGraph {
                 int bottomLeftVertexId = coordsToVertex(x, y + 1);
                 int bottomRightVertexId = coordsToVertex(x + 1, y + 1);
                 if(grid[y][x] == EMPTY_CELL) {
-                    System.out.println("empty " + x + " " + y);
                     // add 2 path diagonal
                     addPath(topLeftVertexId, bottomRightVertexId);
                     addPath(topRightVertexId, bottomLeftVertexId);

@@ -227,27 +227,20 @@ public class BattleSimulator {
                 for(SoldierTargetPath soldierTargetPath: soldierTargetPaths) {
                     if(soldier.getType().equals(soldierTargetPath.getSoldierType())) {
                         if (roundedSoldPosX == soldierTargetPath.getPosX() && roundedSoldPosY == soldierTargetPath.getPosY()) {
-                            System.out.println("eqstep" + timestep);
                             targetPathPreCalc = soldierTargetPath;
                             break;
                         }
                         double centerTargetX = soldierTargetPath.getTarget().getX() + soldierTargetPath.getTarget().getWidth() / 2.0;
                         double centerTargetY = soldierTargetPath.getTarget().getY() + soldierTargetPath.getTarget().getHeight() / 2.0;
-                        System.out.println("loc" + timestep + " " + centerTargetX + " " + centerTargetY);
-                        System.out.println(mapGraph.hasPathCoord(22, 28, 21, 27));
                         if(mapGraph.hasPathCoord(roundedSoldPosX, roundedSoldPosY, soldierTargetPath.getPosX(), soldierTargetPath.getPosY())
                                 && (Common.calcManhattanDistance(roundedSoldPosX, roundedSoldPosY, centerTargetX, centerTargetY) -
                                 Common.calcManhattanDistance(soldierTargetPath.getPosX(), soldierTargetPath.getPosY(), centerTargetX, centerTargetY) > BattleConst.DISTANCE_EPSILON)) {
-                            System.out.println("bestep" + timestep + " " + roundedSoldPosX + " " + roundedSoldPosY + " " +  soldierTargetPath.getPosX() + " " +  soldierTargetPath.getPosY());
                             targetPathPreCalc = soldierTargetPath;
                             break;
                         }
                     }
                 }
                 if(targetPathPreCalc != null) {
-                    if(timestep == 196) {
-                        System.out.println("cacle pre");
-                    }
                     target = (Building) targetPathPreCalc.getTarget();
                     soldier.setTarget(target);
                     pathToTarget = new ArrayList<>(targetPathPreCalc.getPath());
@@ -263,9 +256,6 @@ public class BattleSimulator {
                     targetPosX = target.getX();
                     targetPosY = target.getY();
                     for (int[] cornerPos : getCornersOfMapObj(target)) {
-                        if(timestep == 196) {
-                            System.out.println(Arrays.toString(cornerPos));
-                        }
                         if (Common.calcGridDistance(soldierPosX, soldierPosY, targetPosX, targetPosY) -
                                 Common.calcGridDistance(soldierPosX, soldierPosY, cornerPos[0], cornerPos[1]) > BattleConst.DISTANCE_EPSILON
                         ) {
@@ -315,9 +305,10 @@ public class BattleSimulator {
                             else {
                                 targetPosY = target.getY() + 1;
                             }
-                            pathToTarget = mapGraph.findPathByCoords(soldier.getBattleX(), soldier.getBattleY(), target.getX(), target.getY());
+                            pathToTarget = mapGraph.findPathByCoords(soldier.getBattleX(), soldier.getBattleY(), targetPosX, targetPosY);
                         }
                         if(pathToTarget == null) {
+                            System.out.println("break" + timestep + " " + vertexIndex);
                             break;
                         }
                         if(soldier.getAttackType() == BattleConst.RANGED_ATTACK_TYPE) {
@@ -336,6 +327,7 @@ public class BattleSimulator {
                                 }
                             }
                         }
+                        System.out.println("wall" + timestep + " " + targetPosX + " " + targetPosY);
                     }
                     soldierTargetPaths.add(new SoldierTargetPath(
                             soldier.getType(),
