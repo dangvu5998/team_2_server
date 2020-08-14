@@ -82,18 +82,29 @@ public class BattleHandler extends BaseClientRequestHandler {
 
             // run battle simulator
             singleBattle.loadBattleMap();
-            singleBattle.simulateBattle();
+            singleBattle.simulateBattle(endTimestep, battleSession.getDropSoldiers());
+            int simulatedDestroyed = (int) Math.round(singleBattle.getDestroyedBattle() * 10000);
+            int simulatedAvailGold = singleBattle.getAvailGoldBattle();
+            int simulatedAvailElixir = singleBattle.getAvailElixirBattle();
+            int simulatedStar = singleBattle.getStarFromBattle();
+            if(simulatedDestroyed != proportionDestroyedEndClient || simulatedAvailElixir != availElixirEndClient ||
+                simulatedAvailGold != availGoldEndClient || simulatedStar != starEndClient) {
+                logger.warn("Asynchronous battle client and server map id " + singleBattle.getId());
+                logger.warn("Soldiers dropped: " + battleSession.getDropSoldiers());
+                logger.warn("Server destroyed: " + simulatedDestroyed + " - gold: " + simulatedAvailGold + " - elixir: " + simulatedAvailElixir + " - star: " + simulatedStar);
+                logger.warn("Client destroyed: " + proportionDestroyedEndClient + " - gold: " + availGoldEndClient + " - elixir: " + availElixirEndClient + " - star: " + starEndClient);
+            }
             int availGold = singleBattle.getAvailGold();
             int availElixir = singleBattle.getAvailElixir();
-            // TODO: get this by simulate battle
-            int earnedGold = availGold - availGoldEndClient;
-            int earnedElixir = availElixir - availElixirEndClient;
 
-            singleBattle.setAvailElixir(availElixirEndClient);
-            singleBattle.setAvailGold(availGoldEndClient);
-            System.out.println(starEndClient + " " + singleBattle.getStar());
-            if(starEndClient > singleBattle.getStar()) {
-                singleBattle.setStar(starEndClient);
+            // TODO: get this by simulate battle
+            int earnedGold = availGold - simulatedAvailGold;
+            int earnedElixir = availElixir - simulatedAvailElixir;
+
+            singleBattle.setAvailElixir(simulatedAvailElixir);
+            singleBattle.setAvailGold(simulatedAvailGold);
+            if(simulatedStar > singleBattle.getStar()) {
+                singleBattle.setStar(simulatedStar);
             }
             send(new ResponseEndBattle(clientReqId, starEndClient, earnedGold, earnedElixir), user);
             singleBattlePlayer.save();

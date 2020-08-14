@@ -55,9 +55,6 @@ public class Warrior extends Soldier {
             if (baseConfig != null) {
                 baseConfig = baseConfig.getJSONObject(TYPE_ID);
             }
-            else {
-                System.out.println("eror load base conf wa");
-            }
         } catch (JSONException e) {
             config = null;
             baseConfig = null;

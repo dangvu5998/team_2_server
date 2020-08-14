@@ -99,6 +99,9 @@ public class FresherExtension extends BZExtension {
             RequestLogin reqGet = new RequestLogin(objData);
             reqGet.unpackData();
             String username = reqGet.getUsername();
+            if(username == null || username.length() == 0) {
+                return;
+            }
             GameUser gameUser = GameUser.getGameUserByUsername(username);
             if (gameUser == null) {
                 gameUser = GameUser.createGameUserByUsername(username);

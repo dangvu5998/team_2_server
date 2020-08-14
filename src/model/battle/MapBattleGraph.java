@@ -119,7 +119,7 @@ public class MapBattleGraph {
      * Find path between 2 vertices
      * @param srcV source vertex
      * @param dstV destination vertex
-     * @param upperBoundBonus bonus distance to manhattan allowed to early stop. Default is 14
+     * @param upperBoundBonus bonus distance to manhattan allowed to early stop
      * @return list of vertices from src to dst. If there is no path, return null
      *
      */
@@ -216,7 +216,7 @@ public class MapBattleGraph {
     }
 
     private ArrayList<Integer> findPathByVertices(int srcV, int dstV) {
-        return findPathByVertices(srcV, dstV, 16);
+        return findPathByVertices(srcV, dstV, 24);
     }
 
     public void loadGraphFromMapObjs(ArrayList<MapObject> mapObjs) {
