@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class BattleSimulator {
     private final Queue<BattleSession.DropSoldier> dropSoldiers;
     private int timestep;
+    private boolean isFighting;
     private final ArrayList<Soldier> aliveSoldiers;
     private ArrayList<Defense.TargetInfo> buildingInfoAttack;
     private final ArrayList<Building> aliveBuildings;
@@ -153,8 +154,12 @@ public class BattleSimulator {
     }
 
     public void simulate(int totalTimestep) {
+        isFighting = true;
         for(int i = 0; i < totalTimestep; i++) {
             forwardStep();
+            if(!isFighting) {
+                break;
+            }
         }
     }
 
@@ -208,8 +213,8 @@ public class BattleSimulator {
             Wall currWall = aliveWallBuildings.get(i);
             double currDistanceToWall = Common.calcGridDistance(currWall.getX(), currWall.getY(), soldier.getBattleX(), soldier.getBattleY());
             double currDistanceToMove = currDistanceToWall + Common.calcGridDistance(currWall.getX(), currWall.getY(), buildingTarget.getX(), buildingTarget.getY());
-            if(currDistanceToMove < distanceToMove ||
-                    (Math.abs(currDistanceToMove - distanceToMove) < BattleConst.DISTANCE_EPSILON && currDistanceToWall < distanceToWall)
+            if(currDistanceToMove + BattleConst.DISTANCE_EPSILON < distanceToMove ||
+                    (Math.abs(currDistanceToMove - distanceToMove) < BattleConst.DISTANCE_EPSILON && currDistanceToWall > distanceToWall)
             ) {
                 distanceToMove = currDistanceToMove;
                 distanceToWall = currDistanceToWall;
@@ -458,13 +463,17 @@ public class BattleSimulator {
         }
         updateSoldiers();
 
+        // end battle if all buildings destroyed or out of soldiers
+        if(aliveBuildings.size() == 0 || (aliveSoldiers.size() == 0 && dropSoldiers.peek() == null)) {
+            isFighting = false;
+        }
+
         if(debug) {
             for(Soldier soldier: aliveSoldiers) {
                 String pathStr = "[]";
                 if(soldier.getPath() != null) {
                     pathStr = "[" + soldier.getPath().stream().map(Arrays::toString).collect(Collectors.joining(", ")) + "]";
                 }
-                System.out.println(soldier.isAlive() + " " + (soldier.getPath() == null));
                 stateLogger.append(String.format("S - id: %d - timestep: %d - status: %d - x: %.2f - y: %.2f - health: %d - targetId: %d - targetPosX: %.2f - targetPosY: %.2f - path: %s\n",
                         soldier.getId(), timestep, soldier.getStatus(), soldier.getX(),
                         soldier.getY(), (int) soldier.getHealth(), (soldier.getTarget() == null ? -1 :soldier.getTarget().getId()), soldier.getTargetPosX(), soldier.getTargetPosY(), pathStr));
