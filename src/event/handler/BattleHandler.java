@@ -91,8 +91,14 @@ public class BattleHandler extends BaseClientRequestHandler {
                 simulatedAvailGold != availGoldEndClient || simulatedStar != starEndClient) {
                 logger.warn("Asynchronous battle client and server map id " + singleBattle.getId());
                 logger.warn("Soldiers dropped: " + battleSession.getDropSoldiers());
+                logger.warn("End step: " + endTimestep);
                 logger.warn("Server destroyed: " + simulatedDestroyed + " - gold: " + simulatedAvailGold + " - elixir: " + simulatedAvailElixir + " - star: " + simulatedStar);
                 logger.warn("Client destroyed: " + proportionDestroyedEndClient + " - gold: " + availGoldEndClient + " - elixir: " + availElixirEndClient + " - star: " + starEndClient);
+                if(Math.abs(availGoldEndClient - simulatedAvailGold) < 50 && Math.abs(availElixirEndClient - simulatedAvailElixir) < 50) {
+                    simulatedAvailElixir = availElixirEndClient;
+                    simulatedAvailGold = availGoldEndClient;
+                    simulatedStar = starEndClient;
+                }
             }
             int availGold = singleBattle.getAvailGold();
             int availElixir = singleBattle.getAvailElixir();
