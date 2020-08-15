@@ -74,6 +74,15 @@ public class Wall extends Building {
     }
 
     @Override
+    public void upgrade() {
+        if(level >= getMaxLevel()) {
+            return;
+        }
+        level += 1;
+        save();
+    }
+
+    @Override
     public Wall clone() {
         if(mode == BATTLE_MODE)
             return new Wall(this.id, this.x, this.y, this.level, this.mode);
