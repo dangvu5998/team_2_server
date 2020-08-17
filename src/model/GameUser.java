@@ -139,7 +139,7 @@ public class GameUser {
     }
 
     public void setGold(int gold) {
-        this.gold = gold;
+        this.gold = Math.min(gold, goldCapacity);
         save();
     }
 
@@ -148,7 +148,7 @@ public class GameUser {
     }
 
     public void setElixir(int elixir) {
-        this.elixir = elixir;
+        this.elixir = Math.min(elixir, elixirCapacity);
         save();
     }
 
