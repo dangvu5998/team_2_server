@@ -98,7 +98,6 @@ public class BattleSimulator {
     }
 
     public BattleSimulator(ArrayList<MapObject> battleMapObjects, ArrayList<BattleSession.DropSoldier> dropSoldiers) {
-        // TODO: add check fighting ended
         mapGraph = new MapBattleGraph(BattleConst.SOLDIER_MAP_WIDTH, BattleConst.SOLDIER_MAP_HEIGHT,
                 BattleConst.SOLDIER_X_START, BattleConst.SOLDIER_Y_START);
         mapGraph.loadGraphFromMapObjs(battleMapObjects);
@@ -278,7 +277,7 @@ public class BattleSimulator {
                     }
                 }
                 if(targetPathPreCalc != null) {
-                    target = (Building) targetPathPreCalc.getTarget();
+                    target = targetPathPreCalc.getTarget();
                     soldier.setTarget(target);
                     pathToTarget = new ArrayList<>(targetPathPreCalc.getPath());
                     targetPosX = targetPathPreCalc.getCornerTargetPosX();

@@ -46,6 +46,17 @@ public abstract class Soldier implements Attackable, CanBeAttacked {
             "ARM_2",
             "ARM_4"));
 
+    public static int getHousingSpaceByType(String type) {
+        switch (type) {
+            case "ARM_1":
+            case "ARM_2":
+                return 1;
+            case "ARM_4":
+                return 5;
+        }
+        return 0;
+    }
+
     public void setTimeStep(int timeStep) {
         this.timeStep = timeStep;
         this.lastAttackStep = timeStep;

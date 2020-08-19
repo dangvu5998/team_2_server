@@ -14,6 +14,7 @@ public class ResponseSelectSingleBattle extends BaseMsg {
 
     public static final int NO_ERROR = 0;
     public static final int INVALID_BATTLE_ID = -1;
+    public static final int TOO_MUCH_SOLDIERS = -4;
     public ResponseSelectSingleBattle(int error, int reqId, int battleSessId) {
         super(CmdDefine.SELECT_SINGLE_BATTLE);
         this.reqId = reqId;

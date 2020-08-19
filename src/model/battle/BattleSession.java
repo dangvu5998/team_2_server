@@ -1,9 +1,11 @@
 package model.battle;
 
 import com.google.gson.annotations.Expose;
+import model.soldier.Soldier;
 import util.database.DBBuiltInUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BattleSession {
     public static class SoldierNumber {
@@ -78,7 +80,11 @@ public class BattleSession {
     @Expose
     private int sessionId;
 
+    private HashMap<String, Integer> soldierDroppedSpace;
+
     public static final String COLLECTION_NAME = "BattleSession";
+
+    public static final int MAX_TIME_STEP = 7500;
 
     public BattleSession(int userId) {
         this.userId = userId;
@@ -145,5 +151,30 @@ public class BattleSession {
 
     public void setSessionId(int sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public int getSoldierNumberByType(String type) {
+        for(SoldierNumber soldierNumber: availSoldiers) {
+            if(type.equals(soldierNumber.getSoldierType())) {
+                return soldierNumber.getNumber();
+            }
+        }
+        return 0;
+    }
+
+    public void addDropSoldier(DropSoldier dropSoldier) {
+        if(soldierDroppedSpace == null) {
+            soldierDroppedSpace = new HashMap<>();
+            for(String soldierType: Soldier.SOLDIER_TYPES) {
+                soldierDroppedSpace.put(soldierType, 0);
+            }
+        }
+        dropSoldiers.add(dropSoldier);
+        String soldierType = dropSoldier.getSoldierType();
+        soldierDroppedSpace.put(soldierType, soldierDroppedSpace.get(soldierType) + Soldier.getHousingSpaceByType(soldierType));
+    }
+
+    public boolean isDroppedSoldierSpaceValid(String type) {
+        return soldierDroppedSpace.get(type) <= getSoldierNumberByType(type);
     }
 }

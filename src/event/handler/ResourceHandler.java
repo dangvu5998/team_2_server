@@ -24,7 +24,6 @@ public class ResourceHandler extends BaseClientRequestHandler {
     public void handleClientRequest(User user, DataCmd dataCmd) {
         GameUser gameUser = GameUser.getGameUserById(user.getId());
         if (gameUser == null) {
-            // TODO: handle game user null
             return;
         }
         switch (dataCmd.getId()) {

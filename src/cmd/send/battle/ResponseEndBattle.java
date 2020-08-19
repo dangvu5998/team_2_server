@@ -17,6 +17,7 @@ public class ResponseEndBattle extends BaseMsg {
 
     public static final int NO_ERROR = 0;
     public static final int INVALID_SESSION_ID = -1;
+    public static final int INVALID_TIME_STEP = -2;
 
     public ResponseEndBattle(int reqId, int star, int goldEarned, int elixirEarned) {
         super(CmdDefine.END_BATTLE);

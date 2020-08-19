@@ -14,6 +14,7 @@ public class ResponseDropSoldier extends BaseMsg {
     public static final int NO_ERROR = 0;
     public static final int INVALID_SOLDIER_TYPE = -1;
     public static final int INVALID_SESSION_ID = -3;
+    public static final int INVALID_TIME_STEP = -4;
 
     public ResponseDropSoldier(int reqId) {
         super(CmdDefine.DROP_SOLDIERS);

@@ -140,7 +140,6 @@ public class GameUser {
 
     public void setGold(int gold) {
         this.gold = Math.min(gold, goldCapacity);
-        save();
     }
 
     public int getElixir() {
@@ -149,7 +148,6 @@ public class GameUser {
 
     public void setElixir(int elixir) {
         this.elixir = Math.min(elixir, elixirCapacity);
-        save();
     }
 
     public int getGoldCapacity() {
@@ -162,7 +160,6 @@ public class GameUser {
 
     public void setG(int g) {
         this.g = g;
-        save();
     }
 
     public GameUser(int vipLevel, String username, int frameScore, int userLevel, int userXP,
@@ -243,7 +240,6 @@ public class GameUser {
         if(mapObjects != null) {
             mapObjects.add(mapObject);
         }
-        save();
         if(mapObject instanceof Townhall || mapObject instanceof GoldStorage) {
             updateGoldCapacity();
         }
@@ -307,6 +303,7 @@ public class GameUser {
             addGold(initGold);
             addElixir(initElixir);
             addG(initG);
+            save();
         } catch (JSONException e) {
             throw new RuntimeException("Init config is invalid");
         }
@@ -366,7 +363,6 @@ public class GameUser {
      * @return 2d array
      */
     public int[][] getGridMap() {
-        // TODO: load from cached
         int[][] gridMap = new int[MapObject.MAP_HEIGHT][MapObject.MAP_WIDTH];
         for(int i = 0; i < MapObject.MAP_HEIGHT; i++) {
             Arrays.fill(gridMap[i], -1);
@@ -603,14 +599,11 @@ public class GameUser {
         if(building instanceof BuilderHut) {
             ((BuilderHut) building).setIndex(nbOfCurrBuyingBuilding + 1);
         }
-//        TODO: handle all building
-        if(building == null) {
-            return -1000;
-        }
         if(isMapObjectOverlap(building)) {
             return ResponseBuyBuilding.BUILDING_OVERLAP;
         }
         // check resource
+        assert building != null;
         int goldToBuild = building.getGoldToBuild();
         if(gold < goldToBuild) {
             return ResponseBuyBuilding.NOT_ENOUGH_GOLD;
@@ -719,7 +712,6 @@ public class GameUser {
             // deduct resources and upgrade building
             deductGold(goldToUpgrade);
             deductElixir(elixirToUpgrade);
-            // TODO: optimize by cached map object
             if(building instanceof GoldStorage || building instanceof ElixirStorage || building instanceof Townhall) {
                 ((Building) MapObject.getById(buildingId)).upgrade();
             } else {
@@ -756,7 +748,6 @@ public class GameUser {
                 return ResponseQuickFinish.INVALID_G;
             }
             g -= gToQuickFinish;
-            // TODO: remove record in map object db
             mapObjectIds.removeIf(currId -> currId == mapObjId);
             if(mapObjects != null) {
                 mapObjects.removeIf(mapObj -> mapObj.getId() == mapObjId);

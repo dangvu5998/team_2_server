@@ -58,6 +58,10 @@ public class BattleHandler extends BaseClientRequestHandler {
             int clientReqId = requestEndBattle.getClientReqId();
             int sessBattleId = requestEndBattle.getSessBattleId();
             int endTimestep = requestEndBattle.getTimestep();
+            if(endTimestep > BattleSession.MAX_TIME_STEP) {
+                send(new ResponseEndBattle(clientReqId, ResponseEndBattle.INVALID_TIME_STEP), user);
+                return;
+            }
             int availGoldEndClient = requestEndBattle.getAvailGold();
             int availElixirEndClient = requestEndBattle.getAvailElixir();
             int proportionDestroyedEndClient = requestEndBattle.getProportionDestroyed();
@@ -94,16 +98,10 @@ public class BattleHandler extends BaseClientRequestHandler {
                 logger.warn("End step: " + endTimestep);
                 logger.warn("Server destroyed: " + simulatedDestroyed + " - gold: " + simulatedAvailGold + " - elixir: " + simulatedAvailElixir + " - star: " + simulatedStar);
                 logger.warn("Client destroyed: " + proportionDestroyedEndClient + " - gold: " + availGoldEndClient + " - elixir: " + availElixirEndClient + " - star: " + starEndClient);
-                if(Math.abs(availGoldEndClient - simulatedAvailGold) < 50 && Math.abs(availElixirEndClient - simulatedAvailElixir) < 50) {
-                    simulatedAvailElixir = availElixirEndClient;
-                    simulatedAvailGold = availGoldEndClient;
-                    simulatedStar = starEndClient;
-                }
             }
             int availGold = singleBattle.getAvailGold();
             int availElixir = singleBattle.getAvailElixir();
 
-            // TODO: get this by simulate battle
             int earnedGold = availGold - simulatedAvailGold;
             int earnedElixir = availElixir - simulatedAvailElixir;
 
@@ -138,10 +136,18 @@ public class BattleHandler extends BaseClientRequestHandler {
             }
             ArrayList<BattleSession.DropSoldier> currDropSodiers = battleSession.getDropSoldiers();
             boolean isInvalidSoldierType = false;
+            boolean isOverflowSoldier = false;
             for(BattleSession.DropSoldier dropSoldier: dropSoldiers) {
-                // TODO: validate number soldier
                 if(Soldier.SOLDIER_TYPES.contains(dropSoldier.getSoldierType())) {
-                    currDropSodiers.add(dropSoldier);
+                    if(dropSoldier.getTimestep() > BattleSession.MAX_TIME_STEP) {
+                        send(new ResponseDropSoldier(reqId, ResponseDropSoldier.INVALID_TIME_STEP), user);
+                        return;
+                    }
+                    battleSession.addDropSoldier(dropSoldier);
+                    if(!battleSession.isDroppedSoldierSpaceValid(dropSoldier.getSoldierType())) {
+                        isOverflowSoldier = true;
+                        break;
+                    }
                 }
                 else
                 {
@@ -150,6 +156,10 @@ public class BattleHandler extends BaseClientRequestHandler {
                 }
             }
             if(isInvalidSoldierType) {
+                send(new ResponseDropSoldier(reqId, ResponseDropSoldier.INVALID_SOLDIER_TYPE), user);
+                return;
+            }
+            if(isOverflowSoldier) {
                 send(new ResponseDropSoldier(reqId, ResponseDropSoldier.INVALID_SOLDIER_TYPE), user);
                 return;
             }
@@ -166,6 +176,21 @@ public class BattleHandler extends BaseClientRequestHandler {
             int battleId = requestSelectSingleBattle.getBattleId();
             ArrayList<BattleSession.SoldierNumber> soldierNumbers = requestSelectSingleBattle.getSoldierNumbers();
             int id = user.getId();
+            // validate number of soldier
+            GameUser gameUser = GameUser.getGameUserById(id);
+            if(gameUser == null) {
+                send(new ResponseSelectSingleBattle(ResponseSelectSingleBattle.INVALID_BATTLE_ID, reqId), user);
+                return;
+            }
+            int soldierSpace = 0;
+            for(BattleSession.SoldierNumber soldierNumber: soldierNumbers) {
+                soldierSpace += Soldier.getHousingSpaceByType(soldierNumber.getSoldierType());
+            }
+            if(soldierSpace >= gameUser.getNbOfMaxSodiers()) {
+                send(new ResponseSelectSingleBattle(ResponseSelectSingleBattle.TOO_MUCH_SOLDIERS, reqId), user);
+                return;
+            }
+
             SingleBattlePlayer singleBattlePlayer = SingleBattlePlayer.getBattleSinglePlayerById(id);
             if(singleBattlePlayer == null) {
                 singleBattlePlayer = SingleBattlePlayer.createBattleSinglePlayer(id);
@@ -177,7 +202,7 @@ public class BattleHandler extends BaseClientRequestHandler {
             }
             BattleSession battleSession = BattleSession.getOrCreateBattleSessionById(id);
             battleSession.setBattleId(battleId);
-            // TODO: check valid available soldier
+
             battleSession.setAvailSoldiers(soldierNumbers);
             int currTime = Common.currentTimeInSecond();
             battleSession.setStartTime(currTime);
